@@ -7,7 +7,7 @@
 
 body {
   min-height: 100vh;
-  /* Degradê do rosa escuro/choque para o preto */
+  /* Degradê rosa escuro para o preto */
   background: linear-gradient(135deg, #1a0011 0%, #880e4f 50%, #000000 100%);
   color: #ffffff;
   display: flex;
@@ -17,14 +17,12 @@ body {
   position: relative;
 }
 
-/* Camada extra de fundo com padrão de aranhas/teia */
 .fundo-aranhas {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  /* Imagem transparente de teia de aranha repeti-la */
   background-image: url('https://www.transparenttextures.com/patterns/cobweb.png');
   opacity: 0.3;
   pointer-events: none;
@@ -86,8 +84,13 @@ button:hover {
   box-shadow: 0 0 10px #e91e63;
 }
 
+#status-mensagem {
+  margin: 10px 0;
+  color: #ff80ab;
+}
+
 .escondido {
-  display: none;
+  display: none !important;
 }
 
 .card {
