@@ -1,39 +1,14 @@
 // ==========================================
-// LÓGICA DO MENU LATERAL
-// ==========================================
-function toggleMenu() {
-  const sidebar = document.getElementById('sidebar');
-  const overlay = document.getElementById('overlay');
-
-  sidebar.classList.toggle('aberto');
-  overlay.classList.toggle('ativo');
-}
-
-function filtrarHQs(categoria) {
-  const itens = document.querySelectorAll('.nav-item');
-  itens.forEach(item => item.classList.remove('active'));
-  
-  if (event && event.currentTarget) {
-    event.currentTarget.classList.add('active');
-  }
-
-  console.log("Categoria selecionada:", categoria);
-  toggleMenu();
-}
-
-// ==========================================
-// LÓGICA DO LEITOR DE HQs / QUADRINHOS
+// ESTRUTURA DE DADOS DAS HQS
 // ==========================================
 const hqs = {
   "aranha-verso": {
     titulo: "Aranhaverso #1",
+    capa: "assets/capas/capa-teste.jpg", // <--- Sua capa aqui!
     capitulos: {
       "cap-1": [
-        "https://via.placeholder.com/600x800/ff0000/ffffff?text=Capitulo+1+-+Pagina+1",
-        "https://via.placeholder.com/600x800/ff0000/ffffff?text=Capitulo+1+-+Pagina+2"
-      ],
-      "cap-2": [
-        "https://via.placeholder.com/600x800/800000/ffffff?text=Capitulo+2+-+Pagina+1"
+        "https://via.placeholder.com/600x800/ff0000/ffffff?text=Pagina+1",
+        "https://via.placeholder.com/600x800/800000/ffffff?text=Pagina+2"
       ]
     }
   }
@@ -43,6 +18,9 @@ let hqAtual = "aranha-verso";
 let capituloAtual = "cap-1";
 let paginaAtual = 0;
 
+// ==========================================
+// INICIALIZAÇÃO E NAVEGAÇÃO DA HQ
+// ==========================================
 function carregarMenu() {
   const selectHQ = document.getElementById('select-hq');
   if (!selectHQ) return;
@@ -72,8 +50,7 @@ function carregarCapitulos() {
   }
 
   capituloAtual = Object.keys(caps)[0];
-  paginaAtual = 0;
-  atualizarLeitor();
+  exibirCapa();
 }
 
 function mudarHQ() {
@@ -83,8 +60,33 @@ function mudarHQ() {
 
 function mudarCapitulo() {
   capituloAtual = document.getElementById('select-capitulo').value;
-  paginaAtual = 0;
-  atualizarLeitor();
+  exibirCapa();
+}
+
+// Exibe a capa da história selecionada
+function exibirCapa() {
+  const cardCapa = document.getElementById('card-capa');
+  const areaLeitor = document.getElementById('area-leitor');
+  const imgCapa = document.getElementById('imagem-capa');
+
+  if (cardCapa && areaLeitor && imgCapa) {
+    imgCapa.src = hqs[hqAtual].capa;
+    cardCapa.classList.remove('escondido');
+    areaLeitor.classList.add('escondido');
+  }
+}
+
+// Oculta a capa e abre o leitor de páginas
+function iniciarLeitura() {
+  const cardCapa = document.getElementById('card-capa');
+  const areaLeitor = document.getElementById('area-leitor');
+
+  if (cardCapa && areaLeitor) {
+    cardCapa.classList.add('escondido');
+    areaLeitor.classList.remove('escondido');
+    paginaAtual = 0;
+    atualizarLeitor();
+  }
 }
 
 function atualizarLeitor() {
@@ -115,10 +117,34 @@ function paginaAnterior() {
   }
 }
 
+// ==========================================
+// MENU LATERAL
+// ==========================================
+function toggleMenu() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+
+  if (sidebar && overlay) {
+    sidebar.classList.toggle('aberto');
+    overlay.classList.toggle('ativo');
+  }
+}
+
+function filtrarHQs(categoria) {
+  const itens = document.querySelectorAll('.nav-item');
+  itens.forEach(item => item.classList.remove('active'));
+  
+  if (window.event && window.event.currentTarget) {
+    window.event.currentTarget.classList.add('active');
+  }
+
+  toggleMenu();
+}
+
 window.onload = carregarMenu;
 
 // ==========================================
-// SUA FUNÇÃO DE BUSCA DE PERSONAGEM (ANILIST)
+// BUSCA DE PERSONAGENS (ANILIST)
 // ==========================================
 async function buscarPersonagem() {
   const nomeInput = document.getElementById('nome-personagem')?.value.trim();
@@ -136,13 +162,8 @@ async function buscarPersonagem() {
   const query = `
     query ($search: String) {
       Character (search: $search) {
-        name {
-          full
-          native
-        }
-        image {
-          large
-        }
+        name { full native }
+        image { large }
         description(asHtml: false)
       }
     }
