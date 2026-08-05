@@ -287,3 +287,33 @@ select:hover, select:focus {
 .overlay.ativo {
   display: block;
 }
+
+/* ==========================================
+   AJUSTES APENAS PARA TELAS GRANDES (PC)
+   ========================================== */
+@media (min-width: 768px) {
+  
+  /* Garante que o contêiner principal não fique sobreposto pelo botão do menu */
+  .container {
+    margin-top: 40px;
+  }
+
+  /* Deixa o botão do menu com uma aparência mais robusta e destacada no PC */
+  .menu-btn {
+    top: 25px;
+    left: 25px;
+    padding: 12px 20px;
+    font-size: 1.1rem;
+  }
+
+  /* Ajusta a largura da barra lateral para monitores maiores */
+  .sidebar {
+    width: 300px;
+    left: -320px; /* Garante que fique totalmente escondido fora da tela */
+  }
+
+  /* Melhora a área de leitura e navegação no PC */
+  .leitor-box img {
+    max-height: 75vh;
+  }
+}
