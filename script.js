@@ -1,34 +1,37 @@
-// ==========================================
-// BANCO DE DADOS DAS HQS DISPONÍVEIS
-// ==========================================
-const hqs = {
-  "aranha-verso": {
-    titulo: "Aranhaverso #1",
-    capa: "assets/capas/capa-teste.jpg", // Sua primeira capa
-    capitulos: {
-      "cap-1": [
-        "https://via.placeholder.com/600x800/ff0000/ffffff?text=Capitulo+1+-+Pagina+1",
-        "https://via.placeholder.com/600x800/ff0000/ffffff?text=Capitulo+1+-+Pagina+2"
-      ],
-      "cap-2": [
-        "https://via.placeholder.com/600x800/800000/ffffff?text=Capitulo+2+-+Pagina+1"
-      ]
-    }
-  },
-  "spider-man-2099": {
-    titulo: "Homem-Aranha 2099 #1",
-    capa: "assets/capas/capa-2099.jpg", // Sua segunda capa (suba a foto com esse nome para a pasta)
-    capitulos: {
-      "cap-1": [
-        "https://via.placeholder.com/600x800/0000ff/ffffff?text=Aranha+2099+-+Pagina+1"
-      ]
-    }
-  }
-};
-
-let hqAtual = "aranha-verso";
-let capituloAtual = "cap-1";
+// VARIÁVEIS GLOBAIS
+let hqs = {}; // Será preenchido automaticamente pelo arquivo hqs.json
+let hqAtual = "";
+let capituloAtual = "";
 let paginaAtual = 0;
+
+// ==========================================
+// CARREGAR DADOS DO ARQUIVO hqs.json (FETCH)
+// ==========================================
+async function carregarBancoDeDados() {
+  try {
+    const resposta = await fetch('hqs.json');
+    const listaHQs = await resposta.json();
+
+    // Converte a lista em um objeto fácil de acessar
+    hqs = {};
+    listaHQs.forEach(hq => {
+      hqs[hq.id] = hq;
+    });
+
+    // Define a primeira HQ como padrão inicial
+    const chaves = Object.keys(hqs);
+    if (chaves.length > 0) {
+      hqAtual = chaves[0];
+    }
+
+    // Inicializa o menu e exibe a biblioteca
+    carregarMenu();
+    exibirBiblioteca();
+
+  } catch (erro) {
+    console.error("Erro ao carregar o arquivo hqs.json:", erro);
+  }
+}
 
 // ==========================================
 // LÓGICA DO MENU LATERAL
@@ -53,8 +56,6 @@ function filtrarHQs(categoria) {
 
   if (categoria === 'todas') {
     exibirBiblioteca();
-  } else {
-    console.log("Categoria selecionada:", categoria);
   }
 
   toggleMenu();
@@ -72,7 +73,7 @@ function exibirBiblioteca() {
   if (!grid) return;
   grid.innerHTML = '';
 
-  // Carrega todas as HQs cadastradas no Banco de Dados (objeto hqs)
+  // Monta a galeria lendo o banco de dados carregado
   for (let chave in hqs) {
     const hq = hqs[chave];
     const card = document.createElement('div');
@@ -103,7 +104,7 @@ function selecionarDaBiblioteca(chave) {
 }
 
 // ==========================================
-// LÓGICA DO LEITOR DE HQs / QUADRINHOS
+// LÓGICA DO LEITOR DE HQs
 // ==========================================
 function carregarMenu() {
   const selectHQ = document.getElementById('select-hq');
@@ -122,7 +123,7 @@ function carregarMenu() {
 
 function carregarCapitulos() {
   const selectCap = document.getElementById('select-capitulo');
-  if (!selectCap) return;
+  if (!selectCap || !hqs[hqAtual]) return;
   selectCap.innerHTML = '';
   
   const caps = hqs[hqAtual].capitulos;
@@ -133,7 +134,7 @@ function carregarCapitulos() {
     selectCap.appendChild(option);
   }
 
-  capituloAtual = Object.keys(caps)[0];
+  capituloAtual = Object.keys(caps)[0] || "";
   paginaAtual = 0;
   exibirCapa();
 }
@@ -155,7 +156,7 @@ function exibirCapa() {
   const grid = document.getElementById('biblioteca-hqs');
   const imgCapa = document.getElementById('imagem-capa');
 
-  if (cardCapa && areaLeitor && imgCapa) {
+  if (cardCapa && areaLeitor && imgCapa && hqs[hqAtual]) {
     imgCapa.src = hqs[hqAtual].capa;
     cardCapa.classList.remove('escondido');
     areaLeitor.classList.add('escondido');
@@ -180,6 +181,8 @@ function iniciarLeitura() {
 }
 
 function atualizarLeitor() {
+  if (!hqs[hqAtual] || !hqs[hqAtual].capitulos[capituloAtual]) return;
+  
   const paginas = hqs[hqAtual].capitulos[capituloAtual];
   const imgElement = document.getElementById('pagina-imagem');
   const contador = document.getElementById('contador-pagina');
@@ -193,6 +196,7 @@ function atualizarLeitor() {
 }
 
 function proximaPagina() {
+  if (!hqs[hqAtual] || !hqs[hqAtual].capitulos[capituloAtual]) return;
   const paginas = hqs[hqAtual].capitulos[capituloAtual];
   if (paginaAtual < paginas.length - 1) {
     paginaAtual++;
@@ -207,7 +211,8 @@ function paginaAnterior() {
   }
 }
 
-window.onload = carregarMenu;
+// INICIA O SITE LENDO O JSON
+window.onload = carregarBancoDeDados;
 
 // ==========================================
 // SUA FUNÇÃO DE BUSCA DE PERSONAGEM (ANILIST)
@@ -228,13 +233,8 @@ async function buscarPersonagem() {
   const query = `
     query ($search: String) {
       Character (search: $search) {
-        name {
-          full
-          native
-        }
-        image {
-          large
-        }
+        name { full native }
+        image { large }
         description(asHtml: false)
       }
     }
@@ -243,14 +243,8 @@ async function buscarPersonagem() {
   try {
     const resposta = await fetch('https://graphql.anilist.co', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      body: JSON.stringify({
-        query: query,
-        variables: { search: nomeInput }
-      })
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ query: query, variables: { search: nomeInput } })
     });
 
     const dados = await resposta.json();
