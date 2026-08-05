@@ -8,6 +8,29 @@
 </head>
 <body>
 
+  <button class="menu-btn" onclick="toggleMenu()">
+    <span>🕸️ Menu</span>
+    <span class="dots">⋮</span>
+  </button>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+      <h2>🕸️ SPIDER MENU</h2>
+      <button class="close-btn" onclick="toggleMenu()">&times;</button>
+    </div>
+    
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active" onclick="filtrarHQs('todas')">
+        <span class="icon">📚</span> Todas HQs
+      </a>
+      <a href="#" class="nav-item" onclick="filtrarHQs('favoritos')">
+        <span class="icon">⭐</span> Favoritos
+      </a>
+    </nav>
+  </aside>
+
+  <div id="overlay" class="overlay" onclick="toggleMenu()"></div>
+
   <div class="teia-bg"></div>
   <div class="teia-canto canto-esquerdo"></div>
   <div class="teia-canto canto-direito"></div>
