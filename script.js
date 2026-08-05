@@ -12,34 +12,38 @@ async function buscarPersonagem() {
   card.classList.add('escondido');
 
   try {
-    const resposta = await fetch(`https://api.jikan.moe/v4/characters?q=${encodeURIComponent(nomeInput)}&limit=1`);
-    
+    // Requisição para a API do Jikan (MyAnimeList)
+    const url = `https://api.jikan.moe/v4/characters?q=${encodeURIComponent(nomeInput)}&limit=1`;
+    const resposta = await fetch(url);
+
     if (!resposta.ok) {
-      throw new Error("Erro de conexão na API");
+      throw new Error(`Erro na API: ${resposta.status}`);
     }
 
     const dados = await resposta.json();
 
     if (!dados.data || dados.data.length === 0) {
-      status.innerText = "Personagem não encontrado! Tente pesquisar em inglês.";
+      status.innerText = "Personagem não encontrado! Tente pesquisar em inglês (ex: Goku, Naruto).";
       return;
     }
 
     const personagem = dados.data[0];
 
-    // Atualiza imagem e textos
+    // Preenche as informações
     document.getElementById('img-personagem').src = personagem.images.jpg.image_url;
     document.getElementById('titulo-nome').innerText = personagem.name;
     document.getElementById('nome-japones').innerText = personagem.name_kanji ? `(Kanji: ${personagem.name_kanji})` : '';
     
-    const sobre = personagem.about ? personagem.about : "Nenhuma história encontrada para este personagem.";
+    // Tratamento para limpar formatações estranhas da biografia
+    let sobre = personagem.about ? personagem.about : "Nenhuma história/descrição encontrada para este personagem.";
+    
     document.getElementById('sobre-personagem').innerText = sobre;
 
     status.innerText = "";
     card.classList.remove('escondido');
 
   } catch (erro) {
-    console.error(erro);
-    status.innerText = "Erro ao carregar dados. Tente novamente em alguns segundos!";
+    console.error("Detalhes do erro:", erro);
+    status.innerText = "A API está ocupada no momento. Aguarde 3 segundos e tente clicar em Buscar novamente!";
   }
 }
