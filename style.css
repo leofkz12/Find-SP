@@ -7,7 +7,6 @@
 
 body {
   min-height: 100vh;
-  /* Degradê de Vermelho Vivo / Escuro para o Preto Profundo */
   background: radial-gradient(circle at center, #800000 0%, #330000 50%, #050002 100%);
   color: #ffffff;
   display: flex;
@@ -18,7 +17,6 @@ body {
   overflow-x: hidden;
 }
 
-/* Textura de Teias sobre toda a tela */
 .teia-bg {
   position: fixed;
   top: 0;
@@ -31,7 +29,6 @@ body {
   z-index: 0;
 }
 
-/* Efeito Glow / Container Principal */
 .container {
   position: relative;
   background: rgba(10, 2, 5, 0.92);
@@ -112,7 +109,59 @@ select:hover, select:focus {
   box-shadow: 0 0 12px rgba(255, 30, 39, 0.8);
 }
 
-/* Moldura do Leitor de Quadrinhos */
+/* MOLDURA DA CAPA DA HQ E BOTÃO SOBREPOSTO */
+.capa-box {
+  position: relative;
+  max-width: 320px;
+  margin: 0 auto 20px auto;
+  border: 2px solid #ff1e27;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0 25px rgba(255, 30, 39, 0.6);
+}
+
+.capa-box img {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.capa-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background 0.3s ease;
+}
+
+.capa-box:hover .capa-overlay {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.btn-iniciar {
+  padding: 14px 28px;
+  border: 2px solid #ffffff;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #ff0000 0%, #990000 100%);
+  color: #ffffff;
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+  transition: all 0.3s ease;
+}
+
+.btn-iniciar:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 30px rgba(255, 30, 39, 1);
+}
+
+/* MOLDURA DO LEITOR DE PAGINAS */
 .leitor-box {
   background: #000000;
   border: 2px solid #ff1e27;
@@ -133,7 +182,6 @@ select:hover, select:focus {
   border-radius: 6px;
 }
 
-/* Navegação e Botões */
 .controles {
   display: flex;
   justify-content: space-between;
@@ -167,9 +215,11 @@ select:hover, select:focus {
   font-size: 1rem;
 }
 
-/* ==========================================
-   ESTILOS DO MENU LATERAL (DRAWER)
-   ========================================== */
+.escondido {
+  display: none !important;
+}
+
+/* MENU LATERAL (DRAWER) */
 .menu-btn {
   position: fixed;
   top: 20px;
@@ -288,17 +338,12 @@ select:hover, select:focus {
   display: block;
 }
 
-/* ==========================================
-   AJUSTES APENAS PARA TELAS GRANDES (PC)
-   ========================================== */
+/* AJUSTES PARA COMPUTADORES */
 @media (min-width: 768px) {
-  
-  /* Garante que o contêiner principal não fique sobreposto pelo botão do menu */
   .container {
     margin-top: 40px;
   }
 
-  /* Deixa o botão do menu com uma aparência mais robusta e destacada no PC */
   .menu-btn {
     top: 25px;
     left: 25px;
@@ -306,13 +351,11 @@ select:hover, select:focus {
     font-size: 1.1rem;
   }
 
-  /* Ajusta a largura da barra lateral para monitores maiores */
   .sidebar {
     width: 300px;
-    left: -320px; /* Garante que fique totalmente escondido fora da tela */
+    left: -320px;
   }
 
-  /* Melhora a área de leitura e navegação no PC */
   .leitor-box img {
     max-height: 75vh;
   }
