@@ -1,0 +1,127 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  /* Degradê do rosa escuro/choque para o preto */
+  background: linear-gradient(135deg, #1a0011 0%, #880e4f 50%, #000000 100%);
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  position: relative;
+}
+
+/* Camada extra de fundo com padrão de aranhas/teia */
+.fundo-aranhas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* Imagem transparente de teia de aranha repeti-la */
+  background-image: url('https://www.transparenttextures.com/patterns/cobweb.png');
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.container {
+  background: rgba(15, 15, 15, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid #ff4081;
+  border-radius: 15px;
+  padding: 30px;
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(255, 64, 129, 0.3);
+  z-index: 1;
+}
+
+h1 {
+  margin-bottom: 20px;
+  color: #ff80ab;
+  text-shadow: 0 0 8px #ff1744;
+}
+
+.busca-box {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+input {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ff4081;
+  background: #121212;
+  color: #fff;
+  outline: none;
+}
+
+input:focus {
+  border-color: #ff80ab;
+  box-shadow: 0 0 8px rgba(255, 128, 171, 0.5);
+}
+
+button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #c2185b;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: #e91e63;
+  box-shadow: 0 0 10px #e91e63;
+}
+
+.escondido {
+  display: none;
+}
+
+.card {
+  margin-top: 20px;
+  border-top: 1px solid #333;
+  padding-top: 20px;
+}
+
+.card img {
+  width: 180px;
+  height: 240px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 2px solid #ff4081;
+  margin-bottom: 15px;
+}
+
+.subtitulo {
+  color: #ff80ab;
+  font-style: italic;
+  font-size: 0.9em;
+  margin-bottom: 15px;
+}
+
+.info-detalhes {
+  text-align: left;
+  font-size: 0.9em;
+  line-height: 1.5;
+  max-height: 200px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+.descricao {
+  color: #ccc;
+  margin-top: 5px;
+}
