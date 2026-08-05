@@ -11,39 +11,61 @@ async function buscarPersonagem() {
   status.innerText = "Buscando nas sombras...";
   card.classList.add('escondido');
 
-  try {
-    // Requisição para a API do Jikan (MyAnimeList)
-    const url = `https://api.jikan.moe/v4/characters?q=${encodeURIComponent(nomeInput)}&limit=1`;
-    const resposta = await fetch(url);
-
-    if (!resposta.ok) {
-      throw new Error(`Erro na API: ${resposta.status}`);
+  // Query de busca na AniList GraphQL API
+  const query = `
+    query ($search: String) {
+      Character (search: $search) {
+        name {
+          full
+          native
+        }
+        image {
+          large
+        }
+        description(asHtml: false)
+      }
     }
+  `;
+
+  try {
+    const resposta = await fetch('https://graphql.anilist.co', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        query: query,
+        variables: { search: nomeInput }
+      })
+    });
 
     const dados = await resposta.json();
 
-    if (!dados.data || dados.data.length === 0) {
-      status.innerText = "Personagem não encontrado! Tente pesquisar em inglês (ex: Goku, Naruto).";
+    if (!dados.data || !dados.data.Character) {
+      status.innerText = "Personagem não encontrado! Tente o nome em inglês.";
       return;
     }
 
-    const personagem = dados.data[0];
+    const personagem = dados.data.Character;
 
-    // Preenche as informações
-    document.getElementById('img-personagem').src = personagem.images.jpg.image_url;
-    document.getElementById('titulo-nome').innerText = personagem.name;
-    document.getElementById('nome-japones').innerText = personagem.name_kanji ? `(Kanji: ${personagem.name_kanji})` : '';
+    // Atualiza a tela com a foto, nome e história
+    document.getElementById('img-personagem').src = personagem.image.large;
+    document.getElementById('titulo-nome').innerText = personagem.name.full;
+    document.getElementById('nome-japones').innerText = personagem.name.native ? `(Original: ${personagem.name.native})` : '';
     
-    // Tratamento para limpar formatações estranhas da biografia
-    let sobre = personagem.about ? personagem.about : "Nenhuma história/descrição encontrada para este personagem.";
-    
+    // Limpa marcações extras da descrição caso existam
+    let sobre = personagem.description || "Nenhuma história encontrada para este personagem.";
+    // Remove códigos Markdown de spoilers para o texto ficar limpo
+    sobre = sobre.replace(/~!|!~/g, '').substring(0, 600) + "...";
+
     document.getElementById('sobre-personagem').innerText = sobre;
 
     status.innerText = "";
     card.classList.remove('escondido');
 
   } catch (erro) {
-    console.error("Detalhes do erro:", erro);
-    status.innerText = "A API está ocupada no momento. Aguarde 3 segundos e tente clicar em Buscar novamente!";
+    console.error("Erro na busca:", erro);
+    status.innerText = "Erro ao buscar. Verifique sua conexão e tente novamente!";
   }
 }
