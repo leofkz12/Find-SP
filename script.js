@@ -1,10 +1,10 @@
 // ==========================================
-// ESTRUTURA DE DADOS DAS HQS
+// BANCO DE DADOS DAS HQS DISPONÍVEIS
 // ==========================================
 const hqs = {
   "aranha-verso": {
     titulo: "Aranhaverso #1",
-    capa: "assets/capas/capa-teste.jpg",
+    capa: "assets/capas/capa-teste.jpg", // Sua primeira capa
     capitulos: {
       "cap-1": [
         "https://via.placeholder.com/600x800/ff0000/ffffff?text=Capitulo+1+-+Pagina+1",
@@ -12,6 +12,15 @@ const hqs = {
       ],
       "cap-2": [
         "https://via.placeholder.com/600x800/800000/ffffff?text=Capitulo+2+-+Pagina+1"
+      ]
+    }
+  },
+  "spider-man-2099": {
+    titulo: "Homem-Aranha 2099 #1",
+    capa: "assets/capas/capa-2099.jpg", // Sua segunda capa (suba a foto com esse nome para a pasta)
+    capitulos: {
+      "cap-1": [
+        "https://via.placeholder.com/600x800/0000ff/ffffff?text=Aranha+2099+-+Pagina+1"
       ]
     }
   }
@@ -52,7 +61,7 @@ function filtrarHQs(categoria) {
 }
 
 // ==========================================
-// LÓGICA DA BIBLIOTECA DE HQS
+// EXIBIR BANCO DE TODAS AS HQS (GALERIA)
 // ==========================================
 function exibirBiblioteca() {
   const grid = document.getElementById('biblioteca-hqs');
@@ -63,6 +72,7 @@ function exibirBiblioteca() {
   if (!grid) return;
   grid.innerHTML = '';
 
+  // Carrega todas as HQs cadastradas no Banco de Dados (objeto hqs)
   for (let chave in hqs) {
     const hq = hqs[chave];
     const card = document.createElement('div');
@@ -242,3 +252,38 @@ async function buscarPersonagem() {
         variables: { search: nomeInput }
       })
     });
+
+    const dados = await resposta.json();
+
+    if (!dados.data || !dados.data.Character) {
+      if (status) status.innerText = "Personagem não encontrado! Tente o nome em inglês.";
+      return;
+    }
+
+    const personagem = dados.data.Character;
+
+    if (document.getElementById('img-personagem')) {
+      document.getElementById('img-personagem').src = personagem.image.large;
+    }
+    if (document.getElementById('titulo-nome')) {
+      document.getElementById('titulo-nome').innerText = personagem.name.full;
+    }
+    if (document.getElementById('nome-japones')) {
+      document.getElementById('nome-japones').innerText = personagem.name.native ? `(Original: ${personagem.name.native})` : '';
+    }
+    
+    let sobre = personagem.description || "Nenhuma história encontrada para este personagem.";
+    sobre = sobre.replace(/~!|!~/g, '').substring(0, 600) + "...";
+
+    if (document.getElementById('sobre-personagem')) {
+      document.getElementById('sobre-personagem').innerText = sobre;
+    }
+
+    if (status) status.innerText = "";
+    if (card) card.classList.remove('escondido');
+
+  } catch (erro) {
+    console.error("Erro na busca:", erro);
+    if (status) status.innerText = "Erro ao buscar. Verifique sua conexão e tente novamente!";
+  }
+}
