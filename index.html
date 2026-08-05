@@ -42,7 +42,7 @@
       <p class="subtitulo-hq">Explore as histórias do Aranhaverso</p>
     </header>
 
-    <div class="menu-selecao">
+    <div id="seletores-topo" class="menu-selecao">
       <div class="campo">
         <label for="select-hq">História</label>
         <select id="select-hq" onchange="mudarHQ()"></select>
@@ -53,6 +53,8 @@
         <select id="select-capitulo" onchange="mudarCapitulo()"></select>
       </div>
     </div>
+
+    <div id="biblioteca-hqs" class="biblioteca-grid escondido"></div>
 
     <div id="card-capa" class="capa-box">
       <img id="imagem-capa" src="" alt="Capa da HQ">
