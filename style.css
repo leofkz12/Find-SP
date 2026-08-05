@@ -166,3 +166,124 @@ select:hover, select:focus {
   color: #ff4d52;
   font-size: 1rem;
 }
+
+/* ==========================================
+   ESTILOS DO MENU LATERAL (DRAWER)
+   ========================================== */
+.menu-btn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 10;
+  background: rgba(24, 3, 6, 0.9);
+  border: 2px solid #ff1e27;
+  color: #ffffff;
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  box-shadow: 0 0 12px rgba(255, 30, 39, 0.4);
+  transition: all 0.3s ease;
+}
+
+.menu-btn:hover {
+  background: #ff1e27;
+  box-shadow: 0 0 20px rgba(255, 30, 39, 0.8);
+}
+
+.menu-btn .dots {
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -280px;
+  width: 260px;
+  height: 100%;
+  background: rgba(10, 2, 5, 0.98);
+  border-right: 2px solid #ff1e27;
+  box-shadow: 5px 0 25px rgba(255, 30, 39, 0.4);
+  z-index: 100;
+  transition: left 0.3s ease-in-out;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar.aberto {
+  left: 0;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ff1e27;
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+}
+
+.sidebar-header h2 {
+  font-size: 1.4rem;
+  color: #ff2a33;
+  text-shadow: 0 0 8px #ff0000;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 1.8rem;
+  cursor: pointer;
+}
+
+.close-btn:hover {
+  color: #ff1e27;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #ffffff;
+  text-decoration: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.nav-item:hover, .nav-item.active {
+  background: rgba(255, 30, 39, 0.15);
+  border-color: #ff1e27;
+  color: #ff4d52;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(3px);
+  z-index: 90;
+  display: none;
+}
+
+.overlay.ativo {
+  display: block;
+}
