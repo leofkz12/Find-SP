@@ -3,32 +3,42 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Busca de Personagens de Anime</title>
+  <title>Spider-Verse Comics Reader</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <div class="fundo-aranhas"></div>
+  <div class="teia-bg"></div>
+  <div class="teia-canto canto-esquerdo"></div>
+  <div class="teia-canto canto-direito"></div>
 
   <div class="container">
-    <h1>Pesquisar Personagem</h1>
-    
-    <div class="busca-box">
-      <input type="text" id="nome-personagem" placeholder="Digite o nome (ex: Naruto, Killua)...">
-      <button onclick="buscarPersonagem()">Buscar</button>
+    <header class="header">
+      <div class="spider-icon">🕸️</div>
+      <h1>SPIDER READER</h1>
+      <p class="subtitulo-hq">Explore as histórias do Aranhaverso</p>
+    </header>
+
+    <div class="menu-selecao">
+      <div class="campo">
+        <label for="select-hq">História</label>
+        <select id="select-hq" onchange="mudarHQ()"></select>
+      </div>
+
+      <div class="campo">
+        <label for="select-capitulo">Capítulo</label>
+        <select id="select-capitulo" onchange="mudarCapitulo()"></select>
+      </div>
     </div>
 
-    <p id="status-mensagem"></p>
+    <div class="leitor-box">
+      <img id="pagina-imagem" src="" alt="Página da HQ">
+    </div>
 
-    <div id="card-personagem" class="card escondido">
-      <img id="img-personagem" src="" alt="Foto do Personagem">
-      <h2 id="titulo-nome"></h2>
-      <p id="nome-japones" class="subtitulo"></p>
-      
-      <div class="info-detalhes">
-        <p><strong>História / Sobre:</strong></p>
-        <p id="sobre-personagem" class="descricao"></p>
-      </div>
+    <div class="controles">
+      <button onclick="paginaAnterior()" class="btn-nav">◀ Anterior</button>
+      <span id="contador-pagina">Página 1</span>
+      <button onclick="proximaPagina()" class="btn-nav">Próxima ▶</button>
     </div>
   </div>
 
