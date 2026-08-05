@@ -1,71 +1,89 @@
-async function buscarPersonagem() {
-  const nomeInput = document.getElementById('nome-personagem').value.trim();
-  const status = document.getElementById('status-mensagem');
-  const card = document.getElementById('card-personagem');
+// Dados de exemplo (você pode trocar os links pelas URLs reais das suas páginas)
+const hqs = {
+  "aranha-verso": {
+    titulo: "Aranhaverso #1",
+    capitulos: {
+      "cap-1": [
+        "https://via.placeholder.com/600x800/ff0000/ffffff?text=Capitulo+1+-+Pagina+1",
+        "https://via.placeholder.com/600x800/ff0000/ffffff?text=Capitulo+1+-+Pagina+2"
+      ],
+      "cap-2": [
+        "https://via.placeholder.com/600x800/800000/ffffff?text=Capitulo+2+-+Pagina+1"
+      ]
+    }
+  }
+};
 
-  if (!nomeInput) {
-    status.innerText = "Por favor, digite o nome de um personagem!";
-    return;
+let hqAtual = "aranha-verso";
+let capituloAtual = "cap-1";
+let paginaAtual = 0;
+
+// Inicializa os seletores na tela
+function carregarMenu() {
+  const selectHQ = document.getElementById('select-hq');
+  selectHQ.innerHTML = '';
+  
+  for (let chave in hqs) {
+    let option = document.createElement('option');
+    option.value = chave;
+    option.textContent = hqs[chave].titulo;
+    selectHQ.appendChild(option);
   }
 
-  status.innerText = "Buscando nas sombras...";
-  card.classList.add('escondido');
+  carregarCapitulos();
+}
 
-  // Query de busca na AniList GraphQL API
-  const query = `
-    query ($search: String) {
-      Character (search: $search) {
-        name {
-          full
-          native
-        }
-        image {
-          large
-        }
-        description(asHtml: false)
-      }
-    }
-  `;
+function carregarCapitulos() {
+  const selectCap = document.getElementById('select-capitulo');
+  selectCap.innerHTML = '';
+  
+  const caps = hqs[hqAtual].capitulos;
+  for (let cap in caps) {
+    let option = document.createElement('option');
+    option.value = cap;
+    option.textContent = `Capítulo ${cap.replace('cap-', '')}`;
+    selectCap.appendChild(option);
+  }
 
-  try {
-    const resposta = await fetch('https://graphql.anilist.co', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      body: JSON.stringify({
-        query: query,
-        variables: { search: nomeInput }
-      })
-    });
+  capituloAtual = Object.keys(caps)[0];
+  paginaAtual = 0;
+  atualizarLeitor();
+}
 
-    const dados = await resposta.json();
+function mudarHQ() {
+  hqAtual = document.getElementById('select-hq').value;
+  carregarCapitulos();
+}
 
-    if (!dados.data || !dados.data.Character) {
-      status.innerText = "Personagem não encontrado! Tente o nome em inglês.";
-      return;
-    }
+function mudarCapitulo() {
+  capituloAtual = document.getElementById('select-capitulo').value;
+  paginaAtual = 0;
+  atualizarLeitor();
+}
 
-    const personagem = dados.data.Character;
+function atualizarLeitor() {
+  const paginas = hqs[hqAtual].capitulos[capituloAtual];
+  const imgElement = document.getElementById('pagina-imagem');
+  const contador = document.getElementById('contador-pagina');
 
-    // Atualiza a tela com a foto, nome e história
-    document.getElementById('img-personagem').src = personagem.image.large;
-    document.getElementById('titulo-nome').innerText = personagem.name.full;
-    document.getElementById('nome-japones').innerText = personagem.name.native ? `(Original: ${personagem.name.native})` : '';
-    
-    // Limpa marcações extras da descrição caso existam
-    let sobre = personagem.description || "Nenhuma história encontrada para este personagem.";
-    // Remove códigos Markdown de spoilers para o texto ficar limpo
-    sobre = sobre.replace(/~!|!~/g, '').substring(0, 600) + "...";
+  imgElement.src = paginas[paginaAtual];
+  contador.innerText = `Página ${paginaAtual + 1} de ${paginas.length}`;
+}
 
-    document.getElementById('sobre-personagem').innerText = sobre;
-
-    status.innerText = "";
-    card.classList.remove('escondido');
-
-  } catch (erro) {
-    console.error("Erro na busca:", erro);
-    status.innerText = "Erro ao buscar. Verifique sua conexão e tente novamente!";
+function proximaPagina() {
+  const paginas = hqs[hqAtual].capitulos[capituloAtual];
+  if (paginaAtual < paginas.length - 1) {
+    paginaAtual++;
+    atualizarLeitor();
   }
 }
+
+function paginaAnterior() {
+  if (paginaAtual > 0) {
+    paginaAtual--;
+    atualizarLeitor();
+  }
+}
+
+// Executa assim que a página carrega
+window.onload = carregarMenu;
