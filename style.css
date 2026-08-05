@@ -7,6 +7,7 @@
 
 body {
   min-height: 100vh;
+  /* Degradê de Vermelho Vivo / Escuro para o Preto Profundo */
   background: radial-gradient(circle at center, #800000 0%, #330000 50%, #050002 100%);
   color: #ffffff;
   display: flex;
@@ -17,6 +18,7 @@ body {
   overflow-x: hidden;
 }
 
+/* Textura de Teias sobre toda a tela */
 .teia-bg {
   position: fixed;
   top: 0;
@@ -29,6 +31,7 @@ body {
   z-index: 0;
 }
 
+/* Efeito Glow / Container Principal */
 .container {
   position: relative;
   background: rgba(10, 2, 5, 0.92);
@@ -161,7 +164,7 @@ select:hover, select:focus {
   box-shadow: 0 0 30px rgba(255, 30, 39, 1);
 }
 
-/* MOLDURA DO LEITOR DE PAGINAS */
+/* Moldura do Leitor de Quadrinhos */
 .leitor-box {
   background: #000000;
   border: 2px solid #ff1e27;
@@ -182,6 +185,7 @@ select:hover, select:focus {
   border-radius: 6px;
 }
 
+/* Navegação e Botões */
 .controles {
   display: flex;
   justify-content: space-between;
@@ -217,6 +221,67 @@ select:hover, select:focus {
 
 .escondido {
   display: none !important;
+}
+
+/* ESTILO DA GRADE DA BIBLIOTECA DE HQS */
+.biblioteca-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+.hq-card {
+  background: #180306;
+  border: 2px solid #ff1e27;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.hq-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 20px rgba(255, 30, 39, 0.6);
+}
+
+.hq-card img {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+}
+
+.hq-info {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-grow: 1;
+  justify-content: space-between;
+}
+
+.hq-info h3 {
+  font-size: 1rem;
+  color: #ffffff;
+  text-transform: uppercase;
+}
+
+.btn-card {
+  width: 100%;
+  padding: 8px;
+  border: none;
+  background: #ff1e27;
+  color: #ffffff;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
+.btn-card:hover {
+  background: #ff4d52;
 }
 
 /* MENU LATERAL (DRAWER) */
@@ -338,7 +403,7 @@ select:hover, select:focus {
   display: block;
 }
 
-/* AJUSTES PARA COMPUTADORES */
+/* AJUSTES APENAS PARA TELAS GRANDES (PC) */
 @media (min-width: 768px) {
   .container {
     margin-top: 40px;
