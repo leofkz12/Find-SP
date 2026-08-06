@@ -1,37 +1,34 @@
-// VARIÁVEIS GLOBAIS
-let hqs = {}; // Será preenchido automaticamente pelo arquivo hqs.json
-let hqAtual = "";
-let capituloAtual = "";
-let paginaAtual = 0;
-
 // ==========================================
-// CARREGAR DADOS DO ARQUIVO hqs.json (FETCH)
+// BANCO DE DADOS DAS HQS DISPONÍVEIS
 // ==========================================
-async function carregarBancoDeDados() {
-  try {
-    const resposta = await fetch('hqs.json');
-    const listaHQs = await resposta.json();
-
-    // Converte a lista em um objeto fácil de acessar
-    hqs = {};
-    listaHQs.forEach(hq => {
-      hqs[hq.id] = hq;
-    });
-
-    // Define a primeira HQ como padrão inicial
-    const chaves = Object.keys(hqs);
-    if (chaves.length > 0) {
-      hqAtual = chaves[0];
+const hqs = {
+  "aranha-verso": {
+    titulo: "Aranhaverso #1",
+    capa: "https://via.placeholder.com/300x450/ff0000/ffffff?text=Aranhaverso", // Ou nome da imagem ex: "capa-teste.jpg"
+    capitulos: {
+      "cap-1": [
+        "https://via.placeholder.com/600x800/ff0000/ffffff?text=Capitulo+1+-+Pagina+1",
+        "https://via.placeholder.com/600x800/ff0000/ffffff?text=Capitulo+1+-+Pagina+2"
+      ],
+      "cap-2": [
+        "https://via.placeholder.com/600x800/800000/ffffff?text=Capitulo+2+-+Pagina+1"
+      ]
     }
-
-    // Inicializa o menu e exibe a biblioteca
-    carregarMenu();
-    exibirBiblioteca();
-
-  } catch (erro) {
-    console.error("Erro ao carregar o arquivo hqs.json:", erro);
+  },
+  "miles-morales": {
+    titulo: "Miles Morales #1",
+    capa: "capa-miles.jpg", // Nome exato do arquivo no seu GitHub
+    capitulos: {
+      "cap-1": [
+        "https://via.placeholder.com/600x800/0000ff/ffffff?text=Miles+-+Pagina+1"
+      ]
+    }
   }
-}
+};
+
+let hqAtual = "aranha-verso";
+let capituloAtual = "cap-1";
+let paginaAtual = 0;
 
 // ==========================================
 // LÓGICA DO MENU LATERAL
@@ -62,7 +59,7 @@ function filtrarHQs(categoria) {
 }
 
 // ==========================================
-// EXIBIR BANCO DE TODAS AS HQS (GALERIA)
+// EXIBIR GALERIA "TODAS AS HQS"
 // ==========================================
 function exibirBiblioteca() {
   const grid = document.getElementById('biblioteca-hqs');
@@ -73,7 +70,6 @@ function exibirBiblioteca() {
   if (!grid) return;
   grid.innerHTML = '';
 
-  // Monta a galeria lendo o banco de dados carregado
   for (let chave in hqs) {
     const hq = hqs[chave];
     const card = document.createElement('div');
@@ -211,8 +207,7 @@ function paginaAnterior() {
   }
 }
 
-// INICIA O SITE LENDO O JSON
-window.onload = carregarBancoDeDados;
+window.onload = carregarMenu;
 
 // ==========================================
 // SUA FUNÇÃO DE BUSCA DE PERSONAGEM (ANILIST)
