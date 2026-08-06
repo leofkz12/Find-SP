@@ -1,2 +1,2 @@
-# Find-SP
-Site para encontrar personagens
+# SPIDER READER
+Site para ler todo tipo de HQs e outros recursos em andamento...
