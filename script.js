@@ -16,8 +16,8 @@ const hqs = {
     }
   },
   "spider-man-2099": {
-    titulo: "Homem-Aranha 2099 #1",
-    capa: "assets/capas/capa-miles.jpg", // Sua segunda capa (suba a foto com esse nome para a pasta)
+    titulo: "Absolute Carnage #1",
+    capa: "assets/capas/capa-2099.jpg", // Sua segunda capa (suba a foto com esse nome para a pasta)
     capitulos: {
       "cap-1": [
         "https://via.placeholder.com/600x800/0000ff/ffffff?text=Aranha+2099+-+Pagina+1"
