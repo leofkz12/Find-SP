@@ -1,4 +1,3 @@
-
 // ==========================================
 // BANCO DE DADOS DAS HQS DISPONÍVEIS
 // ==========================================
@@ -6,6 +5,7 @@ const hqs = {
   "aranha-verso": {
     titulo: "Aranhaverso #1",
     capa: "assets/capas/capa-teste.jpg", // Sua primeira capa
+    genero: "hq", // "hq" ou "anime" -> usado pelo filtro do menu lateral
     capitulos: {
       "cap-1": [
         "https://via.placeholder.com/600x800/ff0000/ffffff?text=Capitulo+1+-+Pagina+1",
@@ -19,6 +19,7 @@ const hqs = {
   "spider-man-2099": {
     titulo: "Homem-Aranha 2099 #1",
     capa: "assets/capas/capa-2099.jpg", // Sua segunda capa (suba a foto com esse nome para a pasta)
+    genero: "hq",
     capitulos: {
       "cap-1": [
         "https://via.placeholder.com/600x800/0000ff/ffffff?text=Aranha+2099+-+Pagina+1"
@@ -47,14 +48,15 @@ function toggleMenu() {
 function filtrarHQs(categoria) {
   const itens = document.querySelectorAll('.nav-item');
   itens.forEach(item => item.classList.remove('active'));
-  
+
   if (window.event && window.event.currentTarget) {
     window.event.currentTarget.classList.add('active');
   }
 
-  if (categoria === 'todas') {
-    exibirBiblioteca();
+  if (categoria === 'todas' || categoria === 'hq' || categoria === 'anime') {
+    exibirBiblioteca(categoria);
   } else {
+    // categoria === 'favoritos' (ainda não implementado)
     console.log("Categoria selecionada:", categoria);
   }
 
@@ -63,19 +65,23 @@ function filtrarHQs(categoria) {
 
 // ==========================================
 // EXIBIR BANCO DE TODAS AS HQS (GALERIA)
+// Aceita um filtro de gênero: 'todas', 'hq' ou 'anime'
 // ==========================================
-function exibirBiblioteca() {
+function exibirBiblioteca(filtroGenero = 'todas') {
   const grid = document.getElementById('biblioteca-hqs');
   const areaLeitor = document.getElementById('area-leitor');
   const cardCapa = document.getElementById('card-capa');
   const seletores = document.getElementById('seletores-topo');
+  const btnVoltar = document.getElementById('btn-voltar');
 
   if (!grid) return;
   grid.innerHTML = '';
 
-  // Carrega todas as HQs cadastradas no Banco de Dados (objeto hqs)
+  // Carrega as HQs cadastradas no Banco de Dados (objeto hqs), filtrando por gênero se necessário
   for (let chave in hqs) {
     const hq = hqs[chave];
+    if (filtroGenero !== 'todas' && hq.genero !== filtroGenero) continue;
+
     const card = document.createElement('div');
     card.className = 'hq-card';
     card.innerHTML = `
@@ -88,19 +94,90 @@ function exibirBiblioteca() {
     grid.appendChild(card);
   }
 
+  if (!grid.hasChildNodes()) {
+    grid.innerHTML = '<p style="grid-column: 1 / -1;">Nenhuma história encontrada nessa categoria.</p>';
+  }
+
   grid.classList.remove('escondido');
   if (areaLeitor) areaLeitor.classList.add('escondido');
   if (cardCapa) cardCapa.classList.add('escondido');
   if (seletores) seletores.classList.add('escondido');
+  if (btnVoltar) btnVoltar.classList.remove('escondido');
 }
 
 function selecionarDaBiblioteca(chave) {
   hqAtual = chave;
   const selectHQ = document.getElementById('select-hq');
   if (selectHQ) selectHQ.value = chave;
-  
+
   carregarCapitulos();
   iniciarLeitura();
+}
+
+// ==========================================
+// BARRA DE PESQUISA (tela inicial)
+// ==========================================
+function pesquisarHQ() {
+  const termo = document.getElementById('input-busca')?.value.trim().toLowerCase();
+
+  // Campo vazio: volta pra tela inicial normal
+  if (!termo) {
+    voltarInicio();
+    return;
+  }
+
+  const grid = document.getElementById('biblioteca-hqs');
+  const areaLeitor = document.getElementById('area-leitor');
+  const cardCapa = document.getElementById('card-capa');
+  const seletores = document.getElementById('seletores-topo');
+  const btnVoltar = document.getElementById('btn-voltar');
+
+  if (!grid) return;
+  grid.innerHTML = '';
+
+  for (let chave in hqs) {
+    const hq = hqs[chave];
+    if (hq.titulo.toLowerCase().includes(termo)) {
+      const card = document.createElement('div');
+      card.className = 'hq-card';
+      card.innerHTML = `
+        <img src="${hq.capa}" alt="${hq.titulo}">
+        <div class="hq-info">
+          <h3>${hq.titulo}</h3>
+          <button class="btn-card" onclick="selecionarDaBiblioteca('${chave}')">🚀 LER</button>
+        </div>
+      `;
+      grid.appendChild(card);
+    }
+  }
+
+  if (!grid.hasChildNodes()) {
+    grid.innerHTML = '<p style="grid-column: 1 / -1;">Nenhuma história encontrada com esse nome.</p>';
+  }
+
+  grid.classList.remove('escondido');
+  if (areaLeitor) areaLeitor.classList.add('escondido');
+  if (cardCapa) cardCapa.classList.add('escondido');
+  if (seletores) seletores.classList.add('escondido');
+  if (btnVoltar) btnVoltar.classList.remove('escondido');
+}
+
+// ==========================================
+// BOTÃO VOLTAR (retorna pra tela inicial padrão)
+// ==========================================
+function voltarInicio() {
+  const seletores = document.getElementById('seletores-topo');
+  if (seletores) seletores.classList.remove('escondido');
+
+  const itens = document.querySelectorAll('.nav-item');
+  itens.forEach(item => item.classList.remove('active'));
+  const primeiro = document.querySelector('.nav-item');
+  if (primeiro) primeiro.classList.add('active');
+
+  const inputBusca = document.getElementById('input-busca');
+  if (inputBusca) inputBusca.value = '';
+
+  exibirCapa();
 }
 
 // ==========================================
@@ -110,7 +187,7 @@ function carregarMenu() {
   const selectHQ = document.getElementById('select-hq');
   if (!selectHQ) return;
   selectHQ.innerHTML = '';
-  
+
   for (let chave in hqs) {
     let option = document.createElement('option');
     option.value = chave;
@@ -125,7 +202,7 @@ function carregarCapitulos() {
   const selectCap = document.getElementById('select-capitulo');
   if (!selectCap) return;
   selectCap.innerHTML = '';
-  
+
   const caps = hqs[hqAtual].capitulos;
   for (let cap in caps) {
     let option = document.createElement('option');
@@ -155,12 +232,14 @@ function exibirCapa() {
   const areaLeitor = document.getElementById('area-leitor');
   const grid = document.getElementById('biblioteca-hqs');
   const imgCapa = document.getElementById('imagem-capa');
+  const btnVoltar = document.getElementById('btn-voltar');
 
   if (cardCapa && areaLeitor && imgCapa) {
     imgCapa.src = hqs[hqAtual].capa;
     cardCapa.classList.remove('escondido');
     areaLeitor.classList.add('escondido');
     if (grid) grid.classList.add('escondido');
+    if (btnVoltar) btnVoltar.classList.add('escondido');
   }
 }
 
@@ -169,11 +248,13 @@ function iniciarLeitura() {
   const areaLeitor = document.getElementById('area-leitor');
   const grid = document.getElementById('biblioteca-hqs');
   const seletores = document.getElementById('seletores-topo');
+  const btnVoltar = document.getElementById('btn-voltar');
 
   if (cardCapa && areaLeitor) {
     cardCapa.classList.add('escondido');
     if (grid) grid.classList.add('escondido');
     if (seletores) seletores.classList.remove('escondido');
+    if (btnVoltar) btnVoltar.classList.add('escondido');
     areaLeitor.classList.remove('escondido');
     paginaAtual = 0;
     atualizarLeitor();
@@ -272,7 +353,7 @@ async function buscarPersonagem() {
     if (document.getElementById('nome-japones')) {
       document.getElementById('nome-japones').innerText = personagem.name.native ? `(Original: ${personagem.name.native})` : '';
     }
-    
+
     let sobre = personagem.description || "Nenhuma história encontrada para este personagem.";
     sobre = sobre.replace(/~!|!~/g, '').substring(0, 600) + "...";
 
@@ -288,5 +369,3 @@ async function buscarPersonagem() {
     if (status) status.innerText = "Erro ao buscar. Verifique sua conexão e tente novamente!";
   }
 }
-
-
