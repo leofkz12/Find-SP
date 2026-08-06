@@ -1,3 +1,4 @@
+
 // ==========================================
 // BANCO DE DADOS DAS HQS DISPONÍVEIS
 // ==========================================
@@ -287,4 +288,5 @@ async function buscarPersonagem() {
     if (status) status.innerText = "Erro ao buscar. Verifique sua conexão e tente novamente!";
   }
 }
+
 
