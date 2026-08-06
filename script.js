@@ -2,8 +2,8 @@
 // BANCO DE DADOS DAS HQS DISPONÍVEIS
 // ==========================================
 const hqs = {
-  "aranha-verso": {
-    titulo: "Aranhaverso #1",
+  "Spider-Gwen": {
+    titulo: "Shadow Clones #1",
     capa: "assets/capas/capa-teste.jpg", // Sua primeira capa
     capitulos: {
       "cap-1": [
