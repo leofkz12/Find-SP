@@ -69,6 +69,38 @@ h1 {
   margin-top: 5px;
 }
 
+/* Barra de pesquisa */
+.busca-container {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.busca-container input {
+  flex: 1;
+  min-width: 180px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid #ff1e27;
+  background: #180306;
+  color: #ffffff;
+  font-size: 0.95rem;
+  outline: none;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.busca-container input:focus {
+  border-color: #ff555b;
+  box-shadow: 0 0 12px rgba(255, 30, 39, 0.8);
+}
+
+/* Botão Voltar */
+#btn-voltar {
+  margin-bottom: 20px;
+}
+
 /* Seletores (Dropdowns) */
 .menu-selecao {
   display: flex;
