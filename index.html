@@ -18,10 +18,16 @@
       <h2>🕸️ SPIDER MENU</h2>
       <button class="close-btn" onclick="toggleMenu()">&times;</button>
     </div>
-    
+
     <nav class="sidebar-nav">
       <a href="#" class="nav-item active" onclick="filtrarHQs('todas')">
         <span class="icon">📚</span> Todas HQs
+      </a>
+      <a href="#" class="nav-item" onclick="filtrarHQs('hq')">
+        <span class="icon">📖</span> HQs
+      </a>
+      <a href="#" class="nav-item" onclick="filtrarHQs('anime')">
+        <span class="icon">🎌</span> Animes/Mangás
       </a>
       <a href="#" class="nav-item" onclick="filtrarHQs('favoritos')">
         <span class="icon">⭐</span> Favoritos
@@ -42,6 +48,11 @@
       <p class="subtitulo-hq">Explore as histórias do Aranhaverso</p>
     </header>
 
+    <div class="busca-container">
+      <input type="text" id="input-busca" placeholder="Buscar história..." onkeyup="if(event.key === 'Enter') pesquisarHQ()">
+      <button onclick="pesquisarHQ()" class="btn-nav">🔍 Buscar</button>
+    </div>
+
     <div id="seletores-topo" class="menu-selecao">
       <div class="campo">
         <label for="select-hq">História</label>
@@ -53,6 +64,8 @@
         <select id="select-capitulo" onchange="mudarCapitulo()"></select>
       </div>
     </div>
+
+    <button id="btn-voltar" class="btn-nav escondido" onclick="voltarInicio()">◀ Voltar</button>
 
     <div id="biblioteca-hqs" class="biblioteca-grid escondido"></div>
 
