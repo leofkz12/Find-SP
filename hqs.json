@@ -1,14 +1,26 @@
 [
-  {
-    "id": "Spider-Gwen",
-    "titulo": "Shadow Clones #1",
-    "capa": "capa-teste.jpg",
-    "capitulos": { ... }
-  },
-  {
-    "id": "Miles-Morales",
-    "titulo": "Absolute Carnage #1",
-    "capa": "capa-miles.jpg",
-    "capitulos": { ... }
-  }
+  {
+    "id": "Spider-Gwen",
+    "titulo": "Shadow Clones #1",
+    "capa": "assets/capas/capa-teste.jpg",
+    "capitulos": {
+      "cap-1": [
+        "https://via.placeholder.com/600x800/ff0000/ffffff?text=Capitulo+1+-+Pagina+1",
+        "https://via.placeholder.com/600x800/ff0000/ffffff?text=Capitulo+1+-+Pagina+2"
+      ],
+      "cap-2": [
+        "https://via.placeholder.com/600x800/800000/ffffff?text=Capitulo+2+-+Pagina+1"
+      ]
+    }
+  },
+  {
+    "id": "Miles Morales",
+    "titulo": "Absolute Carnage #1",
+    "capa": "assets/capas/capa-miles.jpg",
+    "capitulos": {
+      "cap-1": [
+        "https://via.placeholder.com/600x800/0000ff/ffffff?text=Aranha+2099+-+Pagina+1"
+      ]
+    }
+  }
 ]
