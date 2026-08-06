@@ -4,7 +4,7 @@
 const hqs = {
   "aranha-verso": {
     titulo: "Aranhaverso #1",
-    capa: "https://via.placeholder.com/300x450/ff0000/ffffff?text=Aranhaverso", // Ou nome da imagem ex: "capa-teste.jpg"
+    capa: "assets/capas/capa-teste.jpg", // Sua primeira capa
     capitulos: {
       "cap-1": [
         "https://via.placeholder.com/600x800/ff0000/ffffff?text=Capitulo+1+-+Pagina+1",
@@ -15,12 +15,12 @@ const hqs = {
       ]
     }
   },
-  "miles-morales": {
-    titulo: "Miles Morales #1",
-    capa: "capa-miles.jpg", // Nome exato do arquivo no seu GitHub
+  "spider-man-2099": {
+    titulo: "Homem-Aranha 2099 #1",
+    capa: "assets/capas/capa-2099.jpg", // Sua segunda capa (suba a foto com esse nome para a pasta)
     capitulos: {
       "cap-1": [
-        "https://via.placeholder.com/600x800/0000ff/ffffff?text=Miles+-+Pagina+1"
+        "https://via.placeholder.com/600x800/0000ff/ffffff?text=Aranha+2099+-+Pagina+1"
       ]
     }
   }
@@ -53,13 +53,15 @@ function filtrarHQs(categoria) {
 
   if (categoria === 'todas') {
     exibirBiblioteca();
+  } else {
+    console.log("Categoria selecionada:", categoria);
   }
 
   toggleMenu();
 }
 
 // ==========================================
-// EXIBIR GALERIA "TODAS AS HQS"
+// EXIBIR BANCO DE TODAS AS HQS (GALERIA)
 // ==========================================
 function exibirBiblioteca() {
   const grid = document.getElementById('biblioteca-hqs');
@@ -70,6 +72,7 @@ function exibirBiblioteca() {
   if (!grid) return;
   grid.innerHTML = '';
 
+  // Carrega todas as HQs cadastradas no Banco de Dados (objeto hqs)
   for (let chave in hqs) {
     const hq = hqs[chave];
     const card = document.createElement('div');
@@ -100,7 +103,7 @@ function selecionarDaBiblioteca(chave) {
 }
 
 // ==========================================
-// LÓGICA DO LEITOR DE HQs
+// LÓGICA DO LEITOR DE HQs / QUADRINHOS
 // ==========================================
 function carregarMenu() {
   const selectHQ = document.getElementById('select-hq');
@@ -119,7 +122,7 @@ function carregarMenu() {
 
 function carregarCapitulos() {
   const selectCap = document.getElementById('select-capitulo');
-  if (!selectCap || !hqs[hqAtual]) return;
+  if (!selectCap) return;
   selectCap.innerHTML = '';
   
   const caps = hqs[hqAtual].capitulos;
@@ -130,7 +133,7 @@ function carregarCapitulos() {
     selectCap.appendChild(option);
   }
 
-  capituloAtual = Object.keys(caps)[0] || "";
+  capituloAtual = Object.keys(caps)[0];
   paginaAtual = 0;
   exibirCapa();
 }
@@ -152,7 +155,7 @@ function exibirCapa() {
   const grid = document.getElementById('biblioteca-hqs');
   const imgCapa = document.getElementById('imagem-capa');
 
-  if (cardCapa && areaLeitor && imgCapa && hqs[hqAtual]) {
+  if (cardCapa && areaLeitor && imgCapa) {
     imgCapa.src = hqs[hqAtual].capa;
     cardCapa.classList.remove('escondido');
     areaLeitor.classList.add('escondido');
@@ -177,8 +180,6 @@ function iniciarLeitura() {
 }
 
 function atualizarLeitor() {
-  if (!hqs[hqAtual] || !hqs[hqAtual].capitulos[capituloAtual]) return;
-  
   const paginas = hqs[hqAtual].capitulos[capituloAtual];
   const imgElement = document.getElementById('pagina-imagem');
   const contador = document.getElementById('contador-pagina');
@@ -192,7 +193,6 @@ function atualizarLeitor() {
 }
 
 function proximaPagina() {
-  if (!hqs[hqAtual] || !hqs[hqAtual].capitulos[capituloAtual]) return;
   const paginas = hqs[hqAtual].capitulos[capituloAtual];
   if (paginaAtual < paginas.length - 1) {
     paginaAtual++;
@@ -228,8 +228,13 @@ async function buscarPersonagem() {
   const query = `
     query ($search: String) {
       Character (search: $search) {
-        name { full native }
-        image { large }
+        name {
+          full
+          native
+        }
+        image {
+          large
+        }
         description(asHtml: false)
       }
     }
@@ -238,8 +243,14 @@ async function buscarPersonagem() {
   try {
     const resposta = await fetch('https://graphql.anilist.co', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({ query: query, variables: { search: nomeInput } })
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        query: query,
+        variables: { search: nomeInput }
+      })
     });
 
     const dados = await resposta.json();
