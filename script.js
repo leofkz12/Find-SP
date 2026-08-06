@@ -2,8 +2,8 @@
 // BANCO DE DADOS DAS HQS DISPONÍVEIS
 // ==========================================
 const hqs = {
-  "Spider-Gwen": {
-    titulo: "Shadow Clones #1",
+  "aranha-verso": {
+    titulo: "Aranhaverso #1",
     capa: "assets/capas/capa-teste.jpg", // Sua primeira capa
     capitulos: {
       "cap-1": [
@@ -16,7 +16,7 @@ const hqs = {
     }
   },
   "spider-man-2099": {
-    titulo: "Absolute Carnage #1",
+    titulo: "Homem-Aranha 2099 #1",
     capa: "assets/capas/capa-2099.jpg", // Sua segunda capa (suba a foto com esse nome para a pasta)
     capitulos: {
       "cap-1": [
@@ -287,3 +287,4 @@ async function buscarPersonagem() {
     if (status) status.innerText = "Erro ao buscar. Verifique sua conexão e tente novamente!";
   }
 }
+
