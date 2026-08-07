@@ -1,44 +1,21 @@
 // ==========================================
-// BANCO DE DADOS DAS HQS DISPONÍVEIS
+// O banco de dados das HQs (variável "hqs") mora em dados.js.
+// Esse script só tem a LÓGICA do site.
 // ==========================================
-const hqs = {
-  "aranha-verso": {
-    titulo: "Aranhaverso #1",
-    capa: "assets/capas/capa-teste.jpg", // Sua primeira capa
-    genero: "hq", // "hq" ou "anime" -> usado pelo filtro do menu lateral
-    capitulos: {
-      "cap-1": [
-        "https://via.placeholder.com/600x800/ff0000/ffffff?text=Capitulo+1+-+Pagina+1",
-        "https://via.placeholder.com/600x800/ff0000/ffffff?text=Capitulo+1+-+Pagina+2"
-      ],
-      "cap-2": [
-        "https://via.placeholder.com/600x800/800000/ffffff?text=Capitulo+2+-+Pagina+1"
-      ]
-    }
-  },
-  "spider-man-2099": {
-    titulo: "Homem-Aranha 2099 #1",
-    capa: "assets/capas/capa-2099.jpg", // Sua segunda capa (suba a foto com esse nome para a pasta)
-    genero: "hq",
-    capitulos: {
-      "cap-1": [
-        "https://via.placeholder.com/600x800/0000ff/ffffff?text=Aranha+2099+-+Pagina+1"
-      ]
-    }
-  }
-};
 
-let hqAtual = "aranha-verso";
+let hqAtual = "spider-gwen";
 let capituloAtual = "cap-1";
 let paginaAtual = 0;
 
-// ==========================================
-// LÓGICA DO MENU LATERAL
-// ==========================================
+// Monta o caminho da imagem sozinho a partir do número da página.
+// Ex: caminhoPagina("spider-gwen", "cap-1", 3) -> "assets/hqs/spider-gwen/cap-1/pagina3.jpg"
+function caminhoPagina(chaveHQ, capitulo, numeroPagina) {
+  return `assets/hqs/${chaveHQ}/${capitulo}/pagina${numeroPagina}.jpg`;
+}
+
 function toggleMenu() {
   const sidebar = document.getElementById('sidebar');
   const overlay = document.getElementById('overlay');
-
   if (sidebar && overlay) {
     sidebar.classList.toggle('aberto');
     overlay.classList.toggle('ativo');
@@ -53,20 +30,15 @@ function filtrarHQs(categoria) {
     window.event.currentTarget.classList.add('active');
   }
 
-  if (categoria === 'todas' || categoria === 'hq' || categoria === 'anime') {
+  if (categoria === 'todas' || categoria === 'hq' || categoria === 'manga') {
     exibirBiblioteca(categoria);
   } else {
-    // categoria === 'favoritos' (ainda não implementado)
     console.log("Categoria selecionada:", categoria);
   }
 
   toggleMenu();
 }
 
-// ==========================================
-// EXIBIR BANCO DE TODAS AS HQS (GALERIA)
-// Aceita um filtro de gênero: 'todas', 'hq' ou 'anime'
-// ==========================================
 function exibirBiblioteca(filtroGenero = 'todas') {
   const grid = document.getElementById('biblioteca-hqs');
   const areaLeitor = document.getElementById('area-leitor');
@@ -77,7 +49,6 @@ function exibirBiblioteca(filtroGenero = 'todas') {
   if (!grid) return;
   grid.innerHTML = '';
 
-  // Carrega as HQs cadastradas no Banco de Dados (objeto hqs), filtrando por gênero se necessário
   for (let chave in hqs) {
     const hq = hqs[chave];
     if (filtroGenero !== 'todas' && hq.genero !== filtroGenero) continue;
@@ -114,13 +85,9 @@ function selecionarDaBiblioteca(chave) {
   iniciarLeitura();
 }
 
-// ==========================================
-// BARRA DE PESQUISA (tela inicial)
-// ==========================================
 function pesquisarHQ() {
   const termo = document.getElementById('input-busca')?.value.trim().toLowerCase();
 
-  // Campo vazio: volta pra tela inicial normal
   if (!termo) {
     voltarInicio();
     return;
@@ -162,9 +129,6 @@ function pesquisarHQ() {
   if (btnVoltar) btnVoltar.classList.remove('escondido');
 }
 
-// ==========================================
-// BOTÃO VOLTAR (retorna pra tela inicial padrão)
-// ==========================================
 function voltarInicio() {
   const seletores = document.getElementById('seletores-topo');
   if (seletores) seletores.classList.remove('escondido');
@@ -180,9 +144,6 @@ function voltarInicio() {
   exibirCapa();
 }
 
-// ==========================================
-// LÓGICA DO LEITOR DE HQs / QUADRINHOS
-// ==========================================
 function carregarMenu() {
   const selectHQ = document.getElementById('select-hq');
   if (!selectHQ) return;
@@ -262,21 +223,21 @@ function iniciarLeitura() {
 }
 
 function atualizarLeitor() {
-  const paginas = hqs[hqAtual].capitulos[capituloAtual];
+  const totalPaginas = hqs[hqAtual].capitulos[capituloAtual];
   const imgElement = document.getElementById('pagina-imagem');
   const contador = document.getElementById('contador-pagina');
 
-  if (imgElement && paginas) {
-    imgElement.src = paginas[paginaAtual];
+  if (imgElement && totalPaginas) {
+    imgElement.src = caminhoPagina(hqAtual, capituloAtual, paginaAtual + 1);
   }
-  if (contador && paginas) {
-    contador.innerText = `Página ${paginaAtual + 1} de ${paginas.length}`;
+  if (contador && totalPaginas) {
+    contador.innerText = `Página ${paginaAtual + 1} de ${totalPaginas}`;
   }
 }
 
 function proximaPagina() {
-  const paginas = hqs[hqAtual].capitulos[capituloAtual];
-  if (paginaAtual < paginas.length - 1) {
+  const totalPaginas = hqs[hqAtual].capitulos[capituloAtual];
+  if (paginaAtual < totalPaginas - 1) {
     paginaAtual++;
     atualizarLeitor();
   }
@@ -291,9 +252,6 @@ function paginaAnterior() {
 
 window.onload = carregarMenu;
 
-// ==========================================
-// SUA FUNÇÃO DE BUSCA DE PERSONAGEM (ANILIST)
-// ==========================================
 async function buscarPersonagem() {
   const nomeInput = document.getElementById('nome-personagem')?.value.trim();
   const status = document.getElementById('status-mensagem');
