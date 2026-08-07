@@ -1,13 +1,16 @@
 // ==========================================
 // BANCO DE DADOS DAS HQS / MANGÁS
 // ==========================================
-
+// "lancamento" e "resumo" são só placeholders — troque pelo texto real
+// de cada história. Eles aparecem na ficha que abre ao clicar em "Ver mais".
 
 const hqs = {
   "spider-gwen": {
     titulo: "Spider-Gwen: Shadow Clones",
     capa: "assets/capas/spider-gwen.jpg",
     genero: "hq",
+    lancamento: "2024", // <-- troque pela data real
+    resumo: "Escreva aqui um resumo curto dessa história.", // <-- troque pelo resumo real
     capitulos: {
       "cap-1": 31, // <-- troque pelo número real de páginas desse capítulo
       "cap-2": 1
@@ -17,6 +20,8 @@ const hqs = {
     titulo: "Sousou no Frieren",
     capa: "assets/capas/frieren.jpg",
     genero: "manga",
+    lancamento: "2024",
+    resumo: "Escreva aqui um resumo curto dessa história.",
     capitulos: {
       "cap-1": 1
     }
@@ -25,6 +30,8 @@ const hqs = {
     titulo: "Miles-Morales Absolute Carnage",
     capa: "assets/capas/miles-morales.jpg",
     genero: "hq",
+    lancamento: "2024",
+    resumo: "Escreva aqui um resumo curto dessa história.",
     capitulos: {
       "cap-1": 21,
       "cap-2": 1
@@ -34,6 +41,8 @@ const hqs = {
     titulo: "Solo-Leveling",
     capa: "assets/capas/sololeveling.jpg",
     genero: "manga",
+    lancamento: "2024",
+    resumo: "Escreva aqui um resumo curto dessa história.",
     capitulos: {
       "cap-1": 1,
       "cap-2": 1
@@ -43,6 +52,8 @@ const hqs = {
     titulo: "Overlord",
     capa: "assets/capas/overlord.jpg",
     genero: "manga",
+    lancamento: "2024",
+    resumo: "Escreva aqui um resumo curto dessa história.",
     capitulos: {
       "cap-1": 1,
       "cap-2": 1
@@ -52,6 +63,8 @@ const hqs = {
     titulo: "Spider-Man 2099 Exodus",
     capa: "assets/capas/spider-man2099.jpg",
     genero: "hq",
+    lancamento: "2024",
+    resumo: "Escreva aqui um resumo curto dessa história.",
     capitulos: {
       "cap-1": 1,
       "cap-2": 1
@@ -60,5 +73,6 @@ const hqs = {
 
   // Adicione novas HQs/mangás aqui embaixo, seguindo o mesmo modelo.
   // Ex: "nome-da-hq": { titulo: "...", capa: "...", genero: "hq"|"manga",
+  //   lancamento: "2024", resumo: "...",
   //   capitulos: { "cap-1": 25, "cap-2": 30 } }
 };

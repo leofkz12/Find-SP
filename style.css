@@ -1,24 +1,38 @@
+/* ==========================================
+   TOKENS (cores, fontes, sombras)
+   ========================================== */
+:root {
+  --bg-void: #050002;
+  --bg-panel: #180306;
+  --red-core: #ff1e27;
+  --red-soft: #ff4d52;
+  --red-deep: #800000;
+  --red-shadow: #330000;
+  --neon-cyan: #2be7d8;
+  --ink: #ffffff;
+  --ink-dim: #cbb8bb;
+
+  --font-logo: 'Bangers', 'Impact', cursive;
+  --font-ui: 'Poppins', 'Segoe UI', Tahoma, sans-serif;
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Impact', 'Segoe UI', Tahoma, sans-serif;
+  font-family: var(--font-ui);
 }
 
 body {
   min-height: 100vh;
-  /* Degradê de Vermelho Vivo / Escuro para o Preto Profundo */
-  background: radial-gradient(circle at center, #800000 0%, #330000 50%, #050002 100%);
-  color: #ffffff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
+  background: radial-gradient(circle at center, var(--red-deep) 0%, var(--red-shadow) 50%, var(--bg-void) 100%);
+  background-attachment: fixed;
+  color: var(--ink);
   position: relative;
   overflow-x: hidden;
 }
 
-/* Textura de Teias sobre toda a tela */
+/* Textura de teia sobre toda a tela */
 .teia-bg {
   position: fixed;
   top: 0;
@@ -26,78 +40,280 @@ body {
   width: 100%;
   height: 100%;
   background-image: url('https://www.transparenttextures.com/patterns/cobweb.png');
-  opacity: 0.25;
+  opacity: 0.2;
   pointer-events: none;
   z-index: 0;
 }
 
-/* Efeito Glow / Container Principal */
-.container {
+/* ==========================================
+   CABEÇALHO (faixa vermelha: logo + busca)
+   ========================================== */
+.topo-site {
   position: relative;
-  background: rgba(10, 2, 5, 0.92);
-  backdrop-filter: blur(8px);
-  border: 2px solid #ff1e27;
-  border-radius: 20px;
-  padding: 30px;
-  max-width: 750px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 16px 30px;
+  background: linear-gradient(120deg, #0a0102 0%, var(--red-deep) 55%, var(--red-core) 100%);
+  border-bottom: 2px solid var(--red-core);
+  box-shadow: 0 4px 25px rgba(255, 30, 39, 0.35);
+}
+
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.menu-btn {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+  padding: 0 9px;
+  transition: all 0.25s ease;
+}
+
+.menu-btn .menu-linha {
+  display: block;
+  height: 2px;
   width: 100%;
-  text-align: center;
-  box-shadow: 0 0 35px rgba(255, 30, 39, 0.5), inset 0 0 15px rgba(255, 30, 39, 0.2);
-  z-index: 1;
+  background: var(--ink);
+  border-radius: 2px;
 }
 
-.header {
-  margin-bottom: 25px;
+.menu-btn:hover {
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 14px rgba(43, 231, 216, 0.6);
 }
 
-.spider-icon {
-  font-size: 2.5rem;
-  margin-bottom: 5px;
+.logo-titulo {
+  font-family: var(--font-logo);
+  font-weight: 400;
+  font-size: 2rem;
+  letter-spacing: 1px;
+  color: var(--ink);
+  text-shadow: 2px 2px 0 #000;
+  white-space: nowrap;
 }
 
-h1 {
-  font-size: 2.5rem;
-  letter-spacing: 3px;
-  color: #ff2a33;
-  text-shadow: 0 0 12px #ff0000, 2px 2px 0px #000;
+.teia-icone {
+  display: inline-block;
+  margin-right: 4px;
+  filter: drop-shadow(0 0 8px var(--neon-cyan));
 }
 
-.subtitulo-hq {
-  font-family: 'Segoe UI', sans-serif;
+.logo-reader {
+  color: var(--red-core);
+  text-shadow: 0 0 14px rgba(255, 30, 39, 0.85), 2px 2px 0 #000;
+}
+
+/* Chip de usuário/login, agora na barra preta (extremidade direita) */
+.chip-usuario {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px 6px 6px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  max-width: 160px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.chip-usuario:hover {
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 12px rgba(43, 231, 216, 0.5);
+}
+
+.chip-avatar {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--red-core);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 0.9rem;
-  color: #bbb;
-  margin-top: 5px;
+  font-weight: 700;
 }
 
-/* Barra de pesquisa */
+.chip-nome {
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .busca-container {
   display: flex;
   gap: 10px;
-  justify-content: center;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
+  flex: 1;
+  max-width: 380px;
+  min-width: 220px;
 }
 
 .busca-container input {
   flex: 1;
-  min-width: 180px;
   padding: 12px 16px;
   border-radius: 10px;
-  border: 1px solid #ff1e27;
-  background: #180306;
-  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(5, 0, 2, 0.55);
+  color: var(--ink);
   font-size: 0.95rem;
   outline: none;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  transition: all 0.25s ease;
+}
+
+.busca-container input::placeholder {
+  color: var(--ink-dim);
 }
 
 .busca-container input:focus {
-  border-color: #ff555b;
-  box-shadow: 0 0 12px rgba(255, 30, 39, 0.8);
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 12px rgba(43, 231, 216, 0.55);
 }
 
-/* Botão Voltar */
-#btn-voltar {
+.btn-busca {
+  padding: 0 18px;
+  border: none;
+  border-radius: 10px;
+  background: var(--ink);
+  color: var(--red-deep);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btn-busca:hover {
+  background: var(--neon-cyan);
+  transform: translateY(-1px);
+}
+
+/* ==========================================
+   BARRA PRETA: menu ☰ + navegação + avatar de perfil
+   ========================================== */
+.nav-secundaria {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 20px;
+  background: #0a0102;
+  border-bottom: 1px solid rgba(255, 30, 39, 0.35);
+}
+
+.nav-secundaria .menu-btn {
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  flex: 1;
+  min-width: 0;
+}
+
+.nav-links .nav-item {
+  position: relative;
+  padding: 10px 16px;
+  color: var(--ink-dim);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.nav-links .nav-item::after {
+  content: '';
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 2px;
+  height: 2px;
+  background: var(--neon-cyan);
+  box-shadow: 0 0 8px var(--neon-cyan);
+  transform: scaleX(0);
+  transition: transform 0.25s ease;
+}
+
+.nav-links .nav-item:hover,
+.nav-links .nav-item.active {
+  color: var(--ink);
+}
+
+.nav-links .nav-item:hover::after,
+.nav-links .nav-item.active::after {
+  transform: scaleX(1);
+}
+
+/* No celular, mantém a MESMA barra do PC — só reduz espaçamento e deixa
+   os links deslizarem com o dedo caso não caibam todos na largura da tela. */
+@media (max-width: 760px) {
+  .nav-secundaria {
+    padding: 8px 12px;
+    gap: 8px;
+  }
+
+  .nav-links .nav-item {
+    padding: 10px 12px;
+    font-size: 0.85rem;
+  }
+
+  .chip-usuario .chip-nome {
+    display: none;
+  }
+
+  .chip-usuario {
+    padding: 6px;
+  }
+}
+
+/* ==========================================
+   CONTEÚDO PRINCIPAL
+   ========================================== */
+.conteudo {
+  position: relative;
+  z-index: 1;
+  padding: 30px 20px 60px;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.secao-titulo {
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ink);
+  padding-left: 14px;
+  border-left: 4px solid var(--red-core);
   margin-bottom: 20px;
 }
 
@@ -105,7 +321,6 @@ h1 {
 .menu-selecao {
   display: flex;
   gap: 20px;
-  justify-content: center;
   margin-bottom: 25px;
   flex-wrap: wrap;
 }
@@ -115,92 +330,255 @@ h1 {
   flex-direction: column;
   align-items: flex-start;
   gap: 6px;
+  flex: 1;
+  min-width: 140px;
 }
 
 label {
-  font-family: 'Segoe UI', sans-serif;
-  font-size: 0.85rem;
-  font-weight: bold;
-  color: #ff4d52;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--red-soft);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 
 select {
+  width: 100%;
   padding: 12px 16px;
   border-radius: 10px;
-  border: 1px solid #ff1e27;
-  background: #180306;
-  color: #ffffff;
+  border: 1px solid var(--red-core);
+  background: var(--bg-panel);
+  color: var(--ink);
   font-size: 0.95rem;
   outline: none;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  transition: all 0.25s ease;
 }
 
 select:hover, select:focus {
-  border-color: #ff555b;
-  box-shadow: 0 0 12px rgba(255, 30, 39, 0.8);
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 12px rgba(43, 231, 216, 0.5);
 }
 
-/* MOLDURA DA CAPA DA HQ E BOTÃO SOBREPOSTO */
-.capa-box {
-  position: relative;
-  max-width: 320px;
-  margin: 0 auto 20px auto;
-  border: 2px solid #ff1e27;
-  border-radius: 12px;
+#btn-voltar {
+  margin-bottom: 20px;
+}
+
+/* ==========================================
+   GRADE DA BIBLIOTECA
+   ========================================== */
+.biblioteca-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 22px;
+  margin-bottom: 20px;
+}
+
+.hq-card {
+  background: var(--bg-panel);
+  border: 1px solid rgba(255, 30, 39, 0.4);
+  border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 0 25px rgba(255, 30, 39, 0.6);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
-.capa-box img {
+.hq-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--red-core);
+  box-shadow: 0 10px 28px rgba(255, 30, 39, 0.4);
+}
+
+.capa-wrapper {
+  position: relative;
+}
+
+.capa-wrapper img {
+  width: 100%;
+  height: 230px;
+  object-fit: cover;
+  display: block;
+}
+
+.btn-favorito {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(5, 0, 2, 0.65);
+  backdrop-filter: blur(2px);
+  color: var(--ink);
+  font-size: 1.05rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.btn-favorito:hover {
+  transform: scale(1.12);
+}
+
+.btn-favorito.ativo {
+  color: var(--red-core);
+  text-shadow: 0 0 8px rgba(255, 30, 39, 0.9);
+}
+
+.hq-info {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex-grow: 1;
+  justify-content: space-between;
+}
+
+.hq-info h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.3;
+}
+
+.btn-card {
+  width: 100%;
+  padding: 9px;
+  border: none;
+  border-radius: 8px;
+  background: var(--red-core);
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-card:hover {
+  background: var(--red-soft);
+}
+
+/* ==========================================
+   FICHA DA HQ (capa + título + lançamento + resumo)
+   Aparece ao clicar em "Ver mais" num card da biblioteca.
+   ========================================== */
+.ficha-box {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 26px;
+  max-width: 640px;
+  margin: 0 auto 20px auto;
+  background: var(--bg-panel);
+  border: 2px solid var(--red-core);
+  border-radius: 16px;
+  padding: 26px;
+  box-shadow: 0 0 25px rgba(255, 30, 39, 0.45);
+}
+
+.ficha-capa-wrap {
+  flex-shrink: 0;
+  width: 170px;
+}
+
+.ficha-capa-wrap img {
   width: 100%;
   display: block;
+  border-radius: 10px;
   object-fit: cover;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
 }
 
-.capa-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.4);
+.ficha-info {
+  flex: 1;
+  min-width: 200px;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: background 0.3s ease;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.capa-box:hover .capa-overlay {
-  background: rgba(0, 0, 0, 0.2);
+.ficha-titulo {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.3;
+}
+
+.ficha-label {
+  display: block;
+  color: var(--red-soft);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  letter-spacing: 1.5px;
+  margin-bottom: 3px;
+}
+
+.ficha-linha {
+  color: var(--ink-dim);
+  font-size: 0.95rem;
+}
+
+.ficha-resumo p {
+  color: var(--ink-dim);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.ficha-info .btn-iniciar {
+  align-self: flex-start;
+  margin-top: 6px;
+}
+
+@media (max-width: 560px) {
+  .ficha-box {
+    flex-direction: column;
+    align-items: center;
+    text-align: left;
+    padding: 20px;
+  }
+
+  .ficha-capa-wrap {
+    width: 150px;
+  }
+
+  .ficha-info .btn-iniciar {
+    align-self: stretch;
+    text-align: center;
+  }
 }
 
 .btn-iniciar {
   padding: 14px 28px;
-  border: 2px solid #ffffff;
+  border: 2px solid var(--ink);
   border-radius: 30px;
   background: linear-gradient(135deg, #ff0000 0%, #990000 100%);
-  color: #ffffff;
-  font-size: 1.2rem;
+  color: var(--ink);
+  font-size: 1.1rem;
+  font-weight: 600;
   letter-spacing: 1px;
   cursor: pointer;
-  box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
-  transition: all 0.3s ease;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.75);
+  transition: all 0.25s ease;
 }
 
 .btn-iniciar:hover {
-  transform: scale(1.08);
-  box-shadow: 0 0 30px rgba(255, 30, 39, 1);
+  transform: scale(1.06);
+  box-shadow: 0 0 28px rgba(255, 30, 39, 1);
 }
 
-/* Moldura do Leitor de Quadrinhos */
+/* ==========================================
+   LEITOR DE PÁGINAS — MODO PÁGINA (uma por vez)
+   ========================================== */
 .leitor-box {
   background: #000000;
-  border: 2px solid #ff1e27;
-  border-radius: 12px;
+  border: 2px solid var(--red-core);
+  border-radius: 14px;
   padding: 12px;
   margin-bottom: 20px;
   display: flex;
@@ -217,147 +595,210 @@ select:hover, select:focus {
   border-radius: 6px;
 }
 
-/* Navegação e Botões */
+/* ==========================================
+   LEITOR DE PÁGINAS — MODO SCROLL
+   Sem bordas, sem cantos arredondados, imagem livre encostando na tela:
+   pensado pro celular, arrastando pra baixo pra ir carregando as páginas.
+   ========================================== */
+.leitor-scroll {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #000000;
+  margin: 0 -20px 20px -20px; /* estica até a borda da tela no mobile */
+}
+
+.scroll-pagina {
+  display: block;
+  width: 100%;
+  max-width: 720px;
+  height: auto;
+}
+
+.scroll-fim {
+  padding: 26px 16px;
+  text-align: center;
+  color: var(--ink-dim);
+  width: 100%;
+}
+
+/* ==========================================
+   CONTROLES DO LEITOR
+   ========================================== */
 .controles {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
+  gap: 10px;
   padding-top: 10px;
 }
 
 .btn-nav {
-  padding: 12px 24px;
+  padding: 12px 22px;
   border: none;
   border-radius: 10px;
-  background: linear-gradient(135deg, #e60000 0%, #800000 100%);
-  color: #ffffff;
-  font-size: 1rem;
-  letter-spacing: 1px;
+  background: linear-gradient(135deg, #e60000 0%, var(--red-deep) 100%);
+  color: var(--ink);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
   box-shadow: 0 0 10px rgba(230, 0, 0, 0.4);
 }
 
 .btn-nav:hover {
   background: linear-gradient(135deg, #ff1a1a 0%, #b30000 100%);
-  box-shadow: 0 0 18px rgba(255, 26, 26, 0.8);
+  box-shadow: 0 0 18px rgba(255, 26, 26, 0.75);
   transform: translateY(-2px);
 }
 
+.btn-modo {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--neon-cyan);
+  box-shadow: none;
+}
+
+.btn-modo:hover {
+  background: rgba(43, 231, 216, 0.15);
+  box-shadow: 0 0 14px rgba(43, 231, 216, 0.5);
+}
+
 #contador-pagina {
-  font-family: 'Segoe UI', sans-serif;
-  font-weight: bold;
-  color: #ff4d52;
-  font-size: 1rem;
+  font-weight: 700;
+  color: var(--red-soft);
+  font-size: 0.95rem;
+}
+
+/* Quando o leitor está sticky no rodapé em modo scroll no celular, deixa fixo
+   pra pessoa ver a página atual e trocar de modo sem precisar rolar até o topo */
+@media (max-width: 760px) {
+  .controles {
+    position: sticky;
+    bottom: 0;
+    background: rgba(5, 0, 2, 0.92);
+    backdrop-filter: blur(6px);
+    padding: 12px 10px;
+    margin: 0 -20px;
+    border-top: 1px solid rgba(255, 30, 39, 0.4);
+    z-index: 3;
+  }
 }
 
 .escondido {
   display: none !important;
 }
 
-/* ESTILO DA GRADE DA BIBLIOTECA DE HQS */
-.biblioteca-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 20px;
-  padding: 10px;
-  margin-bottom: 20px;
-}
-
-.hq-card {
-  background: #180306;
-  border: 2px solid #ff1e27;
-  border-radius: 12px;
-  overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  display: flex;
-  flex-direction: column;
-}
-
-.hq-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 0 20px rgba(255, 30, 39, 0.6);
-}
-
-.hq-card img {
-  width: 100%;
-  height: 240px;
-  object-fit: cover;
-}
-
-.hq-info {
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  flex-grow: 1;
-  justify-content: space-between;
-}
-
-.hq-info h3 {
-  font-size: 1rem;
-  color: #ffffff;
-  text-transform: uppercase;
-}
-
-.btn-card {
-  width: 100%;
-  padding: 8px;
-  border: none;
-  background: #ff1e27;
-  color: #ffffff;
-  font-weight: bold;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: background 0.2s ease;
-}
-
-.btn-card:hover {
-  background: #ff4d52;
-}
-
-/* MENU LATERAL (DRAWER) */
-.menu-btn {
+/* ==========================================
+   MODAL DE LOGIN (básico, só visual)
+   ========================================== */
+.modal-fundo {
   position: fixed;
-  top: 20px;
-  left: 20px;
-  z-index: 10;
-  background: rgba(24, 3, 6, 0.9);
-  border: 2px solid #ff1e27;
-  color: #ffffff;
-  padding: 10px 16px;
-  border-radius: 10px;
-  cursor: pointer;
+  inset: 0;
+  z-index: 110;
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 1rem;
-  box-shadow: 0 0 12px rgba(255, 30, 39, 0.4);
-  transition: all 0.3s ease;
+  justify-content: center;
+  padding: 20px;
 }
 
-.menu-btn:hover {
-  background: #ff1e27;
-  box-shadow: 0 0 20px rgba(255, 30, 39, 0.8);
+.modal-caixa {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  background: linear-gradient(180deg, #12040a 0%, var(--bg-void) 100%);
+  border: 2px solid var(--red-core);
+  border-radius: 16px;
+  box-shadow: 0 0 40px rgba(255, 30, 39, 0.55);
+  padding: 30px 26px 26px;
+  text-align: center;
 }
 
-.menu-btn .dots {
-  font-size: 1.3rem;
-  font-weight: bold;
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 14px;
 }
 
+.modal-icone {
+  font-size: 2.4rem;
+  margin-bottom: 10px;
+}
+
+.modal-titulo {
+  font-family: var(--font-logo);
+  font-weight: 400;
+  font-size: 1.4rem;
+  letter-spacing: 1px;
+  color: var(--red-core);
+  text-shadow: 0 0 10px rgba(255, 0, 0, 0.6);
+  margin-bottom: 8px;
+}
+
+.modal-sub {
+  color: var(--ink-dim);
+  font-size: 0.85rem;
+  margin-bottom: 18px;
+  line-height: 1.4;
+}
+
+.modal-input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(5, 0, 2, 0.55);
+  color: var(--ink);
+  font-size: 0.95rem;
+  outline: none;
+  margin-bottom: 16px;
+  transition: all 0.25s ease;
+}
+
+.modal-input:focus {
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 12px rgba(43, 231, 216, 0.55);
+}
+
+.modal-btn-entrar {
+  width: 100%;
+  border-radius: 12px;
+}
+
+.modal-btn-sair {
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  color: var(--ink-dim);
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.modal-btn-sair:hover {
+  border-color: var(--red-core);
+  color: var(--red-soft);
+}
+
+/* ==========================================
+   MENU LATERAL (DRAWER)
+   ========================================== */
 .sidebar {
   position: fixed;
   top: 0;
-  left: -280px;
-  width: 260px;
+  left: -300px;
+  width: 280px;
   height: 100%;
-  background: rgba(10, 2, 5, 0.98);
-  border-right: 2px solid #ff1e27;
-  box-shadow: 5px 0 25px rgba(255, 30, 39, 0.4);
+  background: linear-gradient(180deg, #12040a 0%, var(--bg-void) 100%);
+  border-right: 2px solid var(--red-core);
+  box-shadow: 5px 0 30px rgba(255, 30, 39, 0.4);
   z-index: 100;
   transition: left 0.3s ease-in-out;
-  padding: 20px;
+  padding: 22px;
   display: flex;
   flex-direction: column;
 }
@@ -370,61 +811,107 @@ select:hover, select:focus {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #ff1e27;
-  padding-bottom: 15px;
+  border-bottom: 1px solid var(--red-core);
+  padding-bottom: 16px;
   margin-bottom: 20px;
 }
 
 .sidebar-header h2 {
-  font-size: 1.4rem;
-  color: #ff2a33;
-  text-shadow: 0 0 8px #ff0000;
+  font-family: var(--font-logo);
+  font-weight: 400;
+  font-size: 1.3rem;
+  letter-spacing: 1px;
+  color: var(--red-core);
+  text-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
 }
 
 .close-btn {
   background: none;
   border: none;
-  color: #ffffff;
+  color: var(--ink);
   font-size: 1.8rem;
   cursor: pointer;
+  line-height: 1;
+  transition: color 0.2s ease;
 }
 
 .close-btn:hover {
-  color: #ff1e27;
+  color: var(--neon-cyan);
 }
 
 .sidebar-nav {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
-.nav-item {
+.sidebar-nav .nav-item {
   display: flex;
   align-items: center;
   gap: 12px;
-  color: #ffffff;
+  color: var(--ink);
   text-decoration: none;
-  padding: 12px;
-  border-radius: 8px;
-  font-family: 'Segoe UI', sans-serif;
-  font-weight: bold;
+  padding: 13px 14px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.95rem;
   transition: all 0.2s ease;
   border: 1px solid transparent;
 }
 
-.nav-item:hover, .nav-item.active {
+.sidebar-nav .nav-item .icon {
+  width: 20px;
+  text-align: center;
+}
+
+.sidebar-nav .nav-item:hover,
+.sidebar-nav .nav-item.active {
   background: rgba(255, 30, 39, 0.15);
-  border-color: #ff1e27;
-  color: #ff4d52;
+  border-color: var(--red-core);
+  color: var(--red-soft);
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 30, 39, 0.35);
+}
+
+.perfil-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  color: var(--ink-dim);
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  border: none;
+  background: none;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.perfil-item:hover {
+  background: rgba(255, 30, 39, 0.15);
+  color: var(--red-soft);
+}
+
+.perfil-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  inset: 0;
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(3px);
   z-index: 90;
@@ -435,25 +922,54 @@ select:hover, select:focus {
   display: block;
 }
 
-/* AJUSTES APENAS PARA TELAS GRANDES (PC) */
+/* ==========================================
+   AJUSTES PARA TELAS GRANDES (PC)
+   ========================================== */
 @media (min-width: 768px) {
-  .container {
-    margin-top: 40px;
+  .topo-site {
+    padding: 20px 40px;
   }
 
-  .menu-btn {
-    top: 25px;
-    left: 25px;
-    padding: 12px 20px;
-    font-size: 1.1rem;
-  }
-
-  .sidebar {
-    width: 300px;
-    left: -320px;
+  .logo-titulo {
+    font-size: 2.4rem;
   }
 
   .leitor-box img {
     max-height: 75vh;
+  }
+
+  .leitor-scroll {
+    margin: 0 auto 20px auto;
+    border-radius: 14px;
+    overflow: hidden;
+  }
+}
+
+/* ==========================================
+   AJUSTES PARA CELULAR
+   A ideia é manter a MESMA estrutura do PC (header, busca, navbar, sidebar),
+   só reduzindo espaçamentos e empilhando o que precisa empilhar.
+   ========================================== */
+@media (max-width: 480px) {
+  .logo-titulo {
+    font-size: 1.4rem;
+  }
+
+  .topo-site {
+    justify-content: center;
+    padding: 12px 16px;
+  }
+
+  .marca {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .busca-container {
+    max-width: 100%;
+  }
+
+  .conteudo {
+    padding: 20px 14px 40px;
   }
 }

@@ -2,90 +2,161 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Spider-Verse Comics Reader</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Spider Reader</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <button class="menu-btn" onclick="toggleMenu()">
-    <span>🕸️ Menu</span>
-    <span class="dots">⋮</span>
-  </button>
+  <div class="teia-bg"></div>
+  <div id="overlay" class="overlay" onclick="fecharTudo()"></div>
 
+  <!-- ========================================== -->
+  <!-- MENU LATERAL RETRÁTIL                       -->
+  <!-- ========================================== -->
   <aside id="sidebar" class="sidebar">
     <div class="sidebar-header">
-      <h2>🕸️ SPIDER MENU</h2>
-      <button class="close-btn" onclick="toggleMenu()">&times;</button>
+      <h2>🕸️ Spider Menu</h2>
+      <button class="close-btn" onclick="toggleMenu()" aria-label="Fechar menu">&times;</button>
     </div>
 
     <nav class="sidebar-nav">
-      <a href="#" class="nav-item active" onclick="filtrarHQs('todas')">
-        <span class="icon">📚</span> Todas HQs
+      <a href="#" class="nav-item active" data-categoria="todas" onclick="filtrarHQs('todas')">
+        <span class="icon">📚</span> Todas
       </a>
-      <a href="#" class="nav-item" onclick="filtrarHQs('hq')">
+      <a href="#" class="nav-item" data-categoria="hq" onclick="filtrarHQs('hq')">
         <span class="icon">📖</span> HQs
       </a>
-      <a href="#" class="nav-item" onclick="filtrarHQs('manga')">
+      <a href="#" class="nav-item" data-categoria="manga" onclick="filtrarHQs('manga')">
         <span class="icon">🎌</span> Mangás
       </a>
-      <a href="#" class="nav-item" onclick="filtrarHQs('favoritos')">
-        <span class="icon">⭐</span> Favoritos
+      <a href="#" class="nav-item" data-categoria="favoritos" onclick="filtrarHQs('favoritos')">
+        <span class="icon">♥</span> Favoritos
       </a>
     </nav>
+
+    <div class="sidebar-footer">
+      <button class="perfil-item" id="perfil-item-sidebar" onclick="abrirLogin()">
+        <span class="perfil-avatar" id="perfil-avatar-sidebar">👤</span>
+        <span id="perfil-texto-sidebar">Entrar</span>
+      </button>
+    </div>
   </aside>
 
-  <div id="overlay" class="overlay" onclick="toggleMenu()"></div>
-
-  <div class="teia-bg"></div>
-  <div class="teia-canto canto-esquerdo"></div>
-  <div class="teia-canto canto-direito"></div>
-
-  <div class="container">
-    <header class="header">
-      <div class="spider-icon">🕸️</div>
-      <h1>SPIDER READER</h1>
-      <p class="subtitulo-hq">Explore as histórias do Aranhaverso</p>
-    </header>
+  <!-- ========================================== -->
+  <!-- CABEÇALHO: logo + busca (faixa vermelha)    -->
+  <!-- ========================================== -->
+  <header class="topo-site">
+    <div class="marca">
+      <h1 class="logo-titulo">
+        <span class="teia-icone">🕸️</span>Spider<span class="logo-reader">Reader</span>
+      </h1>
+    </div>
 
     <div class="busca-container">
       <input type="text" id="input-busca" placeholder="Buscar história..." onkeyup="if(event.key === 'Enter') pesquisarHQ()">
-      <button onclick="pesquisarHQ()" class="btn-nav">🔍 Buscar</button>
+      <button onclick="pesquisarHQ()" class="btn-busca" aria-label="Buscar">🔍</button>
+    </div>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- BARRA PRETA: menu + navegação + perfil      -->
+  <!-- ========================================== -->
+  <nav class="nav-secundaria">
+    <button class="menu-btn" onclick="toggleMenu()" aria-label="Abrir menu">
+      <span class="menu-linha"></span>
+      <span class="menu-linha"></span>
+      <span class="menu-linha"></span>
+    </button>
+
+    <div class="nav-links">
+      <a href="#" class="nav-item active" data-categoria="todas" onclick="filtrarHQs('todas')">Todas</a>
+      <a href="#" class="nav-item" data-categoria="hq" onclick="filtrarHQs('hq')">HQs</a>
+      <a href="#" class="nav-item" data-categoria="manga" onclick="filtrarHQs('manga')">Mangás</a>
+      <a href="#" class="nav-item" data-categoria="favoritos" onclick="filtrarHQs('favoritos')">Favoritos</a>
     </div>
 
-    <div id="seletores-topo" class="menu-selecao">
-      <div class="campo">
-        <label for="select-hq">História</label>
-        <select id="select-hq" onchange="mudarHQ()"></select>
+    <button class="chip-usuario" id="chip-usuario" onclick="abrirLogin()">
+      <span class="chip-avatar" id="chip-avatar">👤</span>
+      <span class="chip-nome" id="chip-nome">Entrar</span>
+    </button>
+  </nav>
+
+  <!-- ========================================== -->
+  <!-- CONTEÚDO PRINCIPAL                          -->
+  <!-- ========================================== -->
+  <main class="conteudo">
+    <div class="container">
+
+      <div id="seletores-topo" class="menu-selecao escondido">
+        <div class="campo">
+          <label for="select-hq">História</label>
+          <select id="select-hq" onchange="mudarHQ()"></select>
+        </div>
+
+        <div class="campo">
+          <label for="select-capitulo">Capítulo</label>
+          <select id="select-capitulo" onchange="mudarCapitulo()"></select>
+        </div>
       </div>
 
-      <div class="campo">
-        <label for="select-capitulo">Capítulo</label>
-        <select id="select-capitulo" onchange="mudarCapitulo()"></select>
+      <button id="btn-voltar" class="btn-nav escondido" onclick="voltarInicio()">◀ Voltar</button>
+
+      <h2 id="titulo-secao" class="secao-titulo">Destaques</h2>
+      <div id="biblioteca-hqs" class="biblioteca-grid"></div>
+
+      <!-- FICHA DA HQ: capa + título + lançamento + resumo -->
+      <div id="card-capa" class="ficha-box escondido">
+        <div class="ficha-capa-wrap">
+          <img id="imagem-capa" src="" alt="Capa da HQ">
+        </div>
+        <div class="ficha-info">
+          <h3 id="ficha-titulo" class="ficha-titulo"></h3>
+          <p class="ficha-linha"><span class="ficha-label">Lançamento</span><span id="ficha-lancamento"></span></p>
+          <div class="ficha-resumo">
+            <span class="ficha-label">Resumo</span>
+            <p id="ficha-resumo-texto"></p>
+          </div>
+          <button onclick="iniciarLeitura()" class="btn-iniciar">📖 Capítulos</button>
+        </div>
       </div>
+
+      <div id="area-leitor" class="escondido">
+
+        <!-- MODO PÁGINA: uma imagem por vez -->
+        <div id="leitor-pagina" class="leitor-box">
+          <img id="pagina-imagem" src="" alt="Página da HQ">
+        </div>
+
+        <!-- MODO SCROLL: todas as páginas em lista, carregando sob demanda -->
+        <div id="leitor-scroll" class="leitor-scroll escondido"></div>
+
+        <div class="controles">
+          <button onclick="paginaAnterior()" id="btn-anterior" class="btn-nav">◀ Anterior</button>
+          <span id="contador-pagina">Página 1</span>
+          <button onclick="proximaPagina()" id="btn-proxima" class="btn-nav">Próxima ▶</button>
+          <button onclick="alternarModoLeitura()" id="btn-modo-leitor" class="btn-nav btn-modo" title="Trocar modo de leitura">📜 Scroll</button>
+        </div>
+      </div>
+
     </div>
+  </main>
 
-    <button id="btn-voltar" class="btn-nav escondido" onclick="voltarInicio()">◀ Voltar</button>
-
-    <div id="biblioteca-hqs" class="biblioteca-grid escondido"></div>
-
-    <div id="card-capa" class="capa-box">
-      <img id="imagem-capa" src="" alt="Capa da HQ">
-      <div class="capa-overlay">
-        <button onclick="iniciarLeitura()" class="btn-iniciar">🚀 LER AGORA</button>
-      </div>
-    </div>
-
-    <div id="area-leitor" class="escondido">
-      <div class="leitor-box">
-        <img id="pagina-imagem" src="" alt="Página da HQ">
-      </div>
-
-      <div class="controles">
-        <button onclick="paginaAnterior()" class="btn-nav">◀ Anterior</button>
-        <span id="contador-pagina">Página 1</span>
-        <button onclick="proximaPagina()" class="btn-nav">Próxima ▶</button>
-      </div>
+  <!-- ========================================== -->
+  <!-- MODAL DE LOGIN (BÁSICO, SÓ VISUAL)          -->
+  <!-- ========================================== -->
+  <div id="modal-login" class="modal-fundo escondido" onclick="if(event.target === this) fecharLogin()">
+    <div class="modal-caixa">
+      <button class="close-btn modal-close" onclick="fecharLogin()" aria-label="Fechar">&times;</button>
+      <div class="modal-icone">🕷️</div>
+      <h2 class="modal-titulo">Identifique-se, aracnídeo</h2>
+      <p class="modal-sub">Só pra personalizar o site. Fica salvo aqui no seu navegador.</p>
+      <input type="text" id="input-login-nome" class="modal-input" placeholder="Seu nome ou apelido" maxlength="24" onkeyup="if(event.key === 'Enter') confirmarLogin()">
+      <button class="btn-iniciar modal-btn-entrar" onclick="confirmarLogin()">Entrar na teia</button>
+      <button id="btn-sair" class="modal-btn-sair escondido" onclick="sairLogin()">Sair da conta</button>
     </div>
   </div>
 
