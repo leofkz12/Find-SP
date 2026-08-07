@@ -47,7 +47,7 @@
   </aside>
 
   <!-- ========================================== -->
-  <!-- CABEÇALHO: logo + busca (faixa vermelha)    -->
+  <!-- CABEÇALHO: logo + decoração + busca (faixa vermelha) -->
   <!-- ========================================== -->
   <header class="topo-site">
     <div class="marca">
@@ -55,6 +55,11 @@
         <span class="teia-icone">🕸️</span>Spider<span class="logo-reader">Reader</span>
       </h1>
     </div>
+
+    <!-- Decorações: solte as imagens em assets/decoracao/ com esses nomes -->
+    <img src="assets/decoracao/teia-canto.png" alt="" class="decor-teia" aria-hidden="true">
+    <img src="assets/decoracao/personagem.png" alt="" class="decor-personagem" aria-hidden="true">
+    <img src="assets/decoracao/aranha-icone.png" alt="" class="decor-aranha" aria-hidden="true">
 
     <div class="busca-container">
       <input type="text" id="input-busca" placeholder="Buscar história..." onkeyup="if(event.key === 'Enter') pesquisarHQ()">

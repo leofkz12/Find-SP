@@ -46,7 +46,7 @@ body {
 }
 
 /* ==========================================
-   CABEÇALHO (faixa vermelha: logo + busca)
+   CABEÇALHO (faixa vermelha: logo + decoração + busca)
    ========================================== */
 .topo-site {
   position: relative;
@@ -57,15 +57,63 @@ body {
   gap: 20px;
   flex-wrap: wrap;
   padding: 16px 30px;
-  background: linear-gradient(115deg, #050002 0%, #050002 40%, var(--red-core) 42%, var(--red-core) 100%);
+  background: linear-gradient(100deg, #050002 0%, var(--red-deep) 55%, var(--red-core) 100%);
   border-bottom: 2px solid var(--red-core);
   box-shadow: 0 4px 25px rgba(255, 30, 39, 0.35);
+  overflow: visible; /* deixa as decorações "vazarem" pra fora da faixa */
 }
 
 .marca {
   display: flex;
   align-items: center;
   gap: 14px;
+}
+
+/* ==========================================
+   DECORAÇÕES DO CABEÇALHO (personagem, aranha, teia)
+   Solte as imagens em assets/decoracao/ com esses nomes.
+   Ajuste os valores de right/top/bottom/height pra reposicionar.
+   ========================================== */
+.decor-personagem {
+  position: absolute;
+  right: 1150px;
+  top: -16px;
+  height: 145px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.decor-aranha {
+  position: absolute;
+  right: 1080px;
+  bottom: 18px;
+  height: 175px;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.decor-teia {
+  --teia-deslocar: 230px;   /* aumente pra mover mais pra esquerda, diminua/negativo pra mover pra direita */
+  --teia-largura: 30%;   /* defina um valor tipo 320px pra controlar a largura, ou deixe "auto" */
+  --teia-altura: 160%;    /* aumente além de 100% se quiser que ela "vaze" pra cima/baixo do banner */
+
+  position: absolute;
+  top: 10;
+  right: var(--teia-deslocar);
+  height: var(--teia-altura);
+  width: var(--teia-largura);
+  opacity: 0.9;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* No celular, esconde as decorações pra não bagunçar o layout */
+@media (max-width: 760px) {
+  .decor-personagem,
+  .decor-aranha,
+  .decor-teia {
+    display: none;
+  }
 }
 
 .menu-btn {
@@ -166,7 +214,8 @@ body {
   gap: 10px;
   flex: 1;
   max-width: 380px;
-  min-width: 220px;
+  min-width: 200px;
+  margin-right: 220px;
 }
 
 .busca-container input {
