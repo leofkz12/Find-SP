@@ -57,7 +57,7 @@ body {
   gap: 20px;
   flex-wrap: wrap;
   padding: 16px 30px;
-  background: linear-gradient(120deg, #0a0102 0%, var(--red-deep) 55%, var(--red-core) 100%);
+  background: linear-gradient(115deg, #050002 0%, #050002 40%, var(--red-core) 42%, var(--red-core) 100%);
   border-bottom: 2px solid var(--red-core);
   box-shadow: 0 4px 25px rgba(255, 30, 39, 0.35);
 }
@@ -369,7 +369,7 @@ select:hover, select:focus {
    ========================================== */
 .biblioteca-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(160px, 200px));
   gap: 22px;
   margin-bottom: 20px;
 }
@@ -390,13 +390,18 @@ select:hover, select:focus {
   box-shadow: 0 10px 28px rgba(255, 30, 39, 0.4);
 }
 
+/* Proporção fixa (2:3, formato de capa de HQ) em vez de altura fixa em pixels.
+   Assim a capa sempre aparece inteira e no mesmo formato, não importa se a
+   grade tem 1 card (favoritos) ou vários (categoria) — nem em qual tela. */
 .capa-wrapper {
   position: relative;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
 }
 
 .capa-wrapper img {
   width: 100%;
-  height: 230px;
+  height: 100%;
   object-fit: cover;
   display: block;
 }
