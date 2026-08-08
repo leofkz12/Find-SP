@@ -76,7 +76,7 @@ body {
    ========================================== */
 .decor-personagem {
   position: absolute;
-  right: 1150px;
+  right: 1380px;
   top: -16px;
   height: 145px;
   pointer-events: none;
@@ -85,7 +85,7 @@ body {
 
 .decor-aranha {
   position: absolute;
-  right: 1080px;
+  right: 1280px;
   bottom: 18px;
   height: 175px;
   pointer-events: none;
