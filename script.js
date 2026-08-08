@@ -350,6 +350,7 @@ function exibirBiblioteca(filtroGenero = 'todas') {
     pararAutoBanner();
   }
 
+  document.body.classList.remove('pagina-leitura');
   pararObservadorScroll();
 }
 
@@ -409,6 +410,7 @@ function pesquisarHQ() {
   // Busca não mostra o banner giratório
   if (banner) banner.classList.add('escondido');
   pararAutoBanner();
+  document.body.classList.remove('pagina-leitura');
   pararObservadorScroll();
 }
 
@@ -468,8 +470,41 @@ function mudarCapitulo() {
   exibirFicha();
 }
 
-// Mostra a "ficha" da HQ: capa, título, data de lançamento e resumo,
-// com o botão que leva pros capítulos.
+// Clicar num item da lista de capítulos: define qual capítulo e já começa a ler
+function abrirCapitulo(cap) {
+  capituloAtual = cap;
+  const selectCap = document.getElementById('select-capitulo');
+  if (selectCap) selectCap.value = cap;
+  paginaAtual = 0;
+  iniciarLeitura();
+}
+
+// Monta a lista visual de capítulos (nome + nº de páginas), clicável
+function montarListaCapitulos() {
+  const lista = document.getElementById('lista-capitulos');
+  const totalEl = document.getElementById('ficha-total-capitulos');
+  if (!lista) return;
+
+  const caps = hqs[hqAtual].capitulos;
+  const chaves = Object.keys(caps);
+
+  lista.innerHTML = '';
+  chaves.forEach(cap => {
+    const totalPaginas = caps[cap];
+    const item = document.createElement('button');
+    item.className = 'item-capitulo';
+    item.innerHTML = `
+      <span>Capítulo ${cap.replace('cap-', '')}</span>
+      <span class="capitulo-paginas">${totalPaginas} página${totalPaginas === 1 ? '' : 's'}</span>
+    `;
+    item.onclick = () => abrirCapitulo(cap);
+    lista.appendChild(item);
+  });
+
+  if (totalEl) totalEl.textContent = `(${chaves.length})`;
+}
+
+// Mostra a "ficha" da HQ: fundo com a capa desfocada, título, ano, resumo e lista de capítulos.
 function exibirFicha() {
   const cardCapa = document.getElementById('card-capa');
   const areaLeitor = document.getElementById('area-leitor');
@@ -481,6 +516,7 @@ function exibirFicha() {
 
   if (cardCapa && areaLeitor && imgCapa && hq) {
     imgCapa.src = hq.capa;
+    cardCapa.style.setProperty('--ficha-fundo', `url("${hq.capa}")`);
 
     const tituloEl = document.getElementById('ficha-titulo');
     const lancamentoEl = document.getElementById('ficha-lancamento');
@@ -490,6 +526,8 @@ function exibirFicha() {
     if (lancamentoEl) lancamentoEl.textContent = hq.lancamento || 'Não informado';
     if (resumoEl) resumoEl.textContent = hq.resumo || 'Resumo ainda não adicionado.';
 
+    montarListaCapitulos();
+
     cardCapa.classList.remove('escondido');
     areaLeitor.classList.add('escondido');
     if (grid) grid.classList.add('escondido');
@@ -497,6 +535,7 @@ function exibirFicha() {
     if (btnVoltar) btnVoltar.classList.remove('escondido');
   }
 
+  document.body.classList.add('pagina-leitura');
   pararAutoBanner();
   pararObservadorScroll();
 }
@@ -517,6 +556,8 @@ function iniciarLeitura() {
     paginaAtual = 0;
     atualizarLeitor();
   }
+
+  document.body.classList.add('pagina-leitura');
 }
 
 // ==========================================
@@ -768,3 +809,6 @@ async function buscarPersonagem() {
     if (status) status.innerText = "Erro ao buscar. Verifique sua conexão e tente novamente!";
   }
 }
+
+
+

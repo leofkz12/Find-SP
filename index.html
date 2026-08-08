@@ -57,7 +57,7 @@
     </div>
 
     <!-- Decorações: solte as imagens em assets/decoracao/ com esses nomes -->
-     
+    <img src="assets/decoracao/teia-canto.png" alt="" class="decor-teia" aria-hidden="true">
     <img src="assets/decoracao/personagem.png" alt="" class="decor-personagem" aria-hidden="true">
     <img src="assets/decoracao/aranha-icone.png" alt="" class="decor-aranha" aria-hidden="true">
 
@@ -124,19 +124,27 @@
         <div id="biblioteca-hqs" class="biblioteca-grid"></div>
       </div>
 
-      <!-- FICHA DA HQ: capa + título + lançamento + resumo -->
+      <!-- FICHA DA HQ: fundo com a própria capa desfocada + capa + título + ano + resumo + lista de capítulos -->
       <div id="card-capa" class="ficha-box escondido">
-        <div class="ficha-capa-wrap">
-          <img id="imagem-capa" src="" alt="Capa da HQ">
-        </div>
-        <div class="ficha-info">
-          <h3 id="ficha-titulo" class="ficha-titulo"></h3>
-          <p class="ficha-linha"><span class="ficha-label">Lançamento</span><span id="ficha-lancamento"></span></p>
-          <div class="ficha-resumo">
-            <span class="ficha-label">Resumo</span>
-            <p id="ficha-resumo-texto"></p>
+        <div class="ficha-fundo" id="ficha-fundo"></div>
+
+        <div class="ficha-topo">
+          <div class="ficha-capa-wrap">
+            <img id="imagem-capa" src="" alt="Capa da HQ">
           </div>
-          <button onclick="iniciarLeitura()" class="btn-iniciar">📖 Capítulos</button>
+          <div class="ficha-info">
+            <h3 id="ficha-titulo" class="ficha-titulo"></h3>
+            <p class="ficha-ano"><span class="ficha-label">Lançamento</span><span id="ficha-lancamento"></span></p>
+            <div class="ficha-resumo">
+              <span class="ficha-label">Resumo</span>
+              <p id="ficha-resumo-texto"></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="ficha-capitulos">
+          <h4 class="ficha-capitulos-titulo">Capítulos <span id="ficha-total-capitulos"></span></h4>
+          <div id="lista-capitulos" class="lista-capitulos"></div>
         </div>
       </div>
 

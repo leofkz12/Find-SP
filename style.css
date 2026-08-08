@@ -32,15 +32,21 @@ body {
   overflow-x: hidden;
 }
 
-/* Textura de teia sobre toda a tela */
+/* Teia de fundo — UMA imagem só, grande, sem repetição (background-size: cover
+   se adapta a qualquer tamanho de tela, PC ou celular). Ancorada no canto
+   superior direito (como uma teia real de canto de parede), com uma segunda
+   teia menor no canto oposto pra equilibrar a composição. */
 .teia-bg {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('https://www.transparenttextures.com/patterns/cobweb.png');
-  opacity: 0.2;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1600' height='900' viewBox='0 0 1600 900'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='1.5'%3E%3Cline x1='1600' y1='0' x2='1600' y2='900'/%3E%3Cline x1='1600' y1='0' x2='1200' y2='900'/%3E%3Cline x1='1600' y1='0' x2='800' y2='900'/%3E%3Cline x1='1600' y1='0' x2='400' y2='900'/%3E%3Cline x1='1600' y1='0' x2='0' y2='900'/%3E%3Cline x1='1600' y1='0' x2='0' y2='600'/%3E%3Cline x1='1600' y1='0' x2='0' y2='300'/%3E%3Cline x1='1600' y1='0' x2='0' y2='0'/%3E%3Cpolyline points='1600,135 1540,135 1480,135 1420,135 1360,135 1360,90 1360,45 1360,0'/%3E%3Cpolyline points='1600,315 1460,315 1320,315 1180,315 1040,315 1040,210 1040,105 1040,0'/%3E%3Cpolyline points='1600,495 1380,495 1160,495 940,495 720,495 720,330 720,165 720,0'/%3E%3Cpolyline points='1600,675 1300,675 1000,675 700,675 400,675 400,450 400,225 400,0'/%3E%3Cline x1='0' y1='900' x2='500' y2='900'/%3E%3Cline x1='0' y1='900' x2='300' y2='700'/%3E%3Cline x1='0' y1='900' x2='0' y2='500'/%3E%3Cpolyline points='250,900 150,800 0,700'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.35;
   pointer-events: none;
   z-index: 0;
 }
@@ -76,23 +82,13 @@ body {
    ========================================== */
 .decor-personagem {
   position: absolute;
-  right: 1450px;
+  right: 1150px;
   top: -16px;
   height: 145px;
   pointer-events: none;
   z-index: 2;
-}
-
-.decor-aranha {
-  position: absolute;
-  right: 1330px;
-  bottom: 18px;
-  height: 175px;
-  pointer-events: none;
-  z-index: 3;
-}
-
-
+  
+} 
 
 /* No celular, esconde as decorações pra não bagunçar o layout */
 @media (max-width: 760px) {
@@ -329,6 +325,38 @@ body {
 }
 
 /* ==========================================
+   MODO "BARRA FINA" — ativado via JS (classe no body) quando a pessoa
+   está vendo a ficha de uma HQ ou lendo um capítulo, pra sobrar mais
+   tela pro conteúdo em vez do cabeçalho.
+   ========================================== */
+body.pagina-leitura .topo-site {
+  padding: 8px 30px;
+}
+
+body.pagina-leitura .logo-titulo {
+  font-size: 1.3rem;
+}
+
+body.pagina-leitura .busca-container {
+  display: none; /* a busca não faz falta enquanto lê/vê a ficha */
+}
+
+body.pagina-leitura .nav-secundaria {
+  padding: 4px 20px;
+}
+
+body.pagina-leitura .nav-links .nav-item {
+  padding: 6px 12px;
+  font-size: 0.82rem;
+}
+
+@media (min-width: 768px) {
+  body.pagina-leitura .logo-titulo {
+    font-size: 1.5rem;
+  }
+}
+
+/* ==========================================
    CONTEÚDO PRINCIPAL
    ========================================== */
 .conteudo {
@@ -444,7 +472,7 @@ select:hover, select:focus {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  object-position: center;  
+  object-position: center;
 }
 
 .banner-legenda {
@@ -647,25 +675,54 @@ select:hover, select:focus {
 }
 
 /* ==========================================
-   FICHA DA HQ (capa + título + lançamento + resumo)
+   FICHA DA HQ (fundo com a capa + capa + título + ano + resumo + capítulos)
    Aparece ao clicar em "Ver mais" num card da biblioteca.
    ========================================== */
 .ficha-box {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 26px;
-  max-width: 640px;
+  position: relative;
+  max-width: 900px;
   margin: 0 auto 20px auto;
-  background: var(--bg-panel);
   border: 2px solid var(--red-core);
   border-radius: 16px;
-  padding: 26px;
+  overflow: hidden;
   box-shadow: 0 0 25px rgba(255, 30, 39, 0.45);
+}
+
+/* Fundo: a própria capa da HQ, desfocada e escurecida — dá pra ver o
+   fundo do site por trás, tipo um "banner" atrás da ficha. O background-image
+   real é definido via JS (variável --ficha-fundo), aqui só o efeito. */
+.ficha-fundo {
+  position: absolute;
+  inset: 0;
+  background-image: var(--ficha-fundo);
+  background-size: cover;
+  background-position: center 20%;
+  filter: blur(24px) brightness(0.55);
+  transform: scale(1.15); /* evita ver a borda desfocada nas bordas do box */
+  z-index: 0;
+}
+
+/* Camada escura por cima do fundo desfocado, pra garantir contraste com o texto */
+.ficha-box::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(5, 0, 2, 0.55) 0%, rgba(5, 0, 2, 0.88) 65%, var(--bg-panel) 100%);
+  z-index: 0;
+}
+
+.ficha-topo {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  padding: 34px;
 }
 
 .ficha-capa-wrap {
   flex-shrink: 0;
-  width: 170px;
+  width: 230px;
 }
 
 .ficha-capa-wrap img {
@@ -673,22 +730,26 @@ select:hover, select:focus {
   display: block;
   border-radius: 10px;
   object-fit: cover;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.75);
 }
 
 .ficha-info {
   flex: 1;
-  min-width: 200px;
+  min-width: 220px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
+  justify-content: center;
 }
 
+/* Título menor — o destaque agora fica com o ano e o resumo */
 .ficha-titulo {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--ink);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--ink-dim);
   line-height: 1.3;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .ficha-label {
@@ -701,37 +762,98 @@ select:hover, select:focus {
   margin-bottom: 3px;
 }
 
-.ficha-linha {
-  color: var(--ink-dim);
-  font-size: 0.95rem;
+/* Ano em destaque, grande */
+.ficha-ano {
+  color: var(--ink);
+  font-size: 1.4rem;
+  font-weight: 700;
 }
 
 .ficha-resumo p {
   color: var(--ink-dim);
-  font-size: 0.9rem;
-  line-height: 1.6;
+  font-size: 1.02rem;
+  line-height: 1.7;
+  max-width: 640px;
 }
 
-.ficha-info .btn-iniciar {
-  align-self: flex-start;
-  margin-top: 6px;
+/* ==========================================
+   LISTA DE CAPÍTULOS (dentro da ficha)
+   ========================================== */
+.ficha-capitulos {
+  position: relative;
+  z-index: 1;
+  background: var(--bg-panel);
+  padding: 22px 34px 30px;
+  border-top: 1px solid rgba(255, 30, 39, 0.35);
+}
+
+.ficha-capitulos-titulo {
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--ink);
+  margin-bottom: 14px;
+}
+
+.ficha-capitulos-titulo span {
+  color: var(--ink-dim);
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.lista-capitulos {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.item-capitulo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.item-capitulo:hover {
+  border-color: var(--red-core);
+  background: rgba(255, 30, 39, 0.1);
+}
+
+.item-capitulo .capitulo-paginas {
+  color: var(--ink-dim);
+  font-weight: 400;
+  font-size: 0.82rem;
+  white-space: nowrap;
 }
 
 @media (max-width: 560px) {
-  .ficha-box {
+  .ficha-topo {
     flex-direction: column;
     align-items: center;
     text-align: left;
-    padding: 20px;
+    padding: 22px;
   }
 
   .ficha-capa-wrap {
-    width: 150px;
+    width: 170px;
   }
 
-  .ficha-info .btn-iniciar {
-    align-self: stretch;
-    text-align: center;
+  .ficha-capitulos {
+    padding: 18px 22px 24px;
   }
 }
 
@@ -1268,11 +1390,23 @@ select:hover, select:focus {
   }
 
   .ficha-titulo {
-    font-size: 1.05rem;
+    font-size: 0.9rem;
   }
 
-  .ficha-resumo p,
-  .ficha-linha {
-    font-size: 0.82rem;
+  .ficha-ano {
+    font-size: 1.1rem;
+  }
+
+  .ficha-resumo p {
+    font-size: 0.85rem;
+  }
+
+  .ficha-capa-wrap {
+    width: 140px;
+  }
+
+  .item-capitulo {
+    padding: 12px 14px;
+    font-size: 0.85rem;
   }
 }

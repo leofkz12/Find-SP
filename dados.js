@@ -66,7 +66,7 @@ const hqs = {
     lancamento: "4/5/2022",
     resumo: "Miguel O'Hara (Homem-Aranha 2099) retorna ao seu presente para investigar o evento cósmico e proteger o novo paraíso da ameaçadora Cabal, liderada por Norman Osborn.  A série apresenta versões futuras de personagens como Soldado Invernal 13, Loki, Motoqueiro Fantasma e uma nova formação de X-Men 2099, além de introduzir os Novos Vingadores de 2099 liderados pelo Cavaleiro da Lua.",
     capitulos: {
-      "cap-1": 1,
+      "cap-1": 31,
       "cap-2": 1
     }
   }
@@ -76,3 +76,6 @@ const hqs = {
   //   lancamento: "2024", resumo: "...",
   //   capitulos: { "cap-1": 25, "cap-2": 30 } }
 };
+
+
+
