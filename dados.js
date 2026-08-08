@@ -13,7 +13,10 @@ const hqs = {
     resumo: "A nova aventura da Spider-Gwen, a Mulher-Aranha da Terra-65, coloca a heroína contra um exército de clones de Gwen baseados nos maiores vilões do Homem-Aranha.Colocará a Spider-Gwen contra seus clones a Gwen Doutor Octopus, a Gwen-Areia e a Gwen Abutre. ", // <-- troque pelo resumo real
     capitulos: {
       "cap-1": 31, // <-- troque pelo número real de páginas desse capítulo
-      "cap-2": 1
+      "cap-2": 21,
+      "cap-3": 21,
+      "cap-4": 1,
+      "cap-5": 1
     }
   },
   "frieren": {
@@ -34,7 +37,10 @@ const hqs = {
     resumo: "A história foca no Miles Morales enfrentando o Escorpião (Mac Gargan), que possui o simbionte Venom.  Quando uma horda de acólitos do Carnificina ataca Nova York, Miles é infectado pelo simbionte vermelho e possuído, transformando-se temporariamente em um vilão. ",
     capitulos: {
       "cap-1": 21,
-      "cap-2": 1
+      "cap-2": 1,
+      "cap-3": 1,
+      "cap-4": 1,
+      "cap-5": 1
     }
   },
   "solo-leveling": {

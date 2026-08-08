@@ -33,20 +33,28 @@ body {
 }
 
 /* Teia de fundo — UMA imagem só, grande, sem repetição (background-size: cover
-   se adapta a qualquer tamanho de tela, PC ou celular). Ancorada no canto
-   superior direito (como uma teia real de canto de parede), com uma segunda
-   teia menor no canto oposto pra equilibrar a composição. */
+   se adapta a qualquer tamanho de tela, PC ou celular, sem precisar de uma
+   versão separada pra cada um). Fica em assets/decoracao/teia-fundo.svg.
+
+   QUER TROCAR POR UMA ARTE FEITA EM IA (tipo a da referência)?
+   1. Gere a imagem (PNG/JPG) numa IA de imagem.
+   2. Salve o arquivo em assets/decoracao/ (ex: teia-fundo.png).
+   3. Troque só a linha do background-image abaixo pelo novo caminho
+      (ex: url("assets/decoracao/teia-fundo.png")).
+   Não precisa mexer em mais nada — o cover cuida de adaptar a mesma
+   imagem pro PC e pro celular automaticamente. */
 .teia-bg {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1600' height='900' viewBox='0 0 1600 900'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='1.5'%3E%3Cline x1='1600' y1='0' x2='1600' y2='900'/%3E%3Cline x1='1600' y1='0' x2='1200' y2='900'/%3E%3Cline x1='1600' y1='0' x2='800' y2='900'/%3E%3Cline x1='1600' y1='0' x2='400' y2='900'/%3E%3Cline x1='1600' y1='0' x2='0' y2='900'/%3E%3Cline x1='1600' y1='0' x2='0' y2='600'/%3E%3Cline x1='1600' y1='0' x2='0' y2='300'/%3E%3Cline x1='1600' y1='0' x2='0' y2='0'/%3E%3Cpolyline points='1600,135 1540,135 1480,135 1420,135 1360,135 1360,90 1360,45 1360,0'/%3E%3Cpolyline points='1600,315 1460,315 1320,315 1180,315 1040,315 1040,210 1040,105 1040,0'/%3E%3Cpolyline points='1600,495 1380,495 1160,495 940,495 720,495 720,330 720,165 720,0'/%3E%3Cpolyline points='1600,675 1300,675 1000,675 700,675 400,675 400,450 400,225 400,0'/%3E%3Cline x1='0' y1='900' x2='500' y2='900'/%3E%3Cline x1='0' y1='900' x2='300' y2='700'/%3E%3Cline x1='0' y1='900' x2='0' y2='500'/%3E%3Cpolyline points='250,900 150,800 0,700'/%3E%3C/g%3E%3C/svg%3E");
+  background: radial-gradient(circle at center, var(--red-deep) 0%, var(--red-shadow) 50%, var(--bg-void) 100%);
+  background-image: url("assets/decoracao/teia-fundo.png");
   background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-  opacity: 0.35;
+  background-size: 2600px auto;
+  background-position: center top;
+  opacity: 0.5;
   pointer-events: none;
   z-index: 0;
 }
