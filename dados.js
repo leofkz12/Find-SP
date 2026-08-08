@@ -13,9 +13,9 @@ const hqs = {
     resumo: "A nova aventura da Spider-Gwen, a Mulher-Aranha da Terra-65, coloca a heroína contra um exército de clones de Gwen baseados nos maiores vilões do Homem-Aranha.Colocará a Spider-Gwen contra seus clones a Gwen Doutor Octopus, a Gwen-Areia e a Gwen Abutre. ", // <-- troque pelo resumo real
     capitulos: {
       "cap-1": 31, // <-- troque pelo número real de páginas desse capítulo
-      "cap-2": 21,
-      "cap-3": 21,
-      "cap-4": 1,
+      "cap-2": 20,
+      "cap-3": 20,
+      "cap-4": 20,
       "cap-5": 1
     }
   },
