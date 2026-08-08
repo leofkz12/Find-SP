@@ -111,7 +111,18 @@
       <button id="btn-voltar" class="btn-nav escondido" onclick="voltarInicio()">◀ Voltar</button>
 
       <h2 id="titulo-secao" class="secao-titulo">Destaques</h2>
-      <div id="biblioteca-hqs" class="biblioteca-grid"></div>
+
+      <!-- Banner giratório: só aparece na aba "Destaques" (Todas) -->
+      <div id="banner-destaques" class="banner-destaques escondido">
+        <button class="banner-seta banner-seta-esq" onclick="bannerAnterior()" aria-label="História anterior">‹</button>
+        <div class="banner-slides" id="banner-slides"></div>
+        <button class="banner-seta banner-seta-dir" onclick="bannerProximo()" aria-label="Próxima história">›</button>
+        <div class="banner-pontos" id="banner-pontos"></div>
+      </div>
+
+      <div class="grade-painel">
+        <div id="biblioteca-hqs" class="biblioteca-grid"></div>
+      </div>
 
       <!-- FICHA DA HQ: capa + título + lançamento + resumo -->
       <div id="card-capa" class="ficha-box escondido">

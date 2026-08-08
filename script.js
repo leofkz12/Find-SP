@@ -210,6 +210,92 @@ function criarCardHQ(chave) {
 }
 
 // ==========================================
+// BANNER GIRATÓRIO (só aparece na aba "Todas"/Destaques)
+// Troca de slide sozinho a cada 5s; as setas deixam navegar na mão.
+// ==========================================
+let bannerIndice = 0;
+let bannerTimer = null;
+const BANNER_INTERVALO_MS = 5000;
+
+function montarBanner() {
+  const slidesEl = document.getElementById('banner-slides');
+  const pontosEl = document.getElementById('banner-pontos');
+  if (!slidesEl || !pontosEl) return;
+
+  slidesEl.innerHTML = '';
+  pontosEl.innerHTML = '';
+
+  const chaves = Object.keys(hqs);
+
+  chaves.forEach((chave, indice) => {
+    const hq = hqs[chave];
+
+    const slide = document.createElement('div');
+    slide.className = 'banner-slide' + (indice === 0 ? ' ativo' : '');
+    slide.innerHTML = `
+      <img src="${hq.capa}" alt="${hq.titulo}">
+      <div class="banner-legenda">
+        <h3>${hq.titulo}</h3>
+        <button class="btn-card" onclick="selecionarDaBiblioteca('${chave}')">📖 Ver mais</button>
+      </div>
+    `;
+    slidesEl.appendChild(slide);
+
+    const ponto = document.createElement('span');
+    ponto.className = 'banner-ponto' + (indice === 0 ? ' ativo' : '');
+    ponto.onclick = () => irParaSlideBanner(indice);
+    pontosEl.appendChild(ponto);
+  });
+
+  bannerIndice = 0;
+  iniciarAutoBanner();
+}
+
+function mostrarSlideBanner(indice) {
+  const slides = document.querySelectorAll('.banner-slide');
+  const pontos = document.querySelectorAll('.banner-ponto');
+  if (!slides.length) return;
+
+  bannerIndice = (indice + slides.length) % slides.length;
+
+  slides.forEach((slide, i) => slide.classList.toggle('ativo', i === bannerIndice));
+  pontos.forEach((ponto, i) => ponto.classList.toggle('ativo', i === bannerIndice));
+}
+
+function bannerProximo() {
+  mostrarSlideBanner(bannerIndice + 1);
+  reiniciarAutoBanner();
+}
+
+function bannerAnterior() {
+  mostrarSlideBanner(bannerIndice - 1);
+  reiniciarAutoBanner();
+}
+
+function irParaSlideBanner(indice) {
+  mostrarSlideBanner(indice);
+  reiniciarAutoBanner();
+}
+
+function iniciarAutoBanner() {
+  pararAutoBanner();
+  bannerTimer = setInterval(() => mostrarSlideBanner(bannerIndice + 1), BANNER_INTERVALO_MS);
+}
+
+function pararAutoBanner() {
+  if (bannerTimer) {
+    clearInterval(bannerTimer);
+    bannerTimer = null;
+  }
+}
+
+// Clicar numa seta reinicia a contagem dos 5s, pra não trocar de novo
+// "no meio" da pessoa escolhendo o que quer ver
+function reiniciarAutoBanner() {
+  iniciarAutoBanner();
+}
+
+// ==========================================
 // EXIBIR BIBLIOTECA (GALERIA) - agora é a TELA INICIAL do site
 // Aceita um filtro: 'todas', 'hq', 'manga' ou 'favoritos'
 // ==========================================
@@ -222,6 +308,7 @@ function exibirBiblioteca(filtroGenero = 'todas') {
   const seletores = document.getElementById('seletores-topo');
   const btnVoltar = document.getElementById('btn-voltar');
   const titulo = document.getElementById('titulo-secao');
+  const banner = document.getElementById('banner-destaques');
 
   if (!grid) return;
   grid.innerHTML = '';
@@ -252,6 +339,15 @@ function exibirBiblioteca(filtroGenero = 'todas') {
   if (cardCapa) cardCapa.classList.add('escondido');
   if (seletores) seletores.classList.add('escondido');
   if (btnVoltar) btnVoltar.classList.add('escondido');
+
+  // O banner giratório só faz sentido na aba "Todas" (Destaques)
+  if (filtroGenero === 'todas') {
+    if (banner) banner.classList.remove('escondido');
+    montarBanner();
+  } else {
+    if (banner) banner.classList.add('escondido');
+    pararAutoBanner();
+  }
 
   pararObservadorScroll();
 }
@@ -284,6 +380,7 @@ function pesquisarHQ() {
   const seletores = document.getElementById('seletores-topo');
   const btnVoltar = document.getElementById('btn-voltar');
   const titulo = document.getElementById('titulo-secao');
+  const banner = document.getElementById('banner-destaques');
 
   if (!grid) return;
   grid.innerHTML = '';
@@ -308,6 +405,9 @@ function pesquisarHQ() {
   if (seletores) seletores.classList.add('escondido');
   if (btnVoltar) btnVoltar.classList.add('escondido');
 
+  // Busca não mostra o banner giratório
+  if (banner) banner.classList.add('escondido');
+  pararAutoBanner();
   pararObservadorScroll();
 }
 
@@ -373,6 +473,7 @@ function exibirFicha() {
   const cardCapa = document.getElementById('card-capa');
   const areaLeitor = document.getElementById('area-leitor');
   const grid = document.getElementById('biblioteca-hqs');
+  const banner = document.getElementById('banner-destaques');
   const imgCapa = document.getElementById('imagem-capa');
   const btnVoltar = document.getElementById('btn-voltar');
   const hq = hqs[hqAtual];
@@ -391,9 +492,11 @@ function exibirFicha() {
     cardCapa.classList.remove('escondido');
     areaLeitor.classList.add('escondido');
     if (grid) grid.classList.add('escondido');
+    if (banner) banner.classList.add('escondido');
     if (btnVoltar) btnVoltar.classList.remove('escondido');
   }
 
+  pararAutoBanner();
   pararObservadorScroll();
 }
 
