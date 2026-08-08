@@ -76,6 +76,3 @@ const hqs = {
   //   lancamento: "2024", resumo: "...",
   //   capitulos: { "cap-1": 25, "cap-2": 30 } }
 };
-
-
-

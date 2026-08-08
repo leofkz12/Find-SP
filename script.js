@@ -335,6 +335,10 @@ function exibirBiblioteca(filtroGenero = 'todas') {
   if (titulo) titulo.textContent = ROTULOS_SECAO[filtroGenero] || 'Destaques';
   marcarNavAtivo(filtroGenero);
 
+  // Ao voltar pra biblioteca, o painel listrado e o título voltam a aparecer
+  titulo?.classList.remove('escondido');
+  document.getElementById('grade-painel')?.classList.remove('escondido');
+
   grid.classList.remove('escondido');
   if (areaLeitor) areaLeitor.classList.add('escondido');
   if (cardCapa) cardCapa.classList.add('escondido');
@@ -400,6 +404,10 @@ function pesquisarHQ() {
 
   if (titulo) titulo.textContent = `Resultado da busca: "${termoOriginal}"`;
   marcarNavAtivo(null); // nenhum item de menu fica ativo durante a busca
+
+  // A busca também acontece na tela inicial: garante que o painel/título estejam visíveis
+  titulo?.classList.remove('escondido');
+  document.getElementById('grade-painel')?.classList.remove('escondido');
 
   grid.classList.remove('escondido');
   if (areaLeitor) areaLeitor.classList.add('escondido');
@@ -533,6 +541,10 @@ function exibirFicha() {
     if (grid) grid.classList.add('escondido');
     if (banner) banner.classList.add('escondido');
     if (btnVoltar) btnVoltar.classList.remove('escondido');
+
+    // Esconde o painel listrado e o título "Destaques" ao entrar na ficha da HQ
+    document.getElementById('grade-painel')?.classList.add('escondido');
+    document.getElementById('titulo-secao')?.classList.add('escondido');
   }
 
   document.body.classList.add('pagina-leitura');
@@ -556,6 +568,10 @@ function iniciarLeitura() {
     paginaAtual = 0;
     atualizarLeitor();
   }
+
+  // Mantém o painel listrado e o título "Destaques" escondidos durante a leitura
+  document.getElementById('grade-painel')?.classList.add('escondido');
+  document.getElementById('titulo-secao')?.classList.add('escondido');
 
   document.body.classList.add('pagina-leitura');
 }
@@ -809,6 +825,4 @@ async function buscarPersonagem() {
     if (status) status.innerText = "Erro ao buscar. Verifique sua conexão e tente novamente!";
   }
 }
-
-
 
