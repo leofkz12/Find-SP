@@ -215,7 +215,7 @@ function criarCardHQ(chave) {
 // ==========================================
 let bannerIndice = 0;
 let bannerTimer = null;
-const BANNER_INTERVALO_MS = 5000;
+const BANNER_INTERVALO_MS = 10000;
 
 function montarBanner() {
   const slidesEl = document.getElementById('banner-slides');
@@ -236,6 +236,7 @@ function montarBanner() {
       <img src="${hq.capa}" alt="${hq.titulo}">
       <div class="banner-legenda">
         <h3>${hq.titulo}</h3>
+        <p class="banner-resumo">${hq.resumo || ''}</p>
         <button class="btn-card" onclick="selecionarDaBiblioteca('${chave}')">📖 Ver mais</button>
       </div>
     `;

@@ -92,20 +92,7 @@ body {
   z-index: 3;
 }
 
-.decor-teia {
-  --teia-deslocar: 230px;   /* aumente pra mover mais pra esquerda, diminua/negativo pra mover pra direita */
-  --teia-largura: 30%;   /* defina um valor tipo 320px pra controlar a largura, ou deixe "auto" */
-  --teia-altura: 160%;    /* aumente além de 100% se quiser que ela "vaze" pra cima/baixo do banner */
 
-  position: absolute;
-  top: 10;
-  right: var(--teia-deslocar);
-  height: var(--teia-altura);
-  width: var(--teia-largura);
-  opacity: 0.9;
-  pointer-events: none;
-  z-index: 1;
-}
 
 /* No celular, esconde as decorações pra não bagunçar o layout */
 @media (max-width: 760px) {
@@ -415,16 +402,19 @@ select:hover, select:focus {
 
 /* ==========================================
    BANNER GIRATÓRIO (aba Destaques)
-   Fundo preto, capas trocando sozinhas a cada 5s, setas pra navegar manual.
+   Fundo fosco com textura sutil. No PC, o espaço vazio ao lado da capa
+   mostra o resumo da história (troca junto com o slide). No celular
+   continua só a capa + título/botão por cima, sem o resumo.
    ========================================== */
 .banner-destaques {
   position: relative;
-  background: #000000;
+  background:
+    repeating-linear-gradient(135deg, #0b0b0b 0px, #0b0b0b 3px, #060606 3px, #060606 6px);
   border-radius: 16px;
   overflow: hidden;
   margin-bottom: 24px;
   height: 260px;
-  box-shadow: 0 0 25px rgba(255, 30, 39, 0.3);
+  box-shadow: 0 0 25px rgba(255, 30, 39, 0.3), inset 0 0 60px rgba(0, 0, 0, 0.6);
 }
 
 .banner-slides {
@@ -454,8 +444,7 @@ select:hover, select:focus {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  object-position: center;
-  background: #000000;
+  object-position: center;  
 }
 
 .banner-legenda {
@@ -473,6 +462,11 @@ select:hover, select:focus {
   color: var(--ink);
   margin-bottom: 8px;
   text-shadow: 1px 1px 3px #000;
+}
+
+/* Resumo: escondido por padrão (celular). Só aparece no PC, ver media query abaixo. */
+.banner-resumo {
+  display: none;
 }
 
 .banner-legenda .btn-card {
@@ -502,6 +496,7 @@ select:hover, select:focus {
 .banner-seta-esq {
   left: 0;
 }
+
 
 .banner-seta-dir {
   right: 0;
@@ -538,10 +533,12 @@ select:hover, select:focus {
    PAINEL PRETO com a grade de histórias
    ========================================== */
 .grade-painel {
-  background: #000000;
+  background:
+    repeating-linear-gradient(135deg, #0b0b0b 0px, #0b0b0b 3px, #060606 3px, #060606 6px);
   border-radius: 16px;
   padding: 20px;
   margin-bottom: 20px;
+  box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.6);
 }
 
 /* ==========================================
@@ -1130,7 +1127,55 @@ select:hover, select:focus {
   }
 
   .banner-destaques {
-    height: 340px;
+    height: 380px;
+  }
+
+  /* No PC o slide vira uma "fileira": texto de um lado, capa do outro,
+     preenchendo o espaço que antes ficava vazio em preto */
+  .banner-slide {
+    align-items: stretch;
+  }
+
+  .banner-slide img {
+    position: relative;
+    inset: auto;
+    width: auto;
+    max-width: 42%;
+    height: 88%;
+    margin: auto 40px auto auto; /* capa encostada na direita, centralizada verticalmente */
+    order: 2;
+    border-radius: 10px;
+    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.65);
+  }
+
+  .banner-legenda {
+    order: 1;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 14px;
+    text-align: left;
+    background: none;
+    padding: 40px 20px 40px 50px;
+  }
+
+  .banner-legenda h3 {
+    font-size: 1.7rem;
+    margin-bottom: 0;
+  }
+
+  .banner-resumo {
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    color: var(--ink-dim);
+    font-size: 0.95rem;
+    line-height: 1.65;
+    max-width: 460px;
   }
 }
 
@@ -1174,7 +1219,7 @@ select:hover, select:focus {
   }
 
   .biblioteca-grid {
-    grid-template-columns: repeat(auto-fill, minmax(130px, 160px));
+    grid-template-columns: repeat(2, 1fr);
     gap: 14px;
   }
 
