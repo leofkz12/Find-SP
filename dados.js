@@ -80,7 +80,35 @@ const hqs = {
       "cap-4": 1,
       "cap-5": 1
     }
-  }
+  },
+  "spider-gwen-ghost": {
+    titulo: "Spider-Gwen: The Ghost-Spider",
+    capa: "assets/capas/spider-gwen-ghost.jpg",
+    genero: "hq",
+    lancamento: "09/10/2020",
+    resumo: "Após os eventos das grandes sagas do Aranhaverso e da revelação de sua identidade secreta na sua dimensão natal (Terra-65), Gwen Stacy tenta equilibrar sua vida de estudante e heroína. Para poder ter uma vida universitária normal e continuar combatendo o crime, Gwen decide se matricular na universidade da Terra-616 (o universo principal da Marvel, onde vive o Peter Parker original). No entanto, transitar entre dois universos traz consequências perigosas, ameaças interdimensionais inesperadas e novos vilões que tentam explorar os portais que ela utiliza.",
+    capitulos: {
+      "cap-1": 31,
+      "cap-2": 27,
+      "cap-3": 1,
+      "cap-4": 1,
+      "cap-5": 1
+    }
+  },
+  "gwenverse": {
+    titulo: "Spider-Gwen: Gwenverse",
+    capa: "assets/capas/gwen-verse.jpg",
+    genero: "hq",
+    lancamento: "09/02/2022",
+    resumo: "A trama se inicia quando Gwen Stacy, a Aranha-Fantasma, é puxada para o fluxo do tempo por uma artista louca que planeja se tornar imortal.  Gwen acaba roubando o ritual, espalhando versões alternativas de si mesma pelo passado da Terra-65. Ela deve viajar pelo tempo, reunir essas variantes (como uma Gwen com armadura de ferro ou uma Gwen-Lobinho) e corrigir a história contra um estado policial distópico liderado pelo pai que a caça em um mech gigante.",
+    capitulos: {
+      "cap-1": 31,
+      "cap-2": 20,
+      "cap-3": 20,
+      "cap-4": 20,
+      "cap-5": 20
+    }
+  },
 
   // Adicione novas HQs/mangás aqui embaixo, seguindo o mesmo modelo.
   // Ex: "nome-da-hq": { titulo: "...", capa: "...", genero: "hq"|"manga",
