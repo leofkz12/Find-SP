@@ -37,8 +37,8 @@ const hqs = {
     resumo: "A história foca no Miles Morales enfrentando o Escorpião (Mac Gargan), que possui o simbionte Venom.  Quando uma horda de acólitos do Carnificina ataca Nova York, Miles é infectado pelo simbionte vermelho e possuído, transformando-se temporariamente em um vilão. ",
     capitulos: {
       "cap-1": 21,
-      "cap-2": 1,
-      "cap-3": 1
+      "cap-2": 22,
+      "cap-3": 21
       
     }
   },
