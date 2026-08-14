@@ -120,6 +120,34 @@
         <div class="banner-pontos" id="banner-pontos"></div>
       </div>
 
+      <!-- Fileira "Continuar lendo" — só aparece se tiver progresso salvo -->
+      <div id="secao-continuar" class="secao-fileira escondido">
+        <h3 class="secao-titulo-sub">Continuar lendo</h3>
+        <div id="continuar-lendo-linha" class="fileira-horizontal"></div>
+      </div>
+
+      <!-- Fileira "Recomendados" — baseada nos favoritos -->
+      <div id="secao-recomendados" class="secao-fileira escondido">
+        <h3 class="secao-titulo-sub">Recomendados pra você</h3>
+        <div id="recomendados-linha" class="fileira-horizontal"></div>
+      </div>
+
+      <!-- Barra de ordenação + filtro de tags -->
+      <div id="barra-filtros" class="barra-filtros">
+        <div class="campo-ordenar">
+          <label for="select-ordenar">Ordenar por</label>
+          <select id="select-ordenar" onchange="mudarOrdenacao()">
+            <option value="recente">Mais recente</option>
+            <option value="alfabetica">Ordem alfabética</option>
+            <option value="lido">Mais lido</option>
+          </select>
+        </div>
+        <div class="campo-tags">
+          <span class="label-tags">Gêneros</span>
+          <div id="lista-tags" class="lista-tags"></div>
+        </div>
+      </div>
+
       <div id="grade-painel" class="grade-painel">
         <div id="biblioteca-hqs" class="biblioteca-grid"></div>
       </div>

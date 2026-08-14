@@ -14,6 +14,10 @@ const CHAVE_FAVORITOS = "spiderReaderFavoritos";
 const CHAVE_USUARIO = "spiderReaderUsuario";
 const CHAVE_MODO_LEITURA = "spiderReaderModoLeitura";
 const CHAVE_PROGRESSO = "spiderReaderProgresso";
+const CHAVE_LEITURAS = "spiderReaderLeituras";
+
+let ordenacaoAtual = "recente";
+let filtrosTags = new Set();
 
 const ROTULOS_SECAO = {
   todas: "Destaques",
@@ -49,6 +53,212 @@ function salvarProgresso(chaveHQ, capitulo, pagina) {
   const todos = obterProgressoTodos();
   todos[chaveHQ] = { capitulo, pagina };
   localStorage.setItem(CHAVE_PROGRESSO, JSON.stringify(todos));
+}
+
+// ==========================================
+// CONTAGEM DE LEITURAS (pra "Mais lido")
+// ==========================================
+function obterTodasLeituras() {
+  try {
+    return JSON.parse(localStorage.getItem(CHAVE_LEITURAS)) || {};
+  } catch (erro) {
+    return {};
+  }
+}
+
+function obterLeituras(chaveHQ) {
+  return obterTodasLeituras()[chaveHQ] || 0;
+}
+
+function registrarLeitura(chaveHQ) {
+  const todas = obterTodasLeituras();
+  todas[chaveHQ] = (todas[chaveHQ] || 0) + 1;
+  localStorage.setItem(CHAVE_LEITURAS, JSON.stringify(todas));
+}
+
+// ==========================================
+// ORDENAÇÃO E FILTRO DE TAGS
+// ==========================================
+function parseDataBR(data) {
+  if (!data) return new Date(0);
+  const [dia, mes, ano] = data.split('/').map(Number);
+  return new Date(ano || 1970, (mes || 1) - 1, dia || 1);
+}
+
+function ordenarChaves(chaves) {
+  const lista = [...chaves];
+  if (ordenacaoAtual === 'alfabetica') {
+    lista.sort((a, b) => hqs[a].titulo.localeCompare(hqs[b].titulo, 'pt-BR'));
+  } else if (ordenacaoAtual === 'lido') {
+    lista.sort((a, b) => obterLeituras(b) - obterLeituras(a));
+  } else {
+    lista.sort((a, b) => parseDataBR(hqs[b].lancamento) - parseDataBR(hqs[a].lancamento));
+  }
+  return lista;
+}
+
+function passaFiltroTags(chave) {
+  if (filtrosTags.size === 0) return true;
+  const tags = hqs[chave].tags || [];
+  return tags.some(t => filtrosTags.has(t));
+}
+
+function mudarOrdenacao() {
+  const select = document.getElementById('select-ordenar');
+  if (select) ordenacaoAtual = select.value;
+  exibirBiblioteca(filtroAtualBiblioteca);
+}
+
+function alternarFiltroTag(tag) {
+  if (filtrosTags.has(tag)) {
+    filtrosTags.delete(tag);
+  } else {
+    filtrosTags.add(tag);
+  }
+  exibirBiblioteca(filtroAtualBiblioteca);
+}
+
+// Monta os "chips" clicáveis com todas as tags que existem no banco de dados
+function montarChipsTags() {
+  const container = document.getElementById('lista-tags');
+  if (!container) return;
+
+  const todasTags = new Set();
+  Object.values(hqs).forEach(hq => (hq.tags || []).forEach(t => todasTags.add(t)));
+
+  container.innerHTML = '';
+  [...todasTags].sort((a, b) => a.localeCompare(b, 'pt-BR')).forEach(tag => {
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'chip-tag' + (filtrosTags.has(tag) ? ' ativo' : '');
+    chip.textContent = tag;
+    chip.onclick = () => alternarFiltroTag(tag);
+    container.appendChild(chip);
+  });
+
+  const select = document.getElementById('select-ordenar');
+  if (select) select.value = ordenacaoAtual;
+}
+
+// ==========================================
+// CARD PEQUENO (usado nas fileiras "Continuar lendo" e "Recomendados")
+// ==========================================
+function criarCardMini(chave, mostrarProgresso) {
+  const hq = hqs[chave];
+  const card = document.createElement('div');
+  card.className = 'hq-card-mini';
+
+  let barraProgresso = '';
+  if (mostrarProgresso) {
+    const progresso = obterProgresso(chave);
+    if (progresso && hq.capitulos[progresso.capitulo]) {
+      const totalPaginas = hq.capitulos[progresso.capitulo];
+      const percentual = Math.min(100, Math.round(((progresso.pagina + 1) / totalPaginas) * 100));
+      barraProgresso = `
+        <div class="mini-progresso">
+          <div class="mini-progresso-preenchido" style="width: ${percentual}%"></div>
+        </div>`;
+    }
+  }
+
+  card.innerHTML = `
+    <div class="capa-wrapper">
+      <img src="${hq.capa}" alt="${hq.titulo}" loading="lazy">
+    </div>
+    <div class="mini-info">
+      <p class="mini-titulo">${hq.titulo}</p>
+      ${barraProgresso}
+    </div>
+  `;
+
+  card.onclick = () => {
+    if (mostrarProgresso) {
+      hqAtual = chave;
+      continuarLeitura();
+    } else {
+      selecionarDaBiblioteca(chave);
+    }
+  };
+
+  return card;
+}
+
+// ==========================================
+// FILEIRA "CONTINUAR LENDO"
+// ==========================================
+function montarContinuarLendo() {
+  const secao = document.getElementById('secao-continuar');
+  const linha = document.getElementById('continuar-lendo-linha');
+  if (!secao || !linha) return;
+
+  linha.innerHTML = '';
+  const todosProgressos = obterProgressoTodos();
+
+  const chaves = Object.keys(todosProgressos).filter(chave => {
+    const hq = hqs[chave];
+    const progresso = todosProgressos[chave];
+    if (!hq || !hq.capitulos[progresso.capitulo]) return false;
+
+    const capsDaHQ = Object.keys(hq.capitulos);
+    const ultimoCap = capsDaHQ[capsDaHQ.length - 1];
+    const totalPaginasCapAtual = hq.capitulos[progresso.capitulo];
+
+    // Se já terminou a última página do último capítulo, não conta como "em andamento"
+    if (progresso.capitulo === ultimoCap && progresso.pagina >= totalPaginasCapAtual - 1) {
+      return false;
+    }
+    return true;
+  });
+
+  if (!chaves.length) {
+    secao.classList.add('escondido');
+    return;
+  }
+
+  chaves.forEach(chave => linha.appendChild(criarCardMini(chave, true)));
+  secao.classList.remove('escondido');
+}
+
+// ==========================================
+// FILEIRA "RECOMENDADOS" (baseada nos favoritos)
+// ==========================================
+function montarRecomendados() {
+  const secao = document.getElementById('secao-recomendados');
+  const linha = document.getElementById('recomendados-linha');
+  if (!secao || !linha) return;
+
+  linha.innerHTML = '';
+  const favoritos = obterFavoritos();
+
+  if (!favoritos.length) {
+    secao.classList.add('escondido');
+    return;
+  }
+
+  const tagsFavoritas = new Set();
+  const generosFavoritos = new Set();
+  favoritos.forEach(chave => {
+    const hq = hqs[chave];
+    if (!hq) return;
+    (hq.tags || []).forEach(t => tagsFavoritas.add(t));
+    generosFavoritos.add(hq.genero);
+  });
+
+  const candidatos = Object.keys(hqs).filter(chave => {
+    if (favoritos.includes(chave)) return false;
+    const hq = hqs[chave];
+    const temTagEmComum = (hq.tags || []).some(t => tagsFavoritas.has(t));
+    const mesmoGenero = generosFavoritos.has(hq.genero);
+    return temTagEmComum || mesmoGenero;
+  });
+
+  if (!candidatos.length) {
+    secao.classList.add('escondido');
+    return;
+  }
+
+  candidatos.slice(0, 8).forEach(chave => linha.appendChild(criarCardMini(chave, false)));
+  secao.classList.remove('escondido');
 }
 
 // ==========================================
@@ -338,7 +548,9 @@ function exibirBiblioteca(filtroGenero = 'todas') {
   if (!grid) return;
   grid.innerHTML = '';
 
-  for (let chave in hqs) {
+  const chavesOrdenadas = ordenarChaves(Object.keys(hqs));
+
+  for (const chave of chavesOrdenadas) {
     const hq = hqs[chave];
 
     if (filtroGenero === 'favoritos') {
@@ -346,6 +558,8 @@ function exibirBiblioteca(filtroGenero = 'todas') {
     } else if (filtroGenero !== 'todas' && hq.genero !== filtroGenero) {
       continue;
     }
+
+    if (!passaFiltroTags(chave)) continue;
 
     grid.appendChild(criarCardHQ(chave));
   }
@@ -369,14 +583,22 @@ function exibirBiblioteca(filtroGenero = 'todas') {
   if (seletores) seletores.classList.add('escondido');
   if (btnVoltar) btnVoltar.classList.add('escondido');
 
-  // O banner giratório só faz sentido na aba "Todas" (Destaques)
+  // O banner giratório e as fileiras "Continuar lendo"/"Recomendados"
+  // só fazem sentido na aba "Todas" (Destaques)
   if (filtroGenero === 'todas') {
     if (banner) banner.classList.remove('escondido');
     montarBanner();
+    montarContinuarLendo();
+    montarRecomendados();
   } else {
     if (banner) banner.classList.add('escondido');
     pararAutoBanner();
+    document.getElementById('secao-continuar')?.classList.add('escondido');
+    document.getElementById('secao-recomendados')?.classList.add('escondido');
   }
+
+  document.getElementById('barra-filtros')?.classList.remove('escondido');
+  montarChipsTags();
 
   document.body.classList.remove('pagina-leitura');
   pararObservadorScroll();
@@ -439,9 +661,12 @@ function pesquisarHQ() {
   if (seletores) seletores.classList.add('escondido');
   if (btnVoltar) btnVoltar.classList.add('escondido');
 
-  // Busca não mostra o banner giratório
+  // Busca não mostra o banner giratório, filtros nem as fileiras
   if (banner) banner.classList.add('escondido');
   pararAutoBanner();
+  document.getElementById('secao-continuar')?.classList.add('escondido');
+  document.getElementById('secao-recomendados')?.classList.add('escondido');
+  document.getElementById('barra-filtros')?.classList.add('escondido');
   document.body.classList.remove('pagina-leitura');
   pararObservadorScroll();
 }
@@ -582,9 +807,12 @@ function exibirFicha() {
     if (banner) banner.classList.add('escondido');
     if (btnVoltar) btnVoltar.classList.remove('escondido');
 
-    // Esconde o painel listrado e o título "Destaques" ao entrar na ficha da HQ
+    // Esconde o painel listrado, o título "Destaques" e as fileiras/filtros ao entrar na ficha
     document.getElementById('grade-painel')?.classList.add('escondido');
     document.getElementById('titulo-secao')?.classList.add('escondido');
+    document.getElementById('secao-continuar')?.classList.add('escondido');
+    document.getElementById('secao-recomendados')?.classList.add('escondido');
+    document.getElementById('barra-filtros')?.classList.add('escondido');
   }
 
   document.body.classList.add('pagina-leitura');
@@ -609,9 +837,14 @@ function iniciarLeitura(manterPagina = false) {
     atualizarLeitor();
   }
 
-  // Mantém o painel listrado e o título "Destaques" escondidos durante a leitura
+  // Mantém o painel listrado, o título "Destaques" e as fileiras/filtros escondidos durante a leitura
   document.getElementById('grade-painel')?.classList.add('escondido');
   document.getElementById('titulo-secao')?.classList.add('escondido');
+  document.getElementById('secao-continuar')?.classList.add('escondido');
+  document.getElementById('secao-recomendados')?.classList.add('escondido');
+  document.getElementById('barra-filtros')?.classList.add('escondido');
+
+  registrarLeitura(hqAtual);
 
   document.body.classList.add('pagina-leitura');
 }

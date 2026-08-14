@@ -566,6 +566,159 @@ select:hover, select:focus {
 }
 
 /* ==========================================
+   FILEIRAS HORIZONTAIS (Continuar lendo / Recomendados)
+   ========================================== */
+.secao-fileira {
+  margin-bottom: 24px;
+}
+
+.secao-titulo-sub {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  padding-left: 12px;
+  border-left: 3px solid var(--neon-cyan);
+  margin-bottom: 12px;
+}
+
+.fileira-horizontal {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x proximity;
+}
+
+.hq-card-mini {
+  flex: 0 0 130px;
+  scroll-snap-align: start;
+  background: var(--bg-panel);
+  border: 1px solid rgba(255, 30, 39, 0.4);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.hq-card-mini:hover {
+  transform: translateY(-4px);
+  border-color: var(--red-core);
+}
+
+.hq-card-mini .capa-wrapper {
+  aspect-ratio: 2 / 3;
+}
+
+.hq-card-mini .mini-info {
+  padding: 8px 10px 10px;
+}
+
+.hq-card-mini .mini-titulo {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.4em;
+}
+
+.mini-progresso {
+  margin-top: 6px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+
+.mini-progresso-preenchido {
+  height: 100%;
+  background: var(--red-core);
+  box-shadow: 0 0 6px rgba(255, 30, 39, 0.8);
+}
+
+/* ==========================================
+   BARRA DE ORDENAÇÃO + TAGS
+   ========================================== */
+.barra-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 20px;
+  margin-bottom: 18px;
+}
+
+.campo-ordenar {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 180px;
+}
+
+.campo-ordenar select {
+  padding: 10px 14px;
+}
+
+.campo-tags {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 220px;
+}
+
+.label-tags {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--red-soft);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.lista-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip-tag {
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ink-dim);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: capitalize;
+}
+
+.chip-tag:hover {
+  border-color: var(--neon-cyan);
+  color: var(--ink);
+}
+
+.chip-tag.ativo {
+  background: var(--red-core);
+  border-color: var(--red-core);
+  color: var(--ink);
+  box-shadow: 0 0 10px rgba(255, 30, 39, 0.6);
+}
+
+@media (max-width: 480px) {
+  .hq-card-mini {
+    flex-basis: 108px;
+  }
+}
+
+/* ==========================================
    PAINEL PRETO com a grade de histórias
    ========================================== */
 .grade-painel {
