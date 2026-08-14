@@ -13,6 +13,7 @@ let observerScroll = null;
 const CHAVE_FAVORITOS = "spiderReaderFavoritos";
 const CHAVE_USUARIO = "spiderReaderUsuario";
 const CHAVE_MODO_LEITURA = "spiderReaderModoLeitura";
+const CHAVE_PROGRESSO = "spiderReaderProgresso";
 
 const ROTULOS_SECAO = {
   todas: "Destaques",
@@ -25,6 +26,29 @@ const ROTULOS_SECAO = {
 // Ex: caminhoPagina("spider-gwen", "cap-1", 3) -> "assets/hqs/spider-gwen/cap-1/pagina3.jpg"
 function caminhoPagina(chaveHQ, capitulo, numeroPagina) {
   return `assets/hqs/${chaveHQ}/${capitulo}/pagina${numeroPagina}.jpg`;
+}
+
+// ==========================================
+// PROGRESSO DE LEITURA ("continuar de onde parou")
+// Guarda, pra cada HQ, em qual capítulo e página a pessoa parou.
+// ==========================================
+function obterProgressoTodos() {
+  try {
+    return JSON.parse(localStorage.getItem(CHAVE_PROGRESSO)) || {};
+  } catch (erro) {
+    return {};
+  }
+}
+
+function obterProgresso(chaveHQ) {
+  const todos = obterProgressoTodos();
+  return todos[chaveHQ] || null;
+}
+
+function salvarProgresso(chaveHQ, capitulo, pagina) {
+  const todos = obterProgressoTodos();
+  todos[chaveHQ] = { capitulo, pagina };
+  localStorage.setItem(CHAVE_PROGRESSO, JSON.stringify(todos));
 }
 
 // ==========================================
@@ -495,14 +519,16 @@ function montarListaCapitulos() {
 
   const caps = hqs[hqAtual].capitulos;
   const chaves = Object.keys(caps);
+  const progresso = obterProgresso(hqAtual);
 
   lista.innerHTML = '';
   chaves.forEach(cap => {
     const totalPaginas = caps[cap];
+    const emProgresso = progresso && progresso.capitulo === cap;
     const item = document.createElement('button');
-    item.className = 'item-capitulo';
+    item.className = 'item-capitulo' + (emProgresso ? ' item-capitulo-progresso' : '');
     item.innerHTML = `
-      <span>Capítulo ${cap.replace('cap-', '')}</span>
+      <span>Capítulo ${cap.replace('cap-', '')}${emProgresso ? '<span class="capitulo-badge">Continuando</span>' : ''}</span>
       <span class="capitulo-paginas">${totalPaginas} página${totalPaginas === 1 ? '' : 's'}</span>
     `;
     item.onclick = () => abrirCapitulo(cap);
@@ -534,6 +560,20 @@ function exibirFicha() {
     if (lancamentoEl) lancamentoEl.textContent = hq.lancamento || 'Não informado';
     if (resumoEl) resumoEl.textContent = hq.resumo || 'Resumo ainda não adicionado.';
 
+    // Mostra o botão "Continuar de onde parou" só se existir progresso salvo
+    // pra essa HQ e o capítulo salvo ainda existir nos dados.
+    const progresso = obterProgresso(hqAtual);
+    const continuarBox = document.getElementById('ficha-continuar');
+    const spanCap = document.getElementById('continuar-capitulo');
+    const spanPag = document.getElementById('continuar-pagina');
+    if (progresso && hq.capitulos[progresso.capitulo]) {
+      if (spanCap) spanCap.textContent = progresso.capitulo.replace('cap-', '');
+      if (spanPag) spanPag.textContent = progresso.pagina + 1;
+      continuarBox?.classList.remove('escondido');
+    } else {
+      continuarBox?.classList.add('escondido');
+    }
+
     montarListaCapitulos();
 
     cardCapa.classList.remove('escondido');
@@ -552,7 +592,7 @@ function exibirFicha() {
   pararObservadorScroll();
 }
 
-function iniciarLeitura() {
+function iniciarLeitura(manterPagina = false) {
   const cardCapa = document.getElementById('card-capa');
   const areaLeitor = document.getElementById('area-leitor');
   const grid = document.getElementById('biblioteca-hqs');
@@ -565,7 +605,7 @@ function iniciarLeitura() {
     if (seletores) seletores.classList.remove('escondido');
     if (btnVoltar) btnVoltar.classList.remove('escondido');
     areaLeitor.classList.remove('escondido');
-    paginaAtual = 0;
+    if (!manterPagina) paginaAtual = 0;
     atualizarLeitor();
   }
 
@@ -574,6 +614,19 @@ function iniciarLeitura() {
   document.getElementById('titulo-secao')?.classList.add('escondido');
 
   document.body.classList.add('pagina-leitura');
+}
+
+// Chamada pelo botão "Continuar de onde parou" na ficha da HQ
+function continuarLeitura() {
+  const progresso = obterProgresso(hqAtual);
+  if (!progresso) return;
+
+  capituloAtual = progresso.capitulo;
+  const selectCap = document.getElementById('select-capitulo');
+  if (selectCap) selectCap.value = capituloAtual;
+
+  paginaAtual = progresso.pagina;
+  iniciarLeitura(true);
 }
 
 // ==========================================
@@ -628,6 +681,17 @@ function montarLeitorPagina() {
   if (contador && totalPaginas) {
     contador.innerText = `Página ${paginaAtual + 1} de ${totalPaginas}`;
   }
+
+  salvarProgresso(hqAtual, capituloAtual, paginaAtual);
+
+  // Pré-carrega a próxima página em segundo plano, pra trocar sem "flash" branco
+  if (totalPaginas && paginaAtual + 1 < totalPaginas) {
+    const preCarrega = new Image();
+    preCarrega.src = caminhoPagina(hqAtual, capituloAtual, paginaAtual + 2);
+  }
+
+  // Volta o zoom ao normal sempre que a página muda
+  if (typeof resetarZoomLeitor === 'function') resetarZoomLeitor();
 }
 
 function proximaPagina() {
@@ -721,6 +785,7 @@ function iniciarObservadorScroll(totalPaginas) {
         const numero = entrada.target.dataset.pagina;
         paginaAtual = Number(numero) - 1;
         contador.innerText = `Página ${numero} de ${totalPaginas}`;
+        salvarProgresso(hqAtual, capituloAtual, paginaAtual);
       }
     });
   }, { threshold: 0.5 });
@@ -736,6 +801,143 @@ function pararObservadorScroll() {
 }
 
 // ==========================================
+// ZOOM NA PÁGINA (modo página): roda do mouse no PC, pinça no celular,
+// arrastar quando tiver zoom, e duplo clique/toque pra voltar ao normal.
+// ==========================================
+function configurarZoomLeitor() {
+  const caixa = document.getElementById('leitor-pagina');
+  const img = document.getElementById('pagina-imagem');
+  if (!caixa || !img) return;
+
+  let escala = 1;
+  let transladoX = 0;
+  let transladoY = 0;
+
+  let distanciaInicialPinça = 0;
+  let escalaInicialPinça = 1;
+
+  let arrastando = false;
+  let arrastoInicioX = 0;
+  let arrastoInicioY = 0;
+  let transladoInicioX = 0;
+  let transladoInicioY = 0;
+
+  function distanciaEntreToques(toques) {
+    const dx = toques[0].clientX - toques[1].clientX;
+    const dy = toques[0].clientY - toques[1].clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  function aplicarZoom(comTransicao) {
+    img.style.transition = comTransicao ? 'transform 0.15s ease-out' : 'none';
+    img.style.transform = `translate(${transladoX}px, ${transladoY}px) scale(${escala})`;
+    caixa.classList.toggle('zoom-ativo', escala > 1);
+  }
+
+  function resetarZoom() {
+    escala = 1;
+    transladoX = 0;
+    transladoY = 0;
+    aplicarZoom(true);
+  }
+
+  // Exposto globalmente pra resetar sempre que a pessoa troca de página
+  window.resetarZoomLeitor = resetarZoom;
+
+  // --- PC: roda do mouse dá zoom ---
+  caixa.addEventListener('wheel', (evento) => {
+    if (modoLeitura !== 'pagina') return;
+    evento.preventDefault();
+    const variacao = -evento.deltaY * 0.0015;
+    escala = Math.min(3, Math.max(1, escala + variacao));
+    if (escala === 1) { transladoX = 0; transladoY = 0; }
+    aplicarZoom(false);
+  }, { passive: false });
+
+  // --- PC: duplo clique reseta o zoom ---
+  caixa.addEventListener('dblclick', () => resetarZoom());
+
+  // --- PC: arrastar a imagem quando já tem zoom ---
+  caixa.addEventListener('mousedown', (evento) => {
+    if (escala <= 1) return;
+    arrastando = true;
+    arrastoInicioX = evento.clientX;
+    arrastoInicioY = evento.clientY;
+    transladoInicioX = transladoX;
+    transladoInicioY = transladoY;
+  });
+
+  window.addEventListener('mousemove', (evento) => {
+    if (!arrastando) return;
+    transladoX = transladoInicioX + (evento.clientX - arrastoInicioX);
+    transladoY = transladoInicioY + (evento.clientY - arrastoInicioY);
+    aplicarZoom(false);
+  });
+
+  window.addEventListener('mouseup', () => { arrastando = false; });
+
+  // --- Celular: pinça com 2 dedos dá zoom; 1 dedo arrasta se já tiver zoom ---
+  caixa.addEventListener('touchstart', (evento) => {
+    if (evento.touches.length === 2) {
+      distanciaInicialPinça = distanciaEntreToques(evento.touches);
+      escalaInicialPinça = escala;
+    } else if (evento.touches.length === 1 && escala > 1) {
+      arrastando = true;
+      arrastoInicioX = evento.touches[0].clientX;
+      arrastoInicioY = evento.touches[0].clientY;
+      transladoInicioX = transladoX;
+      transladoInicioY = transladoY;
+    }
+  }, { passive: true });
+
+  caixa.addEventListener('touchmove', (evento) => {
+    if (evento.touches.length === 2) {
+      evento.preventDefault();
+      const distanciaAtual = distanciaEntreToques(evento.touches);
+      const fator = distanciaAtual / distanciaInicialPinça;
+      escala = Math.min(3, Math.max(1, escalaInicialPinça * fator));
+      if (escala === 1) { transladoX = 0; transladoY = 0; }
+      aplicarZoom(false);
+    } else if (evento.touches.length === 1 && arrastando) {
+      evento.preventDefault();
+      transladoX = transladoInicioX + (evento.touches[0].clientX - arrastoInicioX);
+      transladoY = transladoInicioY + (evento.touches[0].clientY - arrastoInicioY);
+      aplicarZoom(false);
+    }
+  }, { passive: false });
+
+  caixa.addEventListener('touchend', (evento) => {
+    if (evento.touches.length === 0) arrastando = false;
+  });
+
+  // --- Celular: duplo toque reseta o zoom ---
+  let ultimoToqueEm = 0;
+  caixa.addEventListener('touchend', () => {
+    const agora = Date.now();
+    if (agora - ultimoToqueEm < 300) resetarZoom();
+    ultimoToqueEm = agora;
+  });
+}
+
+// ==========================================
+// ATALHOS DE TECLADO NO MODO PÁGINA (← página anterior, → próxima página)
+// Só funciona quando a pessoa está de fato lendo, no modo página.
+// ==========================================
+document.addEventListener('keydown', (evento) => {
+  if (modoLeitura !== 'pagina') return;
+  if (!document.body.classList.contains('pagina-leitura')) return;
+
+  const areaLeitor = document.getElementById('area-leitor');
+  if (!areaLeitor || areaLeitor.classList.contains('escondido')) return;
+
+  if (evento.key === 'ArrowRight') {
+    proximaPagina();
+  } else if (evento.key === 'ArrowLeft') {
+    paginaAnterior();
+  }
+});
+
+// ==========================================
 // INICIALIZAÇÃO: carrega os dropdowns e já mostra a grade de Destaques
 // ==========================================
 function iniciarApp() {
@@ -743,6 +945,7 @@ function iniciarApp() {
   aplicarUsuarioNaUI();
   carregarMenu();
   exibirBiblioteca('todas');
+  configurarZoomLeitor();
 }
 
 window.onload = iniciarApp;

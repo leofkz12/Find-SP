@@ -139,6 +139,13 @@
               <span class="ficha-label">Resumo</span>
               <p id="ficha-resumo-texto"></p>
             </div>
+
+            <!-- Só aparece se já existir progresso salvo de leitura pra essa HQ -->
+            <div id="ficha-continuar" class="ficha-continuar escondido">
+              <button class="btn-card btn-continuar" id="btn-continuar-leitura" onclick="continuarLeitura()">
+                ▶ Continuar — Cap. <span id="continuar-capitulo"></span>, pág. <span id="continuar-pagina"></span>
+              </button>
+            </div>
           </div>
         </div>
 

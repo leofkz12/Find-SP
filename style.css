@@ -784,6 +784,21 @@ select:hover, select:focus {
   max-width: 640px;
 }
 
+/* "Continuar de onde parou" — aparece na ficha quando já existe progresso salvo */
+.ficha-continuar {
+  margin-top: 6px;
+}
+
+.btn-continuar {
+  width: auto;
+  padding: 12px 22px;
+  font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 0 16px rgba(255, 30, 39, 0.5);
+}
+
 /* ==========================================
    LISTA DE CAPÍTULOS (dentro da ficha)
    ========================================== */
@@ -848,6 +863,26 @@ select:hover, select:focus {
   white-space: nowrap;
 }
 
+/* Capítulo com progresso salvo (aparece marcado na lista) */
+.item-capitulo-progresso {
+  border-color: var(--red-core);
+  background: rgba(255, 30, 39, 0.08);
+}
+
+.capitulo-badge {
+  display: inline-block;
+  background: var(--red-core);
+  color: var(--ink);
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
 @media (max-width: 560px) {
   .ficha-topo {
     flex-direction: column;
@@ -898,6 +933,18 @@ select:hover, select:focus {
   align-items: center;
   min-height: 420px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+  overflow: hidden; /* essencial pra conter a imagem quando dá zoom */
+  touch-action: none; /* deixa o gesto de pinça livre pro nosso JS controlar */
+  cursor: zoom-in;
+  position: relative;
+}
+
+.leitor-box.zoom-ativo {
+  cursor: grab;
+}
+
+.leitor-box.zoom-ativo:active {
+  cursor: grabbing;
 }
 
 .leitor-box img {
@@ -905,6 +952,9 @@ select:hover, select:focus {
   max-height: 70vh;
   object-fit: contain;
   border-radius: 6px;
+  touch-action: none;
+  will-change: transform;
+  transition: transform 0.15s ease-out;
 }
 
 /* ==========================================
