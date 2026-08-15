@@ -16,6 +16,7 @@ const CHAVE_MODO_LEITURA = "spiderReaderModoLeitura";
 const CHAVE_PROGRESSO = "spiderReaderProgresso";
 const CHAVE_LEITURAS = "spiderReaderLeituras";
 const CHAVE_TEMA = "spiderReaderTema";
+const CHAVE_LIDOS = "spiderReaderLidos";
 
 let ordenacaoAtual = "recente";
 let filtrosTags = new Set();
@@ -113,9 +114,42 @@ function obterProgresso(chaveHQ) {
 }
 
 function salvarProgresso(chaveHQ, capitulo, pagina) {
-  const todos = obterProgressoTodos();
-  todos[chaveHQ] = { capitulo, pagina };
-  localStorage.setItem(CHAVE_PROGRESSO, JSON.stringify(todos));
+  try {
+    const todos = obterProgressoTodos();
+    todos[chaveHQ] = { capitulo, pagina };
+    localStorage.setItem(CHAVE_PROGRESSO, JSON.stringify(todos));
+  } catch (erro) {
+    console.error('Não foi possível salvar o progresso:', erro);
+  }
+}
+
+// Apaga o progresso salvo de uma HQ específica (usado pelo botão "Limpar progresso")
+function limparProgresso(chaveHQ) {
+  try {
+    const todos = obterProgressoTodos();
+    delete todos[chaveHQ];
+    localStorage.setItem(CHAVE_PROGRESSO, JSON.stringify(todos));
+  } catch (erro) {
+    console.error('Não foi possível limpar o progresso:', erro);
+  }
+}
+
+// Pede confirmação e, se a pessoa aceitar, limpa o progresso salvo da HQ
+// que está aberta na ficha no momento (não mexe no que já foi marcado como lido)
+function confirmarLimparProgresso() {
+  const hq = hqs[hqAtual];
+  if (!hq) return;
+
+  const progresso = obterProgresso(hqAtual);
+  if (!progresso) return;
+
+  const ok = window.confirm(
+    `Limpar o progresso salvo de "${hq.titulo}"?\n\nIsso remove o "continuar de onde parou" — os capítulos marcados como lidos continuam como estão.`
+  );
+  if (!ok) return;
+
+  limparProgresso(hqAtual);
+  exibirFicha();
 }
 
 // ==========================================
@@ -134,9 +168,117 @@ function obterLeituras(chaveHQ) {
 }
 
 function registrarLeitura(chaveHQ) {
-  const todas = obterTodasLeituras();
-  todas[chaveHQ] = (todas[chaveHQ] || 0) + 1;
-  localStorage.setItem(CHAVE_LEITURAS, JSON.stringify(todas));
+  try {
+    const todas = obterTodasLeituras();
+    todas[chaveHQ] = (todas[chaveHQ] || 0) + 1;
+    localStorage.setItem(CHAVE_LEITURAS, JSON.stringify(todas));
+  } catch (erro) {
+    console.error('Não foi possível registrar a leitura:', erro);
+  }
+}
+
+// ==========================================
+// CAPÍTULOS LIDOS (marcação manual, separada do progresso automático)
+// Guarda, pra cada HQ, a lista de capítulos que a pessoa marcou como lidos.
+// Serve tanto pro botão "Marcar tudo como lido" quanto pro selo de
+// "capítulos novos" nos cards da biblioteca.
+// ==========================================
+function obterLidosTodos() {
+  try {
+    return JSON.parse(localStorage.getItem(CHAVE_LIDOS)) || {};
+  } catch (erro) {
+    return {};
+  }
+}
+
+function obterLidos(chaveHQ) {
+  return obterLidosTodos()[chaveHQ] || [];
+}
+
+function capituloEhLido(chaveHQ, cap) {
+  return obterLidos(chaveHQ).includes(cap);
+}
+
+function salvarLidosHQ(chaveHQ, listaCapitulos) {
+  try {
+    const todos = obterLidosTodos();
+    if (listaCapitulos.length) {
+      todos[chaveHQ] = listaCapitulos;
+    } else {
+      delete todos[chaveHQ];
+    }
+    localStorage.setItem(CHAVE_LIDOS, JSON.stringify(todos));
+  } catch (erro) {
+    console.error('Não foi possível salvar os capítulos lidos:', erro);
+  }
+}
+
+// Marca/desmarca UM capítulo específico como lido (usado pelo botãozinho
+// redondo ao lado de cada capítulo na ficha)
+function alternarCapituloLido(chaveHQ, cap) {
+  let lidos = obterLidos(chaveHQ);
+  if (lidos.includes(cap)) {
+    lidos = lidos.filter(c => c !== cap);
+  } else {
+    lidos = [...lidos, cap];
+  }
+  salvarLidosHQ(chaveHQ, lidos);
+  montarListaCapitulos();
+  atualizarBotaoMarcarTudo();
+}
+
+// Wrapper usado no onclick do botão redondo — evita que o clique também
+// abra o capítulo (já que o item inteiro também é clicável)
+function cliqueChipLido(evento, cap) {
+  evento.stopPropagation();
+  alternarCapituloLido(hqAtual, cap);
+}
+
+function todosCapitulosLidos(chaveHQ) {
+  const hq = hqs[chaveHQ];
+  if (!hq) return false;
+  const todosCaps = Object.keys(hq.capitulos);
+  if (!todosCaps.length) return false;
+  const lidos = obterLidos(chaveHQ);
+  return todosCaps.every(cap => lidos.includes(cap));
+}
+
+// Marca (ou desmarca, se já estiver tudo marcado) a HQ inteira como lida —
+// botão "Marcar tudo como lido" na ficha
+function alternarTudoLido() {
+  const hq = hqs[hqAtual];
+  if (!hq) return;
+
+  const todosCaps = Object.keys(hq.capitulos);
+  if (todosCapitulosLidos(hqAtual)) {
+    salvarLidosHQ(hqAtual, []);
+  } else {
+    salvarLidosHQ(hqAtual, todosCaps);
+  }
+
+  montarListaCapitulos();
+  atualizarBotaoMarcarTudo();
+}
+
+// Atualiza o texto/visual do botão "Marcar tudo como lido" conforme o
+// estado atual da HQ aberta na ficha
+function atualizarBotaoMarcarTudo() {
+  const btn = document.getElementById('btn-marcar-lido');
+  if (!btn) return;
+
+  const tudoLido = todosCapitulosLidos(hqAtual);
+  btn.textContent = tudoLido ? '↺ Desmarcar tudo como lido' : '✓ Marcar tudo como lido';
+  btn.classList.toggle('ativo', tudoLido);
+}
+
+// Quantos capítulos de uma HQ ainda não foram marcados como lidos —
+// usado no selo do card da biblioteca
+function contarNaoLidos(chaveHQ) {
+  const hq = hqs[chaveHQ];
+  if (!hq) return 0;
+  const todosCaps = Object.keys(hq.capitulos);
+  const lidos = obterLidos(chaveHQ).filter(c => todosCaps.includes(c));
+  return Math.max(0, todosCaps.length - lidos.length);
 }
 
 // ==========================================
@@ -332,7 +474,11 @@ function obterUsuario() {
 }
 
 function salvarUsuario(nome) {
-  localStorage.setItem(CHAVE_USUARIO, nome);
+  try {
+    localStorage.setItem(CHAVE_USUARIO, nome);
+  } catch (erro) {
+    console.error('Não foi possível salvar o usuário:', erro);
+  }
   aplicarUsuarioNaUI();
 }
 
@@ -433,7 +579,12 @@ function alternarFavorito(chave, evento) {
   } else {
     favoritos.push(chave);
   }
-  localStorage.setItem(CHAVE_FAVORITOS, JSON.stringify(favoritos));
+
+  try {
+    localStorage.setItem(CHAVE_FAVORITOS, JSON.stringify(favoritos));
+  } catch (erro) {
+    console.error('Não foi possível salvar os favoritos:', erro);
+  }
 
   // Atualiza só o botão clicado, sem redesenhar a grade inteira
   const botao = document.querySelector(`.btn-favorito[data-chave="${chave}"]`);
@@ -493,12 +644,17 @@ function filtrarHQs(categoria) {
 function criarCardHQ(chave) {
   const hq = hqs[chave];
   const favoritoAtivo = ehFavorito(chave);
+  const naoLidos = contarNaoLidos(chave);
+  const badgeNaoLidos = naoLidos > 0
+    ? `<span class="badge-nao-lido">${naoLidos} novo${naoLidos === 1 ? '' : 's'}</span>`
+    : '';
 
   const card = document.createElement('div');
   card.className = 'hq-card';
   card.innerHTML = `
     <div class="capa-wrapper">
       <img src="${hq.capa}" alt="${hq.titulo}" loading="lazy">
+      ${badgeNaoLidos}
       <button class="btn-favorito ${favoritoAtivo ? 'ativo' : ''}" data-chave="${chave}"
         onclick="alternarFavorito('${chave}', event)" aria-label="Favoritar ${hq.titulo}">${favoritoAtivo ? '♥' : '♡'}</button>
     </div>
@@ -803,7 +959,9 @@ function abrirCapitulo(cap) {
   iniciarLeitura();
 }
 
-// Monta a lista visual de capítulos (nome + nº de páginas), clicável
+// Monta a lista visual de capítulos (nome + nº de páginas), clicável.
+// Cada item também tem um botãozinho redondo pra marcar/desmarcar
+// aquele capítulo específico como lido, sem precisar abrir ele.
 function montarListaCapitulos() {
   const lista = document.getElementById('lista-capitulos');
   const totalEl = document.getElementById('ficha-total-capitulos');
@@ -812,22 +970,46 @@ function montarListaCapitulos() {
   const caps = hqs[hqAtual].capitulos;
   const chaves = Object.keys(caps);
   const progresso = obterProgresso(hqAtual);
+  const lidos = obterLidos(hqAtual);
 
   lista.innerHTML = '';
   chaves.forEach(cap => {
     const totalPaginas = caps[cap];
     const emProgresso = progresso && progresso.capitulo === cap;
-    const item = document.createElement('button');
+    const lido = lidos.includes(cap);
+
+    // Usa <div> em vez de <button> pra poder ter um botão de verdade
+    // (o chip-lido) dentro sem aninhar botão dentro de botão.
+    const item = document.createElement('div');
     item.className = 'item-capitulo' + (emProgresso ? ' item-capitulo-progresso' : '');
+    item.setAttribute('role', 'button');
+    item.setAttribute('tabindex', '0');
     item.innerHTML = `
       <span>Capítulo ${cap.replace('cap-', '')}${emProgresso ? '<span class="capitulo-badge">Continuando</span>' : ''}</span>
-      <span class="capitulo-paginas">${totalPaginas} página${totalPaginas === 1 ? '' : 's'}</span>
+      <span class="capitulo-info">
+        <span class="capitulo-paginas">${totalPaginas} página${totalPaginas === 1 ? '' : 's'}</span>
+        <button type="button" class="chip-lido ${lido ? 'ativo' : ''}"
+          title="${lido ? 'Marcar como não lido' : 'Marcar como lido'}"
+          aria-label="${lido ? 'Marcar capítulo como não lido' : 'Marcar capítulo como lido'}"
+          onclick="cliqueChipLido(event, '${cap}')">${lido ? '✓' : '○'}</button>
+      </span>
     `;
     item.onclick = () => abrirCapitulo(cap);
+    item.onkeydown = (evento) => {
+      if (evento.key === 'Enter' || evento.key === ' ') {
+        evento.preventDefault();
+        abrirCapitulo(cap);
+      }
+    };
     lista.appendChild(item);
   });
 
-  if (totalEl) totalEl.textContent = `(${chaves.length})`;
+  const totalLidos = lidos.filter(c => chaves.includes(c)).length;
+  if (totalEl) {
+    totalEl.textContent = totalLidos > 0
+      ? `(${chaves.length} — ${totalLidos} lido${totalLidos === 1 ? '' : 's'})`
+      : `(${chaves.length})`;
+  }
 }
 
 // Mostra a "ficha" da HQ: fundo com a capa desfocada, título, ano, resumo e lista de capítulos.
@@ -852,21 +1034,25 @@ function exibirFicha() {
     if (lancamentoEl) lancamentoEl.textContent = hq.lancamento || 'Não informado';
     if (resumoEl) resumoEl.textContent = hq.resumo || 'Resumo ainda não adicionado.';
 
-    // Mostra o botão "Continuar de onde parou" só se existir progresso salvo
-    // pra essa HQ e o capítulo salvo ainda existir nos dados.
+    // Mostra o botão "Continuar de onde parou" e o "Limpar progresso" só se
+    // já existir progresso salvo pra essa HQ e o capítulo salvo ainda existir.
     const progresso = obterProgresso(hqAtual);
     const continuarBox = document.getElementById('ficha-continuar');
     const spanCap = document.getElementById('continuar-capitulo');
     const spanPag = document.getElementById('continuar-pagina');
+    const btnLimpar = document.getElementById('btn-limpar-progresso');
     if (progresso && hq.capitulos[progresso.capitulo]) {
       if (spanCap) spanCap.textContent = progresso.capitulo.replace('cap-', '');
       if (spanPag) spanPag.textContent = progresso.pagina + 1;
       continuarBox?.classList.remove('escondido');
+      btnLimpar?.classList.remove('escondido');
     } else {
       continuarBox?.classList.add('escondido');
+      btnLimpar?.classList.add('escondido');
     }
 
     montarListaCapitulos();
+    atualizarBotaoMarcarTudo();
 
     cardCapa.classList.remove('escondido');
     areaLeitor.classList.add('escondido');
@@ -1220,20 +1406,40 @@ function configurarZoomLeitor() {
 }
 
 // ==========================================
-// ATALHOS DE TECLADO NO MODO PÁGINA (← página anterior, → próxima página)
-// Só funciona quando a pessoa está de fato lendo, no modo página.
+// ATALHOS DE TECLADO NO LEITOR
+// Modo página: ← / → trocam de página.
+// Modo scroll: ↓ / espaço rolam pra baixo, ↑ rola pra cima — do jeito
+// que a pessoa já espera de um leitor tipo "webtoon".
+// Só funciona quando a pessoa está de fato lendo, e nunca quando o
+// foco está num campo de texto (input/select/textarea).
 // ==========================================
 document.addEventListener('keydown', (evento) => {
-  if (modoLeitura !== 'pagina') return;
   if (!document.body.classList.contains('pagina-leitura')) return;
 
   const areaLeitor = document.getElementById('area-leitor');
   if (!areaLeitor || areaLeitor.classList.contains('escondido')) return;
 
-  if (evento.key === 'ArrowRight') {
-    proximaPagina();
-  } else if (evento.key === 'ArrowLeft') {
-    paginaAnterior();
+  const foco = evento.target;
+  const digitando = foco && ['INPUT', 'TEXTAREA', 'SELECT'].includes(foco.tagName);
+  if (digitando) return;
+
+  if (modoLeitura === 'pagina') {
+    if (evento.key === 'ArrowRight') {
+      proximaPagina();
+    } else if (evento.key === 'ArrowLeft') {
+      paginaAnterior();
+    }
+    return;
+  }
+
+  // modoLeitura === 'scroll'
+  const alturaRolagem = window.innerHeight * 0.85;
+  if (evento.key === 'ArrowDown' || evento.code === 'Space' || evento.key === ' ') {
+    evento.preventDefault();
+    window.scrollBy({ top: alturaRolagem, behavior: 'smooth' });
+  } else if (evento.key === 'ArrowUp') {
+    evento.preventDefault();
+    window.scrollBy({ top: -alturaRolagem, behavior: 'smooth' });
   }
 });
 
