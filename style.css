@@ -12,8 +12,58 @@
   --ink: #ffffff;
   --ink-dim: #cbb8bb;
 
+  /* --acc-rgb é a versão "R, G, B" de --red-core, usada em rgba() pros
+     brilhos/sombras acompanharem o tema escolhido.
+     --texto-acento é a cor do texto/ícone em cima de fundos sólidos com
+     --red-core (botões, badges, chips) — troca pra escuro nos temas claros
+     pra nunca ficar "apagado". */
+  --acc-rgb: 255, 30, 39;
+  --texto-acento: #ffffff;
+
   --font-logo: 'Bangers', 'Impact', cursive;
   --font-ui: 'Poppins', 'Segoe UI', Tahoma, sans-serif;
+}
+
+/* ==========================================
+   TEMAS DE COR
+   O degradê de fundo continua igual ao original (preto nas bordas,
+   colorido no centro) — só troca QUAL cor "brilha" nele. Ativado via
+   atributo data-tema na tag <html>, controlado pelo script.js.
+   ========================================== */
+html[data-tema="preto"] {
+  --red-core: #5c5c5c;
+  --red-soft: #9a9a9a;
+  --red-deep: #242424;
+  --red-shadow: #0a0a0a;
+  --acc-rgb: 92, 92, 92;
+  --texto-acento: #ffffff;
+}
+
+html[data-tema="branco"] {
+  --red-core: #f2f2f2;
+  --red-soft: #ffffff;
+  --red-deep: #4a4a4a;
+  --red-shadow: #141414;
+  --acc-rgb: 242, 242, 242;
+  --texto-acento: #111111;
+}
+
+html[data-tema="rosa"] {
+  --red-core: #ff4d9e;
+  --red-soft: #ff8ac4;
+  --red-deep: #7a0044;
+  --red-shadow: #2b0018;
+  --acc-rgb: 255, 77, 158;
+  --texto-acento: #ffffff;
+}
+
+html[data-tema="azul"] {
+  --red-core: #3b6bff;
+  --red-soft: #6f92ff;
+  --red-deep: #0f1f66;
+  --red-shadow: #060b26;
+  --acc-rgb: 59, 107, 255;
+  --texto-acento: #ffffff;
 }
 
 * {
@@ -30,6 +80,7 @@ body {
   color: var(--ink);
   position: relative;
   overflow-x: hidden;
+  transition: background 0.4s ease;
 }
 
 /* Teia de fundo — UMA imagem só, grande, sem repetição (background-size: cover
@@ -57,6 +108,7 @@ body {
   opacity: 0.5;
   pointer-events: none;
   z-index: 0;
+  transition: background 0.4s ease;
 }
 
 /* ==========================================
@@ -73,8 +125,9 @@ body {
   padding: 16px 30px;
   background: linear-gradient(100deg, #050002 0%, var(--red-deep) 55%, var(--red-core) 100%);
   border-bottom: 2px solid var(--red-core);
-  box-shadow: 0 4px 25px rgba(255, 30, 39, 0.35);
+  box-shadow: 0 4px 25px rgba(var(--acc-rgb), 0.35);
   overflow: visible; /* deixa as decorações "vazarem" pra fora da faixa */
+  transition: background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
 }
 
 .marca {
@@ -154,7 +207,8 @@ body {
 
 .logo-reader {
   color: var(--red-core);
-  text-shadow: 0 0 14px rgba(255, 30, 39, 0.85), 2px 2px 0 #000;
+  text-shadow: 0 0 14px rgba(var(--acc-rgb), 0.85), 2px 2px 0 #000;
+  transition: color 0.4s ease;
 }
 
 /* Chip de usuário/login, agora na barra preta (extremidade direita) */
@@ -185,11 +239,13 @@ body {
   flex-shrink: 0;
   border-radius: 50%;
   background: var(--red-core);
+  color: var(--texto-acento);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.9rem;
   font-weight: 700;
+  transition: background 0.4s ease, color 0.4s ease;
 }
 
 .chip-nome {
@@ -258,7 +314,8 @@ body {
   gap: 14px;
   padding: 10px 20px;
   background: #0a0102;
-  border-bottom: 1px solid rgba(255, 30, 39, 0.35);
+  border-bottom: 1px solid rgba(var(--acc-rgb), 0.35);
+  transition: border-color 0.4s ease;
 }
 
 .nav-secundaria .menu-btn {
@@ -387,6 +444,7 @@ body.pagina-leitura .nav-links .nav-item {
   padding-left: 14px;
   border-left: 4px solid var(--red-core);
   margin-bottom: 20px;
+  transition: border-color 0.4s ease;
 }
 
 /* Seletores (Dropdowns) */
@@ -412,6 +470,7 @@ label {
   color: var(--red-soft);
   text-transform: uppercase;
   letter-spacing: 1px;
+  transition: color 0.4s ease;
 }
 
 select {
@@ -450,7 +509,8 @@ select:hover, select:focus {
   overflow: hidden;
   margin-bottom: 24px;
   height: 260px;
-  box-shadow: 0 0 25px rgba(255, 30, 39, 0.3), inset 0 0 60px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 25px rgba(var(--acc-rgb), 0.3), inset 0 0 60px rgba(0, 0, 0, 0.6);
+  transition: box-shadow 0.4s ease;
 }
 
 .banner-slides {
@@ -561,7 +621,7 @@ select:hover, select:focus {
 
 .banner-ponto.ativo {
   background: var(--red-core);
-  box-shadow: 0 0 8px rgba(255, 30, 39, 0.8);
+  box-shadow: 0 0 8px rgba(var(--acc-rgb), 0.8);
   transform: scale(1.2);
 }
 
@@ -596,11 +656,11 @@ select:hover, select:focus {
   flex: 0 0 130px;
   scroll-snap-align: start;
   background: var(--bg-panel);
-  border: 1px solid rgba(255, 30, 39, 0.4);
+  border: 1px solid rgba(var(--acc-rgb), 0.4);
   border-radius: 12px;
   overflow: hidden;
   cursor: pointer;
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.2s ease, border-color 0.4s ease;
 }
 
 .hq-card-mini:hover {
@@ -640,7 +700,8 @@ select:hover, select:focus {
 .mini-progresso-preenchido {
   height: 100%;
   background: var(--red-core);
-  box-shadow: 0 0 6px rgba(255, 30, 39, 0.8);
+  box-shadow: 0 0 6px rgba(var(--acc-rgb), 0.8);
+  transition: background 0.4s ease;
 }
 
 /* ==========================================
@@ -708,8 +769,9 @@ select:hover, select:focus {
 .chip-tag.ativo {
   background: var(--red-core);
   border-color: var(--red-core);
-  color: var(--ink);
-  box-shadow: 0 0 10px rgba(255, 30, 39, 0.6);
+  color: var(--texto-acento);
+  box-shadow: 0 0 10px rgba(var(--acc-rgb), 0.6);
+  transition: background 0.4s ease, color 0.4s ease;
 }
 
 @media (max-width: 480px) {
@@ -742,18 +804,18 @@ select:hover, select:focus {
 
 .hq-card {
   background: var(--bg-panel);
-  border: 1px solid rgba(255, 30, 39, 0.4);
+  border: 1px solid rgba(var(--acc-rgb), 0.4);
   border-radius: 14px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.4s ease;
 }
 
 .hq-card:hover {
   transform: translateY(-6px);
   border-color: var(--red-core);
-  box-shadow: 0 10px 28px rgba(255, 30, 39, 0.4);
+  box-shadow: 0 10px 28px rgba(var(--acc-rgb), 0.4);
 }
 
 /* Proporção fixa (2:3, formato de capa de HQ) em vez de altura fixa em pixels.
@@ -798,7 +860,8 @@ select:hover, select:focus {
 
 .btn-favorito.ativo {
   color: var(--red-core);
-  text-shadow: 0 0 8px rgba(255, 30, 39, 0.9);
+  text-shadow: 0 0 8px rgba(var(--acc-rgb), 0.9);
+  transition: color 0.4s ease;
 }
 
 .hq-info {
@@ -823,12 +886,12 @@ select:hover, select:focus {
   border: none;
   border-radius: 8px;
   background: var(--red-core);
-  color: var(--ink);
+  color: var(--texto-acento);
   font-weight: 700;
   font-size: 0.85rem;
   letter-spacing: 0.5px;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: background 0.2s ease, color 0.4s ease;
 }
 
 .btn-card:hover {
@@ -846,7 +909,8 @@ select:hover, select:focus {
   border: 2px solid var(--red-core);
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 0 25px rgba(255, 30, 39, 0.45);
+  box-shadow: 0 0 25px rgba(var(--acc-rgb), 0.45);
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
 }
 
 /* Fundo: a própria capa da HQ, desfocada e escurecida — dá pra ver o
@@ -921,6 +985,7 @@ select:hover, select:focus {
   font-size: 0.72rem;
   letter-spacing: 1.5px;
   margin-bottom: 3px;
+  transition: color 0.4s ease;
 }
 
 /* Ano em destaque, grande */
@@ -949,7 +1014,7 @@ select:hover, select:focus {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  box-shadow: 0 0 16px rgba(255, 30, 39, 0.5);
+  box-shadow: 0 0 16px rgba(var(--acc-rgb), 0.5);
 }
 
 /* ==========================================
@@ -960,7 +1025,8 @@ select:hover, select:focus {
   z-index: 1;
   background: var(--bg-panel);
   padding: 22px 34px 30px;
-  border-top: 1px solid rgba(255, 30, 39, 0.35);
+  border-top: 1px solid rgba(var(--acc-rgb), 0.35);
+  transition: border-color 0.4s ease;
 }
 
 .ficha-capitulos-titulo {
@@ -1006,7 +1072,7 @@ select:hover, select:focus {
 
 .item-capitulo:hover {
   border-color: var(--red-core);
-  background: rgba(255, 30, 39, 0.1);
+  background: rgba(var(--acc-rgb), 0.1);
 }
 
 .item-capitulo .capitulo-paginas {
@@ -1019,13 +1085,14 @@ select:hover, select:focus {
 /* Capítulo com progresso salvo (aparece marcado na lista) */
 .item-capitulo-progresso {
   border-color: var(--red-core);
-  background: rgba(255, 30, 39, 0.08);
+  background: rgba(var(--acc-rgb), 0.08);
+  transition: border-color 0.4s ease, background 0.4s ease;
 }
 
 .capitulo-badge {
   display: inline-block;
   background: var(--red-core);
-  color: var(--ink);
+  color: var(--texto-acento);
   font-size: 0.62rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -1034,6 +1101,7 @@ select:hover, select:focus {
   border-radius: 999px;
   margin-left: 8px;
   vertical-align: middle;
+  transition: background 0.4s ease, color 0.4s ease;
 }
 
 @media (max-width: 560px) {
@@ -1057,19 +1125,19 @@ select:hover, select:focus {
   padding: 14px 28px;
   border: 2px solid var(--ink);
   border-radius: 30px;
-  background: linear-gradient(135deg, #ff0000 0%, #990000 100%);
-  color: var(--ink);
+  background: linear-gradient(135deg, var(--red-core) 0%, var(--red-deep) 100%);
+  color: var(--texto-acento);
   font-size: 1.1rem;
   font-weight: 600;
   letter-spacing: 1px;
   cursor: pointer;
-  box-shadow: 0 0 20px rgba(255, 0, 0, 0.75);
-  transition: all 0.25s ease;
+  box-shadow: 0 0 20px rgba(var(--acc-rgb), 0.75);
+  transition: all 0.25s ease, background 0.4s ease, color 0.4s ease;
 }
 
 .btn-iniciar:hover {
   transform: scale(1.06);
-  box-shadow: 0 0 28px rgba(255, 30, 39, 1);
+  box-shadow: 0 0 28px rgba(var(--acc-rgb), 1);
 }
 
 /* ==========================================
@@ -1090,6 +1158,7 @@ select:hover, select:focus {
   touch-action: none; /* deixa o gesto de pinça livre pro nosso JS controlar */
   cursor: zoom-in;
   position: relative;
+  transition: border-color 0.4s ease;
 }
 
 .leitor-box.zoom-ativo {
@@ -1153,19 +1222,19 @@ select:hover, select:focus {
   padding: 12px 22px;
   border: none;
   border-radius: 10px;
-  background: linear-gradient(135deg, #e60000 0%, var(--red-deep) 100%);
-  color: var(--ink);
+  background: linear-gradient(135deg, var(--red-core) 0%, var(--red-deep) 100%);
+  color: var(--texto-acento);
   font-size: 0.95rem;
   font-weight: 600;
   letter-spacing: 0.5px;
   cursor: pointer;
-  transition: all 0.25s ease;
-  box-shadow: 0 0 10px rgba(230, 0, 0, 0.4);
+  transition: all 0.25s ease, background 0.4s ease, color 0.4s ease;
+  box-shadow: 0 0 10px rgba(var(--acc-rgb), 0.4);
 }
 
 .btn-nav:hover {
-  background: linear-gradient(135deg, #ff1a1a 0%, #b30000 100%);
-  box-shadow: 0 0 18px rgba(255, 26, 26, 0.75);
+  background: linear-gradient(135deg, var(--red-soft) 0%, var(--red-deep) 100%);
+  box-shadow: 0 0 18px rgba(var(--acc-rgb), 0.75);
   transform: translateY(-2px);
 }
 
@@ -1173,6 +1242,7 @@ select:hover, select:focus {
   background: rgba(0, 0, 0, 0.35);
   border: 1px solid var(--neon-cyan);
   box-shadow: none;
+  color: var(--ink);
 }
 
 .btn-modo:hover {
@@ -1184,6 +1254,7 @@ select:hover, select:focus {
   font-weight: 700;
   color: var(--red-soft);
   font-size: 0.95rem;
+  transition: color 0.4s ease;
 }
 
 /* Quando o leitor está sticky no rodapé em modo scroll no celular, deixa fixo
@@ -1196,7 +1267,7 @@ select:hover, select:focus {
     backdrop-filter: blur(6px);
     padding: 12px 10px;
     margin: 0 -20px;
-    border-top: 1px solid rgba(255, 30, 39, 0.4);
+    border-top: 1px solid rgba(var(--acc-rgb), 0.4);
     z-index: 3;
   }
 }
@@ -1225,9 +1296,10 @@ select:hover, select:focus {
   background: linear-gradient(180deg, #12040a 0%, var(--bg-void) 100%);
   border: 2px solid var(--red-core);
   border-radius: 16px;
-  box-shadow: 0 0 40px rgba(255, 30, 39, 0.55);
+  box-shadow: 0 0 40px rgba(var(--acc-rgb), 0.55);
   padding: 30px 26px 26px;
   text-align: center;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
 }
 
 .modal-close {
@@ -1247,8 +1319,9 @@ select:hover, select:focus {
   font-size: 1.4rem;
   letter-spacing: 1px;
   color: var(--red-core);
-  text-shadow: 0 0 10px rgba(255, 0, 0, 0.6);
+  text-shadow: 0 0 10px rgba(var(--acc-rgb), 0.6);
   margin-bottom: 8px;
+  transition: color 0.4s ease;
 }
 
 .modal-sub {
@@ -1300,6 +1373,75 @@ select:hover, select:focus {
 }
 
 /* ==========================================
+   MODAL DE TEMAS (lista de opções de cor)
+   ========================================== */
+.modal-temas-caixa {
+  max-width: 380px;
+  text-align: left;
+}
+
+.modal-temas-caixa .modal-icone,
+.modal-temas-caixa .modal-titulo,
+.modal-temas-caixa .modal-sub {
+  text-align: center;
+}
+
+.lista-temas {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.tema-opcao {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.tema-opcao:hover {
+  border-color: var(--neon-cyan);
+  background: rgba(43, 231, 216, 0.08);
+}
+
+.tema-opcao.ativo {
+  border-color: var(--red-core);
+  background: rgba(var(--acc-rgb), 0.14);
+  box-shadow: 0 0 12px rgba(var(--acc-rgb), 0.4);
+}
+
+.tema-swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+}
+
+.tema-opcao-check {
+  margin-left: auto;
+  color: var(--red-core);
+  font-size: 1.1rem;
+  visibility: hidden;
+}
+
+.tema-opcao.ativo .tema-opcao-check {
+  visibility: visible;
+}
+
+/* ==========================================
    MENU LATERAL (DRAWER)
    ========================================== */
 .sidebar {
@@ -1310,9 +1452,9 @@ select:hover, select:focus {
   height: 100%;
   background: linear-gradient(180deg, #12040a 0%, var(--bg-void) 100%);
   border-right: 2px solid var(--red-core);
-  box-shadow: 5px 0 30px rgba(255, 30, 39, 0.4);
+  box-shadow: 5px 0 30px rgba(var(--acc-rgb), 0.4);
   z-index: 100;
-  transition: left 0.3s ease-in-out;
+  transition: left 0.3s ease-in-out, border-color 0.4s ease, box-shadow 0.4s ease;
   padding: 22px;
   display: flex;
   flex-direction: column;
@@ -1329,6 +1471,7 @@ select:hover, select:focus {
   border-bottom: 1px solid var(--red-core);
   padding-bottom: 16px;
   margin-bottom: 20px;
+  transition: border-color 0.4s ease;
 }
 
 .sidebar-header h2 {
@@ -1337,7 +1480,8 @@ select:hover, select:focus {
   font-size: 1.3rem;
   letter-spacing: 1px;
   color: var(--red-core);
-  text-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+  text-shadow: 0 0 10px rgba(var(--acc-rgb), 0.7);
+  transition: color 0.4s ease;
 }
 
 .close-btn {
@@ -1381,7 +1525,7 @@ select:hover, select:focus {
 
 .sidebar-nav .nav-item:hover,
 .sidebar-nav .nav-item.active {
-  background: rgba(255, 30, 39, 0.15);
+  background: rgba(var(--acc-rgb), 0.15);
   border-color: var(--red-core);
   color: var(--red-soft);
 }
@@ -1389,7 +1533,8 @@ select:hover, select:focus {
 .sidebar-footer {
   margin-top: auto;
   padding-top: 16px;
-  border-top: 1px solid rgba(255, 30, 39, 0.35);
+  border-top: 1px solid rgba(var(--acc-rgb), 0.35);
+  transition: border-color 0.4s ease;
 }
 
 .perfil-item {
@@ -1409,7 +1554,7 @@ select:hover, select:focus {
 }
 
 .perfil-item:hover {
-  background: rgba(255, 30, 39, 0.15);
+  background: rgba(var(--acc-rgb), 0.15);
   color: var(--red-soft);
 }
 

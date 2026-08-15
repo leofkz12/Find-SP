@@ -15,6 +15,7 @@ const CHAVE_USUARIO = "spiderReaderUsuario";
 const CHAVE_MODO_LEITURA = "spiderReaderModoLeitura";
 const CHAVE_PROGRESSO = "spiderReaderProgresso";
 const CHAVE_LEITURAS = "spiderReaderLeituras";
+const CHAVE_TEMA = "spiderReaderTema";
 
 let ordenacaoAtual = "recente";
 let filtrosTags = new Set();
@@ -25,6 +26,68 @@ const ROTULOS_SECAO = {
   manga: "Mangás",
   favoritos: "Favoritos ♥"
 };
+
+// ==========================================
+// TEMAS DE COR
+// Cada tema troca a cor de destaque do site inteiro (o degradê preto de
+// fundo continua o mesmo, só muda a cor que "brilha" nele). As cores reais
+// de cada tema estão no style.css, em html[data-tema="..."]. Aqui é só
+// pra montar a lista de opções e mostrar a bolinha com a cor certa.
+// ==========================================
+const TEMAS = [
+  { id: "vermelho", nome: "Vermelho padrão", cor: "#ff1e27" },
+  { id: "preto", nome: "Preto", cor: "#5c5c5c" },
+  { id: "branco", nome: "Branco", cor: "#f2f2f2" },
+  { id: "rosa", nome: "Rosa", cor: "#ff4d9e" },
+  { id: "azul", nome: "Azul escuro", cor: "#3b6bff" }
+];
+
+function obterTemaSalvo() {
+  const salvo = localStorage.getItem(CHAVE_TEMA);
+  return TEMAS.some(t => t.id === salvo) ? salvo : "vermelho";
+}
+
+// Aplica o tema (troca o atributo data-tema na <html>, que o CSS usa
+// pra trocar as variáveis de cor) e guarda a escolha no navegador.
+function aplicarTema(idTema) {
+  document.documentElement.setAttribute('data-tema', idTema);
+  localStorage.setItem(CHAVE_TEMA, idTema);
+  montarListaTemas();
+}
+
+// Monta a lista de opções dentro do modal, marcando qual está ativa
+function montarListaTemas() {
+  const container = document.getElementById('lista-temas');
+  if (!container) return;
+
+  const temaAtual = obterTemaSalvo();
+  container.innerHTML = '';
+
+  TEMAS.forEach(tema => {
+    const opcao = document.createElement('button');
+    opcao.type = 'button';
+    opcao.className = 'tema-opcao' + (tema.id === temaAtual ? ' ativo' : '');
+    opcao.innerHTML = `
+      <span class="tema-swatch" style="background: ${tema.cor}"></span>
+      <span>${tema.nome}</span>
+      <span class="tema-opcao-check">✓</span>
+    `;
+    opcao.onclick = () => aplicarTema(tema.id);
+    container.appendChild(opcao);
+  });
+}
+
+function abrirTemas() {
+  montarListaTemas();
+  document.getElementById('modal-temas')?.classList.remove('escondido');
+  fecharMenu();
+  document.getElementById('overlay')?.classList.add('ativo');
+}
+
+function fecharTemas() {
+  document.getElementById('modal-temas')?.classList.add('escondido');
+  document.getElementById('overlay')?.classList.remove('ativo');
+}
 
 // Monta o caminho da imagem sozinho a partir do número da página.
 // Ex: caminhoPagina("spider-gwen", "cap-1", 3) -> "assets/hqs/spider-gwen/cap-1/pagina3.jpg"
@@ -339,10 +402,11 @@ function sairLogin() {
   fecharLogin();
 }
 
-// Fecha modal e menu lateral juntos (usado pelo overlay)
+// Fecha modais e menu lateral juntos (usado pelo overlay)
 function fecharTudo() {
   fecharMenu();
   fecharLogin();
+  fecharTemas();
 }
 
 // ==========================================
@@ -401,7 +465,10 @@ function fecharMenu() {
   const sidebar = document.getElementById('sidebar');
   const overlay = document.getElementById('overlay');
   if (sidebar) sidebar.classList.remove('aberto');
-  if (overlay && !document.getElementById('modal-login')?.classList.contains('escondido')) return;
+
+  const loginAberto = !document.getElementById('modal-login')?.classList.contains('escondido');
+  const temasAberto = !document.getElementById('modal-temas')?.classList.contains('escondido');
+  if (overlay && (loginAberto || temasAberto)) return;
   if (overlay) overlay.classList.remove('ativo');
 }
 
@@ -1171,9 +1238,11 @@ document.addEventListener('keydown', (evento) => {
 });
 
 // ==========================================
-// INICIALIZAÇÃO: carrega os dropdowns e já mostra a grade de Destaques
+// INICIALIZAÇÃO: carrega os dropdowns, aplica o tema salvo
+// e já mostra a grade de Destaques
 // ==========================================
 function iniciarApp() {
+  document.documentElement.setAttribute('data-tema', obterTemaSalvo());
   modoLeitura = obterModoLeituraPadrao();
   aplicarUsuarioNaUI();
   carregarMenu();

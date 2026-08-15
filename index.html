@@ -36,6 +36,9 @@
       <a href="#" class="nav-item" data-categoria="favoritos" onclick="filtrarHQs('favoritos')">
         <span class="icon">♥</span> Favoritos
       </a>
+      <a href="#" class="nav-item" onclick="abrirTemas(); return false;">
+        <span class="icon">🎨</span> Temas
+      </a>
     </nav>
 
     <div class="sidebar-footer">
@@ -216,6 +219,19 @@
       <input type="text" id="input-login-nome" class="modal-input" placeholder="Seu nome ou apelido" maxlength="24" onkeyup="if(event.key === 'Enter') confirmarLogin()">
       <button class="btn-iniciar modal-btn-entrar" onclick="confirmarLogin()">Entrar na teia</button>
       <button id="btn-sair" class="modal-btn-sair escondido" onclick="sairLogin()">Sair da conta</button>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL DE TEMAS (escolha da cor de destaque) -->
+  <!-- ========================================== -->
+  <div id="modal-temas" class="modal-fundo escondido" onclick="if(event.target === this) fecharTemas()">
+    <div class="modal-caixa modal-temas-caixa">
+      <button class="close-btn modal-close" onclick="fecharTemas()" aria-label="Fechar">&times;</button>
+      <div class="modal-icone">🎨</div>
+      <h2 class="modal-titulo">Escolha o tema</h2>
+      <p class="modal-sub">Troca a cor de destaque do site inteiro. Fica salvo aqui no seu navegador.</p>
+      <div id="lista-temas" class="lista-temas"></div>
     </div>
   </div>
 
