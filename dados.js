@@ -130,6 +130,22 @@ const hqs = {
       "cap-1": 21
   
     }
+  },
+  "spider-noir": {
+    titulo: "Spider-Noir",
+    capa: "assets/capas/spider-noir.jpg",
+    genero: "hq",
+    tags: ["ação", "ficção científica", "crime"],
+    lancamento: "28/10/2020",
+    resumo: "Na Nova York dos anos 1930, o Homem-Aranha Noir é arrastado para uma investigação internacional após um assassinato no Splash Club. Caçando pistas sobre um antigo artefato cicládico, Peter Parker viaja pelo mundo para impedir que nazistas e uma perigosa conspiração mística obtenham um poder capaz de mudar o rumo da história.",
+    capitulos: {
+      "cap-1": 25,
+      "cap-2": 20,
+      "cap-3": 20,
+      "cap-4": 20,
+      "cap-5": 20
+  
+    }
   }
 
   // Adicione novas HQs/mangás aqui embaixo, seguindo o mesmo modelo.
