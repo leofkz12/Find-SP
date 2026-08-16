@@ -127,7 +127,7 @@ const hqs = {
     lancamento: "06/03/2024",
     resumo: "Ameaça Principal: Gwen enfrenta uma versão mortal do Doutor Polvo (Doc Ock), que ameaça destruir a estabilidade de seu universo e colocar em risco as pessoas mais próximas a ela.Conflito Multiversal: A HQ explora as consequências do desgaste multiversal em sua vida, testando seus limites como heroína enquanto lida com as repercussões de suas viagens entre dimensões.",
     capitulos: {
-      "cap-1": 21
+      "cap-1": 21,
   
     }
   },
