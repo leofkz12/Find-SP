@@ -118,6 +118,18 @@ const hqs = {
       "cap-4": 20,
       "cap-5": 20
     }
+  },
+  "sp-giant-size": {
+    titulo: "Spider-Gwen Giant-Size",
+    capa: "assets/capas/sg-giant.jpg",
+    genero: "hq",
+    tags: ["ação", "ficção científica", "aventura"],
+    lancamento: "06/03/2024",
+    resumo: "Ameaça Principal: Gwen enfrenta uma versão mortal do Doutor Polvo (Doc Ock), que ameaça destruir a estabilidade de seu universo e colocar em risco as pessoas mais próximas a ela.Conflito Multiversal: A HQ explora as consequências do desgaste multiversal em sua vida, testando seus limites como heroína enquanto lida com as repercussões de suas viagens entre dimensões.",
+    capitulos: {
+      "cap-1": 21
+  
+    }
   }
 
   // Adicione novas HQs/mangás aqui embaixo, seguindo o mesmo modelo.
