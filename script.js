@@ -37,7 +37,7 @@ const ROTULOS_SECAO = {
 // ==========================================
 const TEMAS = [
   { id: "vermelho", nome: "Vermelho padrão", cor: "#ff1e27" },
-  { id: "preto", nome: "Preto", cor: "#5c5c5c" },
+  { id: "preto", nome: "Preto", cor: "#333333" },
   { id: "branco", nome: "Branco", cor: "#f2f2f2" },
   { id: "rosa", nome: "Rosa", cor: "#ff4d9e" },
   { id: "azul", nome: "Azul escuro", cor: "#3b6bff" }
