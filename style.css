@@ -12,11 +12,6 @@
   --ink: #ffffff;
   --ink-dim: #cbb8bb;
 
-  /* --acc-rgb é a versão "R, G, B" de --red-core, usada em rgba() pros
-     brilhos/sombras acompanharem o tema escolhido.
-     --texto-acento é a cor do texto/ícone em cima de fundos sólidos com
-     --red-core (botões, badges, chips) — troca pra escuro nos temas claros
-     pra nunca ficar "apagado". */
   --acc-rgb: 255, 30, 39;
   --texto-acento: #ffffff;
 
@@ -24,12 +19,6 @@
   --font-ui: 'Poppins', 'Segoe UI', Tahoma, sans-serif;
 }
 
-/* ==========================================
-   TEMAS DE COR
-   O degradê de fundo continua igual ao original (preto nas bordas,
-   colorido no centro) — só troca QUAL cor "brilha" nele. Ativado via
-   atributo data-tema na tag <html>, controlado pelo script.js.
-   ========================================== */
 html[data-tema="preto"] {
   --red-core: #333333;
   --red-soft: #4d4d4d;
@@ -83,17 +72,6 @@ body {
   transition: background 0.4s ease;
 }
 
-/* Teia de fundo — UMA imagem só, grande, sem repetição (background-size: cover
-   se adapta a qualquer tamanho de tela, PC ou celular, sem precisar de uma
-   versão separada pra cada um). Fica em assets/decoracao/teia-fundo.svg.
-
-   QUER TROCAR POR UMA ARTE FEITA EM IA (tipo a da referência)?
-   1. Gere a imagem (PNG/JPG) numa IA de imagem.
-   2. Salve o arquivo em assets/decoracao/ (ex: teia-fundo.png).
-   3. Troque só a linha do background-image abaixo pelo novo caminho
-      (ex: url("assets/decoracao/teia-fundo.png")).
-   Não precisa mexer em mais nada — o cover cuida de adaptar a mesma
-   imagem pro PC e pro celular automaticamente. */
 .teia-bg {
   position: fixed;
   top: 0;
@@ -111,9 +89,6 @@ body {
   transition: background 0.4s ease;
 }
 
-/* ==========================================
-   CABEÇALHO (faixa vermelha: logo + decoração + busca)
-   ========================================== */
 .topo-site {
   position: relative;
   z-index: 5;
@@ -126,7 +101,7 @@ body {
   background: linear-gradient(100deg, #050002 0%, var(--red-deep) 55%, var(--red-core) 100%);
   border-bottom: 2px solid var(--red-core);
   box-shadow: 0 4px 25px rgba(var(--acc-rgb), 0.35);
-  overflow: visible; /* deixa as decorações "vazarem" pra fora da faixa */
+  overflow: visible;
   transition: background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
 }
 
@@ -136,11 +111,6 @@ body {
   gap: 14px;
 }
 
-/* ==========================================
-   DECORAÇÕES DO CABEÇALHO (personagem, aranha, teia)
-   Solte as imagens em assets/decoracao/ com esses nomes.
-   Ajuste os valores de right/top/bottom/height pra reposicionar.
-   ========================================== */
 .decor-personagem {
   position: absolute;
   right: 1150px;
@@ -151,7 +121,6 @@ body {
   
 } 
 
-/* No celular, esconde as decorações pra não bagunçar o layout */
 @media (max-width: 760px) {
   .decor-personagem,
   .decor-aranha,
@@ -211,7 +180,6 @@ body {
   transition: color 0.4s ease;
 }
 
-/* Chip de usuário/login, agora na barra preta (extremidade direita) */
 .chip-usuario {
   display: flex;
   align-items: center;
@@ -266,7 +234,7 @@ body {
 
 .busca-container input {
   flex: 1;
-  min-width: 0; /* impede que o input force o flex item a estourar a largura do container */
+  min-width: 0;
   padding: 12px 16px;
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.25);
@@ -302,9 +270,6 @@ body {
   transform: translateY(-1px);
 }
 
-/* ==========================================
-   BARRA PRETA: menu ☰ + navegação + avatar de perfil
-   ========================================== */
 .nav-secundaria {
   position: sticky;
   top: 0;
@@ -367,8 +332,6 @@ body {
   transform: scaleX(1);
 }
 
-/* No celular, mantém a MESMA barra do PC — só reduz espaçamento e deixa
-   os links deslizarem com o dedo caso não caibam todos na largura da tela. */
 @media (max-width: 760px) {
   .nav-secundaria {
     padding: 8px 12px;
@@ -389,11 +352,6 @@ body {
   }
 }
 
-/* ==========================================
-   MODO "BARRA FINA" — ativado via JS (classe no body) quando a pessoa
-   está vendo a ficha de uma HQ ou lendo um capítulo, pra sobrar mais
-   tela pro conteúdo em vez do cabeçalho.
-   ========================================== */
 body.pagina-leitura .topo-site {
   padding: 8px 30px;
 }
@@ -403,7 +361,7 @@ body.pagina-leitura .logo-titulo {
 }
 
 body.pagina-leitura .busca-container {
-  display: none; /* a busca não faz falta enquanto lê/vê a ficha */
+  display: none;
 }
 
 body.pagina-leitura .nav-secundaria {
@@ -421,9 +379,6 @@ body.pagina-leitura .nav-links .nav-item {
   }
 }
 
-/* ==========================================
-   CONTEÚDO PRINCIPAL
-   ========================================== */
 .conteudo {
   position: relative;
   z-index: 1;
@@ -447,7 +402,6 @@ body.pagina-leitura .nav-links .nav-item {
   transition: border-color 0.4s ease;
 }
 
-/* Seletores (Dropdowns) */
 .menu-selecao {
   display: flex;
   gap: 20px;
@@ -495,12 +449,6 @@ select:hover, select:focus {
   margin-bottom: 20px;
 }
 
-/* ==========================================
-   BANNER GIRATÓRIO (aba Destaques)
-   Fundo fosco com textura sutil. No PC, o espaço vazio ao lado da capa
-   mostra o resumo da história (troca junto com o slide). No celular
-   continua só a capa + título/botão por cima, sem o resumo.
-   ========================================== */
 .banner-destaques {
   position: relative;
   background:
@@ -560,7 +508,6 @@ select:hover, select:focus {
   text-shadow: 1px 1px 3px #000;
 }
 
-/* Resumo: escondido por padrão (celular). Só aparece no PC, ver media query abaixo. */
 .banner-resumo {
   display: none;
 }
@@ -625,9 +572,6 @@ select:hover, select:focus {
   transform: scale(1.2);
 }
 
-/* ==========================================
-   FILEIRAS HORIZONTAIS (Continuar lendo / Recomendados)
-   ========================================== */
 .secao-fileira {
   margin-bottom: 24px;
 }
@@ -704,9 +648,6 @@ select:hover, select:focus {
   transition: background 0.4s ease;
 }
 
-/* ==========================================
-   BARRA DE ORDENAÇÃO + TAGS
-   ========================================== */
 .barra-filtros {
   display: flex;
   flex-wrap: wrap;
@@ -780,9 +721,6 @@ select:hover, select:focus {
   }
 }
 
-/* ==========================================
-   PAINEL PRETO com a grade de histórias
-   ========================================== */
 .grade-painel {
   background:
     repeating-linear-gradient(135deg, #0b0b0b 0px, #0b0b0b 3px, #060606 3px, #060606 6px);
@@ -792,13 +730,10 @@ select:hover, select:focus {
   box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.6);
 }
 
-/* ==========================================
-   GRADE DA BIBLIOTECA
-   ========================================== */
 .biblioteca-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 200px));
-  justify-content: center; /* centraliza os cards quando sobra espaço na linha (resolve o "tudo pra esquerda" no celular) */
+  justify-content: center;
   gap: 22px;
 }
 
@@ -818,9 +753,6 @@ select:hover, select:focus {
   box-shadow: 0 10px 28px rgba(var(--acc-rgb), 0.4);
 }
 
-/* Proporção fixa (2:3, formato de capa de HQ) em vez de altura fixa em pixels.
-   Assim a capa sempre aparece inteira e no mesmo formato, não importa se a
-   grade tem 1 card (favoritos) ou vários (categoria) — nem em qual tela. */
 .capa-wrapper {
   position: relative;
   aspect-ratio: 2 / 3;
@@ -864,8 +796,6 @@ select:hover, select:focus {
   transition: color 0.4s ease;
 }
 
-/* Selo mostrando quantos capítulos ainda não foram lidos naquela HQ
-   (fica no canto oposto ao coração de favoritar) */
 .badge-nao-lido {
   position: absolute;
   top: 10px;
@@ -916,10 +846,6 @@ select:hover, select:focus {
   background: var(--red-soft);
 }
 
-/* ==========================================
-   FICHA DA HQ (fundo com a capa + capa + título + ano + resumo + capítulos)
-   Aparece ao clicar em "Ver mais" num card da biblioteca.
-   ========================================== */
 .ficha-box {
   position: relative;
   max-width: 900px;
@@ -931,9 +857,6 @@ select:hover, select:focus {
   transition: border-color 0.4s ease, box-shadow 0.4s ease;
 }
 
-/* Fundo: a própria capa da HQ, desfocada e escurecida — dá pra ver o
-   fundo do site por trás, tipo um "banner" atrás da ficha. O background-image
-   real é definido via JS (variável --ficha-fundo), aqui só o efeito. */
 .ficha-fundo {
   position: absolute;
   inset: 0;
@@ -941,11 +864,10 @@ select:hover, select:focus {
   background-size: cover;
   background-position: center 20%;
   filter: blur(24px) brightness(0.55);
-  transform: scale(1.15); /* evita ver a borda desfocada nas bordas do box */
+  transform: scale(1.15);
   z-index: 0;
 }
 
-/* Camada escura por cima do fundo desfocado, pra garantir contraste com o texto */
 .ficha-box::after {
   content: '';
   position: absolute;
@@ -985,7 +907,6 @@ select:hover, select:focus {
   justify-content: center;
 }
 
-/* Título menor — o destaque agora fica com o ano e o resumo */
 .ficha-titulo {
   font-size: 1.05rem;
   font-weight: 600;
@@ -1006,7 +927,6 @@ select:hover, select:focus {
   transition: color 0.4s ease;
 }
 
-/* Ano em destaque, grande */
 .ficha-ano {
   color: var(--ink);
   font-size: 1.4rem;
@@ -1020,7 +940,6 @@ select:hover, select:focus {
   max-width: 640px;
 }
 
-/* "Continuar de onde parou" — aparece na ficha quando já existe progresso salvo */
 .ficha-continuar {
   margin-top: 6px;
 }
@@ -1035,7 +954,6 @@ select:hover, select:focus {
   box-shadow: 0 0 16px rgba(var(--acc-rgb), 0.5);
 }
 
-/* Fileira de ações extras: marcar tudo como lido / limpar progresso */
 .ficha-acoes {
   display: flex;
   flex-wrap: wrap;
@@ -1077,9 +995,6 @@ select:hover, select:focus {
   background: rgba(var(--acc-rgb), 0.1);
 }
 
-/* ==========================================
-   LISTA DE CAPÍTULOS (dentro da ficha)
-   ========================================== */
 .ficha-capitulos {
   position: relative;
   z-index: 1;
@@ -1147,7 +1062,6 @@ select:hover, select:focus {
   white-space: nowrap;
 }
 
-/* Agrupa "X páginas" + o botão de marcar lido, do lado direito do item */
 .capitulo-info {
   display: flex;
   align-items: center;
@@ -1155,8 +1069,6 @@ select:hover, select:focus {
   flex-shrink: 0;
 }
 
-/* Botão redondo pra marcar/desmarcar um capítulo específico como lido,
-   sem precisar abrir ele */
 .chip-lido {
   width: 26px;
   height: 26px;
@@ -1187,7 +1099,6 @@ select:hover, select:focus {
   transition: background 0.4s ease, color 0.4s ease, border-color 0.4s ease;
 }
 
-/* Capítulo com progresso salvo (aparece marcado na lista) */
 .item-capitulo-progresso {
   border-color: var(--red-core);
   background: rgba(var(--acc-rgb), 0.08);
@@ -1245,9 +1156,6 @@ select:hover, select:focus {
   box-shadow: 0 0 28px rgba(var(--acc-rgb), 1);
 }
 
-/* ==========================================
-   LEITOR DE PÁGINAS — MODO PÁGINA (uma por vez)
-   ========================================== */
 .leitor-box {
   background: #000000;
   border: 2px solid var(--red-core);
@@ -1259,8 +1167,8 @@ select:hover, select:focus {
   align-items: center;
   min-height: 420px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
-  overflow: hidden; /* essencial pra conter a imagem quando dá zoom */
-  touch-action: none; /* deixa o gesto de pinça livre pro nosso JS controlar */
+  overflow: hidden;
+  touch-action: none;
   cursor: zoom-in;
   position: relative;
   transition: border-color 0.4s ease;
@@ -1281,20 +1189,25 @@ select:hover, select:focus {
   border-radius: 6px;
   touch-action: none;
   will-change: transform;
-  transition: transform 0.15s ease-out;
+  transition: transform 0.15s ease-out, filter 0.2s ease;
 }
 
-/* ==========================================
-   LEITOR DE PÁGINAS — MODO SCROLL
-   Sem bordas, sem cantos arredondados, imagem livre encostando na tela:
-   pensado pro celular, arrastando pra baixo pra ir carregando as páginas.
-   ========================================== */
+/* Modo "dois em um": duas páginas lado a lado, tipo livro aberto (PC/telas largas) */
+.leitor-box.duas-paginas {
+  gap: 10px;
+}
+
+.leitor-box.duas-paginas img {
+  max-width: calc(50% - 5px);
+  max-height: 75vh;
+}
+
 .leitor-scroll {
   display: flex;
   flex-direction: column;
   align-items: center;
   background: #000000;
-  margin: 0 -20px 20px -20px; /* estica até a borda da tela no mobile */
+  margin: 0 -20px 20px -20px;
 }
 
 .scroll-pagina {
@@ -1302,6 +1215,7 @@ select:hover, select:focus {
   width: 100%;
   max-width: 720px;
   height: auto;
+  transition: filter 0.2s ease;
 }
 
 .scroll-fim {
@@ -1312,8 +1226,96 @@ select:hover, select:focus {
 }
 
 /* ==========================================
-   CONTROLES DO LEITOR
+   BOTÃO FLUTUANTE "VOLTAR AO TOPO" (modo scroll)
    ========================================== */
+.btn-topo-flutuante {
+  position: fixed;
+  right: 20px;
+  bottom: 90px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid var(--red-core);
+  background: rgba(5, 0, 2, 0.85);
+  backdrop-filter: blur(4px);
+  color: var(--ink);
+  font-size: 1.3rem;
+  cursor: pointer;
+  z-index: 50;
+  box-shadow: 0 0 16px rgba(var(--acc-rgb), 0.6);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.4s ease, opacity 0.25s ease;
+}
+
+.btn-topo-flutuante:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 22px rgba(var(--acc-rgb), 0.9);
+}
+
+@media (max-width: 760px) {
+  .btn-topo-flutuante {
+    right: 14px;
+    bottom: 78px;
+    width: 42px;
+    height: 42px;
+    font-size: 1.1rem;
+  }
+}
+
+/* ==========================================
+   CONTROLES EXTRAS: brilho + modo duas páginas
+   ========================================== */
+.controles-extra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding-top: 4px;
+  margin-bottom: 6px;
+}
+
+.controle-brilho {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 180px;
+  max-width: 280px;
+}
+
+.controle-brilho label {
+  font-size: 0.8rem;
+  white-space: nowrap;
+  color: var(--red-soft);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.controle-brilho input[type="range"] {
+  flex: 1;
+  accent-color: var(--red-core);
+  cursor: pointer;
+  height: 4px;
+}
+
+#btn-duas-paginas {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  #btn-duas-paginas {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
+#btn-duas-paginas.ativo {
+  background: rgba(43, 231, 216, 0.15);
+  border: 1px solid var(--neon-cyan);
+  box-shadow: 0 0 14px rgba(43, 231, 216, 0.5);
+}
+
 .controles {
   display: flex;
   flex-wrap: wrap;
@@ -1362,8 +1364,6 @@ select:hover, select:focus {
   transition: color 0.4s ease;
 }
 
-/* Quando o leitor está sticky no rodapé em modo scroll no celular, deixa fixo
-   pra pessoa ver a página atual e trocar de modo sem precisar rolar até o topo */
 @media (max-width: 760px) {
   .controles {
     position: sticky;
@@ -1381,9 +1381,6 @@ select:hover, select:focus {
   display: none !important;
 }
 
-/* ==========================================
-   MODAL DE LOGIN (básico, só visual)
-   ========================================== */
 .modal-fundo {
   position: fixed;
   inset: 0;
@@ -1477,9 +1474,6 @@ select:hover, select:focus {
   color: var(--red-soft);
 }
 
-/* ==========================================
-   MODAL DE TEMAS (lista de opções de cor)
-   ========================================== */
 .modal-temas-caixa {
   max-width: 380px;
   text-align: left;
@@ -1546,9 +1540,6 @@ select:hover, select:focus {
   visibility: visible;
 }
 
-/* ==========================================
-   MENU LATERAL (DRAWER)
-   ========================================== */
 .sidebar {
   position: fixed;
   top: 0;
@@ -1687,9 +1678,6 @@ select:hover, select:focus {
   display: block;
 }
 
-/* ==========================================
-   AJUSTES PARA TELAS GRANDES (PC)
-   ========================================== */
 @media (min-width: 768px) {
   .topo-site {
     padding: 20px 40px;
@@ -1713,8 +1701,6 @@ select:hover, select:focus {
     height: 380px;
   }
 
-  /* No PC o slide vira uma "fileira": texto de um lado, capa do outro,
-     preenchendo o espaço que antes ficava vazio em preto */
   .banner-slide {
     align-items: stretch;
   }
@@ -1725,7 +1711,7 @@ select:hover, select:focus {
     width: auto;
     max-width: 42%;
     height: 88%;
-    margin: auto 40px auto auto; /* capa encostada na direita, centralizada verticalmente */
+    margin: auto 40px auto auto;
     order: 2;
     border-radius: 10px;
     box-shadow: 0 12px 34px rgba(0, 0, 0, 0.65);
@@ -1762,12 +1748,6 @@ select:hover, select:focus {
   }
 }
 
-/* ==========================================
-   AJUSTES PARA CELULAR
-   A ideia é manter a MESMA estrutura do PC (header, busca, navbar, sidebar),
-   só reduzindo espaçamentos, deixando textos um pouco menores e centralizando
-   o que precisa centralizar.
-   ========================================== */
 @media (max-width: 480px) {
   .logo-titulo {
     font-size: 1.4rem;

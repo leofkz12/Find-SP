@@ -17,9 +17,12 @@ const CHAVE_PROGRESSO = "spiderReaderProgresso";
 const CHAVE_LEITURAS = "spiderReaderLeituras";
 const CHAVE_TEMA = "spiderReaderTema";
 const CHAVE_LIDOS = "spiderReaderLidos";
+const CHAVE_BRILHO = "spiderReaderBrilho";
+const CHAVE_DUAS_PAGINAS = "spiderReaderDuasPaginas";
 
 let ordenacaoAtual = "recente";
 let filtrosTags = new Set();
+let duasPaginasAtivo = localStorage.getItem(CHAVE_DUAS_PAGINAS) === "1";
 
 const ROTULOS_SECAO = {
   todas: "Destaques",
@@ -1087,6 +1090,13 @@ function iniciarLeitura(manterPagina = false) {
     if (btnVoltar) btnVoltar.classList.remove('escondido');
     areaLeitor.classList.remove('escondido');
     if (!manterPagina) paginaAtual = 0;
+
+    // Sincroniza o slider de brilho e o botão de duas páginas com o
+    // estado salvo antes de renderizar a página em si
+    const sliderBrilho = document.getElementById('slider-brilho');
+    if (sliderBrilho) sliderBrilho.value = obterBrilhoSalvo();
+    atualizarBotaoDuasPaginas();
+
     atualizarLeitor();
   }
 
@@ -1137,6 +1147,16 @@ function atualizarLeitor() {
     btnModo.textContent = modoLeitura === 'pagina' ? '📜 Scroll' : '📄 Página';
   }
 
+  // O botão de "duas páginas" só faz sentido no modo página
+  const btnDuas = document.getElementById('btn-duas-paginas');
+  if (btnDuas) btnDuas.classList.toggle('escondido', modoLeitura !== 'pagina');
+
+  // O botão flutuante "voltar ao topo" só faz sentido no modo scroll —
+  // some imediatamente ao trocar pra modo página
+  if (modoLeitura !== 'scroll') {
+    document.getElementById('btn-topo-scroll')?.classList.add('escondido');
+  }
+
   if (modoLeitura === 'scroll') {
     montarLeitorScroll();
   } else {
@@ -1144,12 +1164,13 @@ function atualizarLeitor() {
   }
 }
 
-// --- Modo página: como já funcionava, uma imagem por vez ---
+// --- Modo página: uma página, ou duas lado a lado se o modo "dois em um" estiver ativo ---
 function montarLeitorPagina() {
   pararObservadorScroll();
 
   const totalPaginas = hqs[hqAtual].capitulos[capituloAtual];
   const imgElement = document.getElementById('pagina-imagem');
+  const imgElement2 = document.getElementById('pagina-imagem-2');
   const contador = document.getElementById('contador-pagina');
   const leitorPagina = document.getElementById('leitor-pagina');
   const leitorScroll = document.getElementById('leitor-scroll');
@@ -1161,30 +1182,56 @@ function montarLeitorPagina() {
   if (btnAnterior) btnAnterior.classList.remove('escondido');
   if (btnProxima) btnProxima.classList.remove('escondido');
 
+  const duasAgora = duasPaginasEstaoAtivas();
+  leitorPagina?.classList.toggle('duas-paginas', duasAgora);
+
   if (imgElement && totalPaginas) {
     imgElement.src = caminhoPagina(hqAtual, capituloAtual, paginaAtual + 1);
   }
+
+  if (imgElement2) {
+    const temSegundaPagina = duasAgora && (paginaAtual + 2 <= totalPaginas);
+    if (temSegundaPagina) {
+      imgElement2.src = caminhoPagina(hqAtual, capituloAtual, paginaAtual + 2);
+      imgElement2.classList.remove('escondido');
+    } else {
+      imgElement2.classList.add('escondido');
+    }
+  }
+
   if (contador && totalPaginas) {
-    contador.innerText = `Página ${paginaAtual + 1} de ${totalPaginas}`;
+    if (duasAgora && paginaAtual + 2 <= totalPaginas) {
+      contador.innerText = `Páginas ${paginaAtual + 1}-${paginaAtual + 2} de ${totalPaginas}`;
+    } else {
+      contador.innerText = `Página ${paginaAtual + 1} de ${totalPaginas}`;
+    }
   }
 
   salvarProgresso(hqAtual, capituloAtual, paginaAtual);
 
-  // Pré-carrega a próxima página em segundo plano, pra trocar sem "flash" branco
-  if (totalPaginas && paginaAtual + 1 < totalPaginas) {
+  // Pré-carrega a(s) próxima(s) página(s) em segundo plano, pra trocar sem "flash" branco
+  const proximaAPreCarregar = paginaAtual + (duasAgora ? 3 : 2);
+  if (totalPaginas && proximaAPreCarregar <= totalPaginas) {
     const preCarrega = new Image();
-    preCarrega.src = caminhoPagina(hqAtual, capituloAtual, paginaAtual + 2);
+    preCarrega.src = caminhoPagina(hqAtual, capituloAtual, proximaAPreCarregar);
   }
 
   // Volta o zoom ao normal sempre que a página muda
   if (typeof resetarZoomLeitor === 'function') resetarZoomLeitor();
+
+  aplicarBrilhoNasPaginas(obterBrilhoSalvo());
+}
+
+// Quantas páginas avançar/voltar por vez: 2 no modo "dois em um" ativo em tela larga, senão 1
+function passoDePaginas() {
+  return duasPaginasEstaoAtivas() ? 2 : 1;
 }
 
 function proximaPagina() {
   if (modoLeitura !== 'pagina') return;
   const totalPaginas = hqs[hqAtual].capitulos[capituloAtual];
   if (paginaAtual < totalPaginas - 1) {
-    paginaAtual++;
+    paginaAtual = Math.min(paginaAtual + passoDePaginas(), totalPaginas - 1);
     montarLeitorPagina();
   }
 }
@@ -1192,7 +1239,7 @@ function proximaPagina() {
 function paginaAnterior() {
   if (modoLeitura !== 'pagina') return;
   if (paginaAtual > 0) {
-    paginaAtual--;
+    paginaAtual = Math.max(0, paginaAtual - passoDePaginas());
     montarLeitorPagina();
   }
 }
@@ -1241,6 +1288,7 @@ function montarLeitorScroll() {
   if (contador) contador.innerText = `Página 1 de ${totalPaginas}`;
 
   iniciarObservadorScroll(totalPaginas);
+  aplicarBrilhoNasPaginas(obterBrilhoSalvo());
 }
 
 function irParaProximoCapitulo() {
@@ -1283,6 +1331,104 @@ function pararObservadorScroll() {
   if (observerScroll) {
     observerScroll.disconnect();
     observerScroll = null;
+  }
+}
+
+// ==========================================
+// AJUSTE DE BRILHO DA PÁGINA (slider — bom pra ler à noite)
+// Aplica filter: brightness() nas imagens do leitor. Fica salvo no
+// navegador e é reaplicado toda vez que uma página nova é carregada.
+// ==========================================
+function obterBrilhoSalvo() {
+  const salvo = parseInt(localStorage.getItem(CHAVE_BRILHO), 10);
+  return Number.isFinite(salvo) && salvo >= 40 && salvo <= 100 ? salvo : 100;
+}
+
+function ajustarBrilho(valor) {
+  const brilho = Math.min(100, Math.max(40, Number(valor) || 100));
+  try {
+    localStorage.setItem(CHAVE_BRILHO, brilho);
+  } catch (erro) {
+    console.error('Não foi possível salvar o brilho:', erro);
+  }
+  aplicarBrilhoNasPaginas(brilho);
+}
+
+function aplicarBrilhoNasPaginas(brilho) {
+  const filtro = `brightness(${brilho}%)`;
+  const imgPagina = document.getElementById('pagina-imagem');
+  const imgPagina2 = document.getElementById('pagina-imagem-2');
+  if (imgPagina) imgPagina.style.filter = filtro;
+  if (imgPagina2) imgPagina2.style.filter = filtro;
+  document.querySelectorAll('.scroll-pagina').forEach(img => { img.style.filter = filtro; });
+}
+
+// ==========================================
+// MODO "DOIS EM UM" (PC): mostra duas páginas lado a lado no modo página,
+// como um livro/mangá aberto, em telas largas (>=1024px).
+// ==========================================
+function duasPaginasEstaoAtivas() {
+  return duasPaginasAtivo && modoLeitura === 'pagina' && window.matchMedia('(min-width: 1024px)').matches;
+}
+
+function alternarModoDuasPaginas() {
+  duasPaginasAtivo = !duasPaginasAtivo;
+  try {
+    localStorage.setItem(CHAVE_DUAS_PAGINAS, duasPaginasAtivo ? '1' : '0');
+  } catch (erro) {
+    console.error('Não foi possível salvar a preferência de duas páginas:', erro);
+  }
+  atualizarBotaoDuasPaginas();
+  if (modoLeitura === 'pagina') montarLeitorPagina();
+}
+
+function atualizarBotaoDuasPaginas() {
+  const btn = document.getElementById('btn-duas-paginas');
+  if (!btn) return;
+  btn.classList.toggle('ativo', duasPaginasAtivo);
+  btn.textContent = duasPaginasAtivo ? '📖 Página única' : '📖 Duas páginas';
+}
+
+// Recalcula o layout de página(s) quando a tela é redimensionada (ex: girar
+// o celular, ou o PC passar a valer/deixar de valer a regra de 1024px)
+let redimensionamentoTimer = null;
+window.addEventListener('resize', () => {
+  clearTimeout(redimensionamentoTimer);
+  redimensionamentoTimer = setTimeout(() => {
+    const areaLeitor = document.getElementById('area-leitor');
+    if (!areaLeitor || areaLeitor.classList.contains('escondido')) return;
+    if (modoLeitura === 'pagina') montarLeitorPagina();
+  }, 200);
+});
+
+// ==========================================
+// BOTÃO FLUTUANTE "VOLTAR AO TOPO" (modo scroll)
+// Aparece só quando a pessoa está lendo em modo scroll e já rolou bastante.
+// ==========================================
+function configurarBotaoTopo() {
+  const btn = document.getElementById('btn-topo-scroll');
+  if (!btn) return;
+
+  window.addEventListener('scroll', () => {
+    const areaLeitor = document.getElementById('area-leitor');
+    const emLeituraScroll = document.body.classList.contains('pagina-leitura')
+      && modoLeitura === 'scroll'
+      && areaLeitor && !areaLeitor.classList.contains('escondido');
+
+    if (emLeituraScroll && window.scrollY > 600) {
+      btn.classList.remove('escondido');
+    } else {
+      btn.classList.add('escondido');
+    }
+  }, { passive: true });
+}
+
+function voltarTopoScroll() {
+  const areaLeitor = document.getElementById('area-leitor');
+  if (areaLeitor) {
+    areaLeitor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }
 
@@ -1454,7 +1600,8 @@ function iniciarApp() {
   carregarMenu();
   exibirBiblioteca('todas');
   configurarZoomLeitor();
+  configurarBotaoTopo();
+  atualizarBotaoDuasPaginas();
 }
 
 window.onload = iniciarApp;
-

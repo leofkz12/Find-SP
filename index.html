@@ -185,13 +185,25 @@
 
       <div id="area-leitor" class="escondido">
 
-        <!-- MODO PÁGINA: uma imagem por vez -->
+        <!-- MODO PÁGINA: uma ou duas imagens, dependendo do modo "dois em um" -->
         <div id="leitor-pagina" class="leitor-box">
           <img id="pagina-imagem" src="" alt="Página da HQ">
+          <img id="pagina-imagem-2" src="" alt="Página seguinte" class="escondido">
         </div>
 
         <!-- MODO SCROLL: todas as páginas em lista, carregando sob demanda -->
         <div id="leitor-scroll" class="leitor-scroll escondido"></div>
+
+        <!-- Botão flutuante "voltar ao topo", só aparece no modo scroll após rolar bastante -->
+        <button id="btn-topo-scroll" class="btn-topo-flutuante escondido" onclick="voltarTopoScroll()" aria-label="Voltar ao topo">⬆</button>
+
+        <div class="controles-extra">
+          <div class="controle-brilho">
+            <label for="slider-brilho">☀️ Brilho</label>
+            <input type="range" id="slider-brilho" min="40" max="100" value="100" oninput="ajustarBrilho(this.value)">
+          </div>
+          <button onclick="alternarModoDuasPaginas()" id="btn-duas-paginas" class="btn-nav btn-modo" title="Mostrar duas páginas lado a lado (telas largas)">📖 Duas páginas</button>
+        </div>
 
         <div class="controles">
           <button onclick="paginaAnterior()" id="btn-anterior" class="btn-nav">◀ Anterior</button>
