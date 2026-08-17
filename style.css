@@ -1540,6 +1540,183 @@ select:hover, select:focus {
   visibility: visible;
 }
 
+/* ==========================================
+   NÍVEL DE LEITURA E MOLDURAS DE AVATAR
+   ========================================== */
+
+/* A moldura é uma imagem PNG (com fundo transparente) desenhada por cima
+   do avatar, um pouco maior que ele, via pseudo-elemento ::after */
+.chip-avatar.com-moldura,
+.perfil-avatar.com-moldura {
+  position: relative;
+  overflow: visible;
+}
+
+.chip-avatar.com-moldura::after,
+.perfil-avatar.com-moldura::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  background-image: var(--moldura-img);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  pointer-events: none;
+}
+
+.modal-niveis-caixa {
+  max-width: 420px;
+  text-align: left;
+}
+
+.modal-niveis-caixa .modal-icone,
+.modal-niveis-caixa .modal-titulo,
+.modal-niveis-caixa .modal-sub {
+  text-align: center;
+}
+
+.nivel-resumo {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  font-size: 0.85rem;
+  color: var(--ink-dim);
+  line-height: 1.6;
+}
+
+.nivel-resumo strong {
+  color: var(--ink);
+}
+
+.moldura-descricao-caixa {
+  background: rgba(255, 255, 255, 0.04);
+  border-left: 3px solid var(--neon-cyan);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  font-size: 0.82rem;
+  color: var(--ink-dim);
+  min-height: 40px;
+}
+
+.lista-molduras {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.moldura-opcao {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.moldura-opcao:hover:not(.bloqueada) {
+  border-color: var(--neon-cyan);
+  background: rgba(43, 231, 216, 0.08);
+}
+
+.moldura-opcao.ativo {
+  border-color: var(--red-core);
+  background: rgba(var(--acc-rgb), 0.14);
+  box-shadow: 0 0 12px rgba(var(--acc-rgb), 0.4);
+}
+
+.moldura-opcao.bloqueada {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.moldura-preview {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.moldura-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.moldura-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.moldura-nome {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.moldura-descricao {
+  font-size: 0.75rem;
+  color: var(--ink-dim);
+}
+
+.moldura-check {
+  margin-left: auto;
+  color: var(--red-core);
+  font-size: 1.1rem;
+  visibility: hidden;
+  flex-shrink: 0;
+}
+
+.moldura-opcao.ativo .moldura-check {
+  visibility: visible;
+}
+
+/* Bloco de teste (dev) — remova do HTML antes de publicar em produção */
+.dev-caixa {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.2);
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-dev {
+  flex: 1;
+  min-width: 130px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px dashed var(--neon-cyan);
+  background: rgba(43, 231, 216, 0.08);
+  color: var(--ink);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-dev:hover {
+  background: rgba(43, 231, 216, 0.18);
+}
+
 .sidebar {
   position: fixed;
   top: 0;

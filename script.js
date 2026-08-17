@@ -19,10 +19,16 @@ const CHAVE_TEMA = "spiderReaderTema";
 const CHAVE_LIDOS = "spiderReaderLidos";
 const CHAVE_BRILHO = "spiderReaderBrilho";
 const CHAVE_DUAS_PAGINAS = "spiderReaderDuasPaginas";
+const CHAVE_PAGINAS_LIDAS = "spiderReaderPaginasLidas";
+const CHAVE_MOLDURA_EQUIPADA = "spiderReaderMolduraEquipada";
 
 let ordenacaoAtual = "recente";
 let filtrosTags = new Set();
 let duasPaginasAtivo = localStorage.getItem(CHAVE_DUAS_PAGINAS) === "1";
+
+// Guarda quais páginas já foram contadas nesta sessão de navegador, pra
+// não somar a mesma página várias vezes (ex: re-render do modo scroll)
+let paginasContadasSessao = new Set();
 
 const ROTULOS_SECAO = {
   todas: "Destaques",
@@ -285,6 +291,206 @@ function contarNaoLidos(chaveHQ) {
 }
 
 // ==========================================
+// SISTEMA DE NÍVEL DE LEITURA E MOLDURAS DE AVATAR
+// Quanto mais páginas a pessoa lê, mais alto o nível e mais molduras
+// (imagens PNG que ficam em volta do avatar) ela desbloqueia. Cada nível
+// também tem uma cor própria, usada na moldura e no nome do usuário.
+// ==========================================
+const NIVEIS_LEITURA = [
+  { id: "novato", nome: "Novato", cor: "#9e9e9e", paginas: 0, moldura: "assets/molduras/novato.png", descricao: "Nível inicial. Toda jornada começa aqui." },
+  { id: "intermediario", nome: "Intermediário", cor: "#4caf50", paginas: 50, moldura: "assets/molduras/intermediario.png", descricao: "Leia 50 páginas para desbloquear." },
+  { id: "veterano", nome: "Veterano", cor: "#2196f3", paginas: 150, moldura: "assets/molduras/veterano.png", descricao: "Leia 150 páginas para desbloquear." },
+  { id: "pro", nome: "Pro", cor: "#9c27b0", paginas: 300, moldura: "assets/molduras/pro.png", descricao: "Leia 300 páginas para desbloquear." },
+  { id: "master", nome: "Master", cor: "#ff9800", paginas: 500, moldura: "assets/molduras/master.png", descricao: "Leia 500 páginas para desbloquear." },
+  { id: "supremo", nome: "Supremo", cor: "#e53935", paginas: 800, moldura: "assets/molduras/supremo.png", descricao: "Leia 800 páginas para desbloquear." },
+  { id: "ultimate", nome: "Ultimate", cor: "#00e5ff", paginas: 1200, moldura: "assets/molduras/ultimate.png", descricao: "Leia 1200 páginas para desbloquear." },
+  { id: "divindade", nome: "Divindade", cor: "#ffd700", paginas: 1800, moldura: "assets/molduras/divindade.png", descricao: "Leia 1800 páginas para desbloquear." },
+  { id: "godless", nome: "Godless", cor: "#ff1e27", paginas: 2500, moldura: "assets/molduras/godless.png", descricao: "Leia 2500 páginas para desbloquear." }
+];
+
+function obterPaginasLidas() {
+  const salvo = parseInt(localStorage.getItem(CHAVE_PAGINAS_LIDAS), 10);
+  return Number.isFinite(salvo) && salvo >= 0 ? salvo : 0;
+}
+
+function adicionarPaginasLidas(qtd) {
+  try {
+    const total = obterPaginasLidas() + qtd;
+    localStorage.setItem(CHAVE_PAGINAS_LIDAS, total);
+    atualizarUINivelLeitura();
+  } catch (erro) {
+    console.error('Não foi possível salvar as páginas lidas:', erro);
+  }
+}
+
+// Conta uma página como lida só na primeira vez que ela aparece nesta
+// sessão (evita somar de novo ao re-renderizar o leitor)
+function contarPaginaSeNova(chaveUnica) {
+  if (paginasContadasSessao.has(chaveUnica)) return;
+  paginasContadasSessao.add(chaveUnica);
+  adicionarPaginasLidas(1);
+}
+
+function niveisDesbloqueados() {
+  const total = obterPaginasLidas();
+  return NIVEIS_LEITURA.filter(nivel => total >= nivel.paginas);
+}
+
+function obterNivelAtual() {
+  const desbloqueados = niveisDesbloqueados();
+  return desbloqueados[desbloqueados.length - 1] || NIVEIS_LEITURA[0];
+}
+
+function nivelEhDesbloqueado(idNivel) {
+  return niveisDesbloqueados().some(n => n.id === idNivel);
+}
+
+// A moldura equipada por padrão é a do nível atual, mas a pessoa pode
+// equipar qualquer moldura de nível já desbloqueado (ex: usar uma de nível
+// mais baixo mesmo já tendo passado dele)
+function obterMolduraEquipada() {
+  const salva = localStorage.getItem(CHAVE_MOLDURA_EQUIPADA);
+  if (salva && nivelEhDesbloqueado(salva)) return salva;
+  return obterNivelAtual().id;
+}
+
+function equiparMoldura(idNivel) {
+  if (!nivelEhDesbloqueado(idNivel)) return;
+  try {
+    localStorage.setItem(CHAVE_MOLDURA_EQUIPADA, idNivel);
+  } catch (erro) {
+    console.error('Não foi possível salvar a moldura equipada:', erro);
+  }
+  atualizarUINivelLeitura();
+  montarDropdownMolduras();
+}
+
+// Aplica a moldura equipada (imagem em volta do avatar) e a cor do nível
+// atual no nome do usuário, no chip do topo e no rodapé do menu lateral
+function aplicarMolduraNaUI() {
+  const idEquipada = obterMolduraEquipada();
+  const nivelEquipado = NIVEIS_LEITURA.find(n => n.id === idEquipada) || NIVEIS_LEITURA[0];
+  const nivelAtual = obterNivelAtual();
+
+  document.querySelectorAll('.chip-avatar, .perfil-avatar').forEach(avatar => {
+    avatar.style.setProperty('--moldura-img', `url("${nivelEquipado.moldura}")`);
+    avatar.classList.add('com-moldura');
+  });
+
+  document.querySelectorAll('.chip-nome, #perfil-texto-sidebar').forEach(nomeEl => {
+    nomeEl.style.color = nivelAtual.cor;
+  });
+}
+
+// Atualiza tudo relacionado a nível/moldura: avatares, cor do nome e o
+// resumo textual dentro do modal "Nível de Leitura"
+function atualizarUINivelLeitura() {
+  aplicarMolduraNaUI();
+
+  const total = obterPaginasLidas();
+  const nivelAtual = obterNivelAtual();
+  const proximoNivel = NIVEIS_LEITURA.find(n => n.paginas > total);
+
+  const elTotal = document.getElementById('nivel-paginas-total');
+  const elNome = document.getElementById('nivel-nome-atual');
+  const elProximo = document.getElementById('nivel-proximo-info');
+
+  if (elTotal) elTotal.textContent = total;
+  if (elNome) {
+    elNome.textContent = nivelAtual.nome;
+    elNome.style.color = nivelAtual.cor;
+  }
+  if (elProximo) {
+    elProximo.textContent = proximoNivel
+      ? `Faltam ${proximoNivel.paginas - total} página${(proximoNivel.paginas - total) === 1 ? '' : 's'} para "${proximoNivel.nome}"`
+      : 'Nível máximo alcançado! 🕷️';
+  }
+}
+
+// Monta o menu suspenso com todas as molduras existentes. Molduras
+// bloqueadas aparecem desabilitadas, com cadeado, e mostram como
+// desbloquear ao passar o mouse ou focar (teclado)
+function montarDropdownMolduras() {
+  const container = document.getElementById('lista-molduras');
+  if (!container) return;
+
+  const equipada = obterMolduraEquipada();
+  container.innerHTML = '';
+
+  NIVEIS_LEITURA.forEach(nivel => {
+    const desbloqueada = nivelEhDesbloqueado(nivel.id);
+
+    const opcao = document.createElement('button');
+    opcao.type = 'button';
+    opcao.className = 'moldura-opcao'
+      + (nivel.id === equipada ? ' ativo' : '')
+      + (desbloqueada ? '' : ' bloqueada');
+    opcao.disabled = !desbloqueada;
+
+    opcao.innerHTML = `
+      <span class="moldura-preview" style="border-color: ${nivel.cor}">
+        <img src="${nivel.moldura}" alt="Moldura ${nivel.nome}" onerror="this.style.display='none'">
+      </span>
+      <span class="moldura-texto">
+        <span class="moldura-nome" style="color: ${nivel.cor}">${nivel.nome}${desbloqueada ? '' : ' 🔒'}</span>
+        <span class="moldura-descricao">${nivel.descricao}</span>
+      </span>
+      <span class="moldura-check">✓</span>
+    `;
+
+    opcao.title = desbloqueada ? `Equipar moldura de ${nivel.nome}` : nivel.descricao;
+    opcao.onmouseenter = () => mostrarDescricaoMoldura(nivel);
+    opcao.onfocus = () => mostrarDescricaoMoldura(nivel);
+    opcao.onclick = () => equiparMoldura(nivel.id);
+
+    container.appendChild(opcao);
+  });
+
+  mostrarDescricaoMoldura(NIVEIS_LEITURA.find(n => n.id === equipada));
+}
+
+// Mostra, na caixinha de descrição acima da lista, como desbloquear (ou que
+// já está desbloqueada) a moldura que está sob o mouse/foco no momento
+function mostrarDescricaoMoldura(nivel) {
+  const el = document.getElementById('moldura-descricao-atual');
+  if (!el || !nivel) return;
+  const desbloqueada = nivelEhDesbloqueado(nivel.id);
+  el.innerHTML = `<strong style="color:${nivel.cor}">${nivel.nome}</strong> — ${desbloqueada ? 'Desbloqueada. ' + nivel.descricao : nivel.descricao}`;
+}
+
+function abrirNiveis() {
+  atualizarUINivelLeitura();
+  montarDropdownMolduras();
+  document.getElementById('modal-niveis')?.classList.remove('escondido');
+  fecharMenu();
+  document.getElementById('overlay')?.classList.add('ativo');
+}
+
+function fecharNiveis() {
+  document.getElementById('modal-niveis')?.classList.add('escondido');
+  document.getElementById('overlay')?.classList.remove('ativo');
+}
+
+// --- Modo de teste (dev): botões temporários pra simular progresso sem
+// precisar ler centenas de páginas de verdade. Remova o bloco no HTML
+// (.dev-caixa) antes de publicar o site em produção. ---
+function devAdicionarPaginas(qtd = 50) {
+  adicionarPaginasLidas(qtd);
+  montarDropdownMolduras();
+}
+
+function devResetarPaginas() {
+  try {
+    localStorage.setItem(CHAVE_PAGINAS_LIDAS, 0);
+    localStorage.removeItem(CHAVE_MOLDURA_EQUIPADA);
+  } catch (erro) {
+    console.error('Não foi possível resetar o nível de leitura:', erro);
+  }
+  atualizarUINivelLeitura();
+  montarDropdownMolduras();
+}
+
+// ==========================================
 // ORDENAÇÃO E FILTRO DE TAGS
 // ==========================================
 function parseDataBR(data) {
@@ -510,6 +716,9 @@ function aplicarUsuarioNaUI() {
     if (textoSidebar) textoSidebar.textContent = 'Entrar';
     if (avatarSidebar) avatarSidebar.textContent = '👤';
   }
+
+  // Reaplica a moldura/cor de nível depois de trocar o conteúdo do avatar
+  atualizarUINivelLeitura();
 }
 
 function abrirLogin() {
@@ -556,6 +765,7 @@ function fecharTudo() {
   fecharMenu();
   fecharLogin();
   fecharTemas();
+  fecharNiveis();
 }
 
 // ==========================================
@@ -622,7 +832,8 @@ function fecharMenu() {
 
   const loginAberto = !document.getElementById('modal-login')?.classList.contains('escondido');
   const temasAberto = !document.getElementById('modal-temas')?.classList.contains('escondido');
-  if (overlay && (loginAberto || temasAberto)) return;
+  const niveisAberto = !document.getElementById('modal-niveis')?.classList.contains('escondido');
+  if (overlay && (loginAberto || temasAberto || niveisAberto)) return;
   if (overlay) overlay.classList.remove('ativo');
 }
 
@@ -1209,6 +1420,13 @@ function montarLeitorPagina() {
 
   salvarProgresso(hqAtual, capituloAtual, paginaAtual);
 
+  // Conta a(s) página(s) exibida(s) agora pro nível de leitura (só na
+  // primeira vez que aparecem nesta sessão)
+  contarPaginaSeNova(`${hqAtual}|${capituloAtual}|${paginaAtual}`);
+  if (duasAgora && (paginaAtual + 2 <= totalPaginas)) {
+    contarPaginaSeNova(`${hqAtual}|${capituloAtual}|${paginaAtual + 1}`);
+  }
+
   // Pré-carrega a(s) próxima(s) página(s) em segundo plano, pra trocar sem "flash" branco
   const proximaAPreCarregar = paginaAtual + (duasAgora ? 3 : 2);
   if (totalPaginas && proximaAPreCarregar <= totalPaginas) {
@@ -1320,6 +1538,7 @@ function iniciarObservadorScroll(totalPaginas) {
         paginaAtual = Number(numero) - 1;
         contador.innerText = `Página ${numero} de ${totalPaginas}`;
         salvarProgresso(hqAtual, capituloAtual, paginaAtual);
+        contarPaginaSeNova(`${hqAtual}|${capituloAtual}|${paginaAtual}`);
       }
     });
   }, { threshold: 0.5 });
@@ -1597,6 +1816,7 @@ function iniciarApp() {
   document.documentElement.setAttribute('data-tema', obterTemaSalvo());
   modoLeitura = obterModoLeituraPadrao();
   aplicarUsuarioNaUI();
+  atualizarUINivelLeitura();
   carregarMenu();
   exibirBiblioteca('todas');
   configurarZoomLeitor();

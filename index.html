@@ -30,6 +30,9 @@
       <a href="#" class="nav-item" onclick="abrirTemas(); return false;">
         <span class="icon">🎨</span> Temas
       </a>
+      <a href="#" class="nav-item" onclick="abrirNiveis(); return false;">
+        <span class="icon">🏆</span> Nível de Leitura
+      </a>
     </nav>
 
     <div class="sidebar-footer">
@@ -241,6 +244,38 @@
       <h2 class="modal-titulo">Escolha o tema</h2>
       <p class="modal-sub">Troca a cor de destaque do site inteiro. Fica salvo aqui no seu navegador.</p>
       <div id="lista-temas" class="lista-temas"></div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL DE NÍVEL DE LEITURA E MOLDURAS        -->
+  <!-- ========================================== -->
+  <div id="modal-niveis" class="modal-fundo escondido" onclick="if(event.target === this) fecharNiveis()">
+    <div class="modal-caixa modal-niveis-caixa">
+      <button class="close-btn modal-close" onclick="fecharNiveis()" aria-label="Fechar">&times;</button>
+      <div class="modal-icone">🏆</div>
+      <h2 class="modal-titulo">Nível de Leitura</h2>
+      <p class="modal-sub">Ganhe níveis lendo páginas e desbloqueie molduras pro seu avatar.</p>
+
+      <div class="nivel-resumo">
+        Páginas lidas: <strong id="nivel-paginas-total">0</strong><br>
+        Nível atual: <strong id="nivel-nome-atual">Novato</strong><br>
+        <span id="nivel-proximo-info"></span>
+      </div>
+
+      <!-- Descrição da moldura sob o mouse/foco no momento -->
+      <div id="moldura-descricao-atual" class="moldura-descricao-caixa"></div>
+
+      <!-- Menu suspenso com todas as molduras existentes -->
+      <div id="lista-molduras" class="lista-molduras"></div>
+
+      <!-- Modo de teste (dev): permite simular progresso de leitura sem
+           precisar ler de verdade. Remova este bloco antes de publicar
+           o site em produção. -->
+      <div class="dev-caixa">
+        <button class="btn-dev" onclick="devAdicionarPaginas(50)">🧪 +50 páginas (teste)</button>
+        <button class="btn-dev" onclick="devResetarPaginas()">↺ Resetar (teste)</button>
+      </div>
     </div>
   </div>
 
