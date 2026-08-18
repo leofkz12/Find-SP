@@ -1904,9 +1904,19 @@ function abrirPerfil() {
 
   if (avatarGrande) {
     avatarGrande.textContent = iniciais;
-    avatarGrande.style.setProperty('--moldura-img', `url("${nivelEquipado.moldura}")`);
-    avatarGrande.classList.add('com-moldura');
+    avatarGrande.classList.remove('com-moldura');
+    avatarGrande.style.removeProperty('--moldura-img');
+
+    // Só aplica a moldura depois de confirmar que a imagem existe de
+    // verdade, pra nunca deixar a moldura "sumida" ou quebrada
+    const testeImg = new Image();
+    testeImg.onload = () => {
+      avatarGrande.style.setProperty('--moldura-img', `url("${nivelEquipado.moldura}")`);
+      avatarGrande.classList.add('com-moldura');
+    };
+    testeImg.src = nivelEquipado.moldura;
   }
+
   if (nomeGrande) nomeGrande.textContent = nome;
   if (nivelGrande) {
     nivelGrande.textContent = nivelAtual.nome;

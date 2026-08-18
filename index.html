@@ -287,39 +287,55 @@
   <!-- MODAL DE PERFIL (avatar com moldura + infos) -->
   <!-- ========================================== -->
   <div id="modal-perfil" class="modal-fundo escondido" onclick="if(event.target === this) fecharPerfil()">
-    <div class="modal-caixa modal-perfil-caixa">
-      <button class="close-btn modal-close" onclick="fecharPerfil()" aria-label="Fechar">&times;</button>
+  <div class="modal-caixa modal-perfil-caixa">
+    <button class="close-btn modal-close" onclick="fecharPerfil()" aria-label="Fechar">&times;</button>
 
-      <div class="perfil-avatar-grande-wrap">
-        <span class="perfil-avatar-grande" id="perfil-avatar-grande">👤</span>
+    <div class="perfil-banner"></div>
+
+    <div class="perfil-avatar-grande-wrap">
+      <span class="perfil-avatar-grande" id="perfil-avatar-grande">👤</span>
+      <span class="perfil-status-dot" title="Ativo agora"></span>
+    </div>
+
+    <h2 class="perfil-nome-grande" id="perfil-nome-grande">Aracnídeo</h2>
+    <p class="perfil-nivel-grande" id="perfil-nivel-grande">Novato</p>
+
+    <div class="perfil-stats">
+      <div class="perfil-stat">
+        <span class="perfil-stat-valor" id="perfil-stat-paginas">0</span>
+        <span class="perfil-stat-label">Páginas</span>
       </div>
-
-      <h2 class="modal-titulo perfil-nome-grande" id="perfil-nome-grande">Aracnídeo</h2>
-      <p class="perfil-nivel-grande" id="perfil-nivel-grande">Novato</p>
-
-      <div class="perfil-stats">
-        <div class="perfil-stat">
-          <span class="perfil-stat-valor" id="perfil-stat-paginas">0</span>
-          <span class="perfil-stat-label">Páginas lidas</span>
-        </div>
-        <div class="perfil-stat">
-          <span class="perfil-stat-valor" id="perfil-stat-favoritos">0</span>
-          <span class="perfil-stat-label">Favoritos</span>
-        </div>
-        <div class="perfil-stat">
-          <span class="perfil-stat-valor" id="perfil-stat-capitulos">0</span>
-          <span class="perfil-stat-label">Capítulos lidos</span>
-        </div>
+      <div class="perfil-stat">
+        <span class="perfil-stat-valor" id="perfil-stat-favoritos">0</span>
+        <span class="perfil-stat-label">Favoritos</span>
       </div>
-
-      <p class="moldura-descricao-caixa" id="perfil-proximo-nivel"></p>
-
-      <div class="ficha-acoes perfil-acoes">
-        <button class="btn-acao" onclick="fecharPerfil(); abrirNiveis();">🏆 Ver molduras</button>
-        <button class="btn-acao" onclick="fecharPerfil(); abrirLogin();">✏️ Editar / sair</button>
+      <div class="perfil-stat">
+        <span class="perfil-stat-valor" id="perfil-stat-capitulos">0</span>
+        <span class="perfil-stat-label">Capítulos</span>
       </div>
     </div>
+
+    <p class="perfil-proximo-nivel" id="perfil-proximo-nivel"></p>
+
+    <div class="perfil-lista-acoes">
+      <button class="perfil-linha-acao" onclick="fecharPerfil(); abrirNiveis();">
+        <span class="perfil-linha-icone">🏆</span>
+        <span class="perfil-linha-texto">Ver molduras</span>
+        <span class="perfil-linha-seta">›</span>
+      </button>
+      <button class="perfil-linha-acao" onclick="fecharPerfil(); abrirLogin();">
+        <span class="perfil-linha-icone">✏️</span>
+        <span class="perfil-linha-texto">Editar perfil</span>
+        <span class="perfil-linha-seta">›</span>
+      </button>
+      <button class="perfil-linha-acao perfil-linha-sair" onclick="fecharPerfil(); sairLogin();">
+        <span class="perfil-linha-icone">🚪</span>
+        <span class="perfil-linha-texto">Sair da conta</span>
+        <span class="perfil-linha-seta">›</span>
+      </button>
+    </div>
   </div>
+</div>
 
   <script src="dados.js"></script>
   <script src="script.js"></script>
