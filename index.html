@@ -33,10 +33,13 @@
       <a href="#" class="nav-item" onclick="abrirNiveis(); return false;">
         <span class="icon">🏆</span> Nível de Leitura
       </a>
+      <a href="#" class="nav-item" id="item-tela-cheia" onclick="alternarTelaCheia(); return false;">
+        <span class="icon">📱</span> <span id="texto-tela-cheia">Tela Cheia</span>
+      </a>
     </nav>
 
     <div class="sidebar-footer">
-      <button class="perfil-item" id="perfil-item-sidebar" onclick="abrirLogin()">
+      <button class="perfil-item" id="perfil-item-sidebar" onclick="abrirPerfilOuLogin()">
         <span class="perfil-avatar" id="perfil-avatar-sidebar">👤</span>
         <span id="perfil-texto-sidebar">Entrar</span>
       </button>
@@ -81,7 +84,7 @@
       <a href="#" class="nav-item" data-categoria="favoritos" onclick="filtrarHQs('favoritos')">Favoritos</a>
     </div>
 
-    <button class="chip-usuario" id="chip-usuario" onclick="abrirLogin()">
+    <button class="chip-usuario" id="chip-usuario" onclick="abrirPerfilOuLogin()">
       <span class="chip-avatar" id="chip-avatar">👤</span>
       <span class="chip-nome" id="chip-nome">Entrar</span>
     </button>
@@ -252,6 +255,7 @@
   <!-- ========================================== -->
   <div id="modal-niveis" class="modal-fundo escondido" onclick="if(event.target === this) fecharNiveis()">
     <div class="modal-caixa modal-niveis-caixa">
+      <button class="close-btn modal-voltar" onclick="voltarNiveis()" aria-label="Voltar">←</button>
       <button class="close-btn modal-close" onclick="fecharNiveis()" aria-label="Fechar">&times;</button>
       <div class="modal-icone">🏆</div>
       <h2 class="modal-titulo">Nível de Leitura</h2>
@@ -275,6 +279,44 @@
       <div class="dev-caixa">
         <button class="btn-dev" onclick="devAdicionarPaginas(50)">🧪 +50 páginas (teste)</button>
         <button class="btn-dev" onclick="devResetarPaginas()">↺ Resetar (teste)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL DE PERFIL (avatar com moldura + infos) -->
+  <!-- ========================================== -->
+  <div id="modal-perfil" class="modal-fundo escondido" onclick="if(event.target === this) fecharPerfil()">
+    <div class="modal-caixa modal-perfil-caixa">
+      <button class="close-btn modal-close" onclick="fecharPerfil()" aria-label="Fechar">&times;</button>
+
+      <div class="perfil-avatar-grande-wrap">
+        <span class="perfil-avatar-grande" id="perfil-avatar-grande">👤</span>
+      </div>
+
+      <h2 class="modal-titulo perfil-nome-grande" id="perfil-nome-grande">Aracnídeo</h2>
+      <p class="perfil-nivel-grande" id="perfil-nivel-grande">Novato</p>
+
+      <div class="perfil-stats">
+        <div class="perfil-stat">
+          <span class="perfil-stat-valor" id="perfil-stat-paginas">0</span>
+          <span class="perfil-stat-label">Páginas lidas</span>
+        </div>
+        <div class="perfil-stat">
+          <span class="perfil-stat-valor" id="perfil-stat-favoritos">0</span>
+          <span class="perfil-stat-label">Favoritos</span>
+        </div>
+        <div class="perfil-stat">
+          <span class="perfil-stat-valor" id="perfil-stat-capitulos">0</span>
+          <span class="perfil-stat-label">Capítulos lidos</span>
+        </div>
+      </div>
+
+      <p class="moldura-descricao-caixa" id="perfil-proximo-nivel"></p>
+
+      <div class="ficha-acoes perfil-acoes">
+        <button class="btn-acao" onclick="fecharPerfil(); abrirNiveis();">🏆 Ver molduras</button>
+        <button class="btn-acao" onclick="fecharPerfil(); abrirLogin();">✏️ Editar / sair</button>
       </div>
     </div>
   </div>

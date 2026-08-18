@@ -766,6 +766,7 @@ function fecharTudo() {
   fecharLogin();
   fecharTemas();
   fecharNiveis();
+  fecharPerfil();
 }
 
 // ==========================================
@@ -833,7 +834,8 @@ function fecharMenu() {
   const loginAberto = !document.getElementById('modal-login')?.classList.contains('escondido');
   const temasAberto = !document.getElementById('modal-temas')?.classList.contains('escondido');
   const niveisAberto = !document.getElementById('modal-niveis')?.classList.contains('escondido');
-  if (overlay && (loginAberto || temasAberto || niveisAberto)) return;
+  const perfilAberto = !document.getElementById('modal-perfil')?.classList.contains('escondido');
+  if (overlay && (loginAberto || temasAberto || niveisAberto || perfilAberto)) return;
   if (overlay) overlay.classList.remove('ativo');
 }
 
@@ -1822,6 +1824,115 @@ function iniciarApp() {
   configurarZoomLeitor();
   configurarBotaoTopo();
   atualizarBotaoDuasPaginas();
+}
+// ==========================================
+// TELA CHEIA (esconde a barra de endereço/comandos do celular)
+// Usa a Fullscreen API: funciona em navegadores mobile modernos e,
+// quando o site é aberto como app instalado (PWA), some de vez.
+// ==========================================
+function documentoEmTelaCheia() {
+  return !!(document.fullscreenElement || document.webkitFullscreenElement);
+}
+
+function alternarTelaCheia() {
+  if (!documentoEmTelaCheia()) {
+    const elemento = document.documentElement;
+    const pedido = elemento.requestFullscreen
+      || elemento.webkitRequestFullscreen
+      || elemento.msRequestFullscreen;
+    if (pedido) pedido.call(elemento).catch(() => {});
+  } else {
+    const saida = document.exitFullscreen
+      || document.webkitExitFullscreen
+      || document.msExitFullscreen;
+    if (saida) saida.call(document).catch(() => {});
+  }
+  fecharMenu();
+}
+
+// Mantém o texto do botão sincronizado com o estado real de tela cheia
+// (cobre também o caso da pessoa apertar Esc pra saber)
+function atualizarTextoTelaCheia() {
+  const texto = document.getElementById('texto-tela-cheia');
+  if (texto) texto.textContent = documentoEmTelaCheia() ? 'Sair da Tela Cheia' : 'Tela Cheia';
+}
+
+document.addEventListener('fullscreenchange', atualizarTextoTelaCheia);
+document.addEventListener('webkitfullscreenchange', atualizarTextoTelaCheia);
+
+// ==========================================
+// BOTÃO "VOLTAR" na tela de Nível de Leitura/Molduras
+// Fecha o modal e reabre o menu lateral, de onde a pessoa veio
+// ==========================================
+function voltarNiveis() {
+  fecharNiveis();
+  toggleMenu();
+}
+
+// ==========================================
+// PERFIL DO USUÁRIO (avatar com moldura + estatísticas)
+// ==========================================
+
+// Decide se clicar no avatar/nome abre o perfil (já logado) ou o login
+function abrirPerfilOuLogin() {
+  if (obterUsuario()) {
+    abrirPerfil();
+  } else {
+    abrirLogin();
+  }
+}
+
+// Soma quantos capítulos foram marcados como lidos em todas as HQs
+function contarTotalCapitulosLidos() {
+  const todos = obterLidosTodos();
+  return Object.values(todos).reduce((soma, lista) => soma + lista.length, 0);
+}
+
+function abrirPerfil() {
+  const nome = obterUsuario() || 'Aracnídeo';
+  const iniciais = nome.trim().charAt(0).toUpperCase() || '👤';
+  const nivelAtual = obterNivelAtual();
+  const idEquipada = obterMolduraEquipada();
+  const nivelEquipado = NIVEIS_LEITURA.find(n => n.id === idEquipada) || NIVEIS_LEITURA[0];
+  const total = obterPaginasLidas();
+  const proximoNivel = NIVEIS_LEITURA.find(n => n.paginas > total);
+
+  const avatarGrande = document.getElementById('perfil-avatar-grande');
+  const nomeGrande = document.getElementById('perfil-nome-grande');
+  const nivelGrande = document.getElementById('perfil-nivel-grande');
+  const proximoInfo = document.getElementById('perfil-proximo-nivel');
+
+  if (avatarGrande) {
+    avatarGrande.textContent = iniciais;
+    avatarGrande.style.setProperty('--moldura-img', `url("${nivelEquipado.moldura}")`);
+    avatarGrande.classList.add('com-moldura');
+  }
+  if (nomeGrande) nomeGrande.textContent = nome;
+  if (nivelGrande) {
+    nivelGrande.textContent = nivelAtual.nome;
+    nivelGrande.style.color = nivelAtual.cor;
+  }
+  if (proximoInfo) {
+    proximoInfo.textContent = proximoNivel
+      ? `Faltam ${proximoNivel.paginas - total} página${(proximoNivel.paginas - total) === 1 ? '' : 's'} para "${proximoNivel.nome}"`
+      : 'Nível máximo alcançado! 🕷️';
+  }
+
+  const statPaginas = document.getElementById('perfil-stat-paginas');
+  const statFavoritos = document.getElementById('perfil-stat-favoritos');
+  const statCapitulos = document.getElementById('perfil-stat-capitulos');
+  if (statPaginas) statPaginas.textContent = total;
+  if (statFavoritos) statFavoritos.textContent = obterFavoritos().length;
+  if (statCapitulos) statCapitulos.textContent = contarTotalCapitulosLidos();
+
+  document.getElementById('modal-perfil')?.classList.remove('escondido');
+  fecharMenu();
+  document.getElementById('overlay')?.classList.add('ativo');
+}
+
+function fecharPerfil() {
+  document.getElementById('modal-perfil')?.classList.add('escondido');
+  document.getElementById('overlay')?.classList.remove('ativo');
 }
 
 window.onload = iniciarApp;
